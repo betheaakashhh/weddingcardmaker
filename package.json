@@ -5,39 +5,36 @@
   "main": "main.js",
   "author": "Aakash",
   "license": "MIT",
-
   "scripts": {
-  "start": "electron .",
-  "build": "electron-builder --win nsis"
-},
-
+    "start": "electron .",
+    "build": "electron-builder --win nsis"
+  },
   "devDependencies": {
     "electron": "^30.0.0",
     "electron-builder": "^24.13.3"
   },
-
- "build": {
-  "appId": "com.aakash.weddingstudio",
-  "productName": "Wedding Card Studio",
-
-  "publish": [
-    {
-      "provider": "github",
-      "owner": "betheaakashhh",
-      "repo": "weddingcardmaker"
-    }
-  ],
-
+  "build": {
+    "appId": "com.aakash.weddingstudio",
+    "productName": "Wedding Card Studio",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "betheaakashhh",
+        "repo": "weddingcardmaker"
+      }
+    ],
     "win": {
-  "target": "nsis",
-  "icon": "icon.ico"
-},
-
-"nsis": {
-  "oneClick": false,
-  "allowToChangeInstallationDirectory": true,
-  "createDesktopShortcut": true,
-  "createStartMenuShortcut": true
-}
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.3"
   }
 }

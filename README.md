@@ -95,3 +95,16 @@ If you want to make it look even more **professional (like top GitHub projects)*
 
 Just say 👍
 ---
+
+## issue of 7zip unpacking windowSignUp
+step 1: GOTO > Win + R 
+      - search && enter : %LOCALAPPDATA% 
+      -%LOCALAPPDATA%/electron-build/cache | delete the folder inside of cache
+
+step 2: window setting > privacy & security or search developer 
+       - turn on developer mode.
+
+step 3: build again: 
+```bash
+npm run build
+```
