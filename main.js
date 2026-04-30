@@ -1,13 +1,15 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const { autoUpdater } = require("electron-updater");
+
+let win;
 
 function createWindow() {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1600,
     height: 1000,
     autoHideMenuBar: true,
     icon: path.join(__dirname, "icon.ico"),
-
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false
@@ -17,4 +19,19 @@ function createWindow() {
   win.loadFile("card-layout-studio-v3.html");
 }
 
-app.whenReady().then(createWindow);
+// 🔹 Auto update logic
+app.whenReady().then(() => {
+  createWindow();
+
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+// Optional logs
+autoUpdater.on("update-available", () => {
+  console.log("Update available");
+});
+
+autoUpdater.on("update-downloaded", () => {
+  console.log("Update downloaded");
+  autoUpdater.quitAndInstall();
+});

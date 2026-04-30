@@ -16,17 +16,17 @@
     "electron-builder": "^24.13.3"
   },
 
-  "build": {
-    "appId": "com.aakash.weddingstudio",
-    "productName": "Wedding Card Studio",
+ "build": {
+  "appId": "com.aakash.weddingstudio",
+  "productName": "Wedding Card Studio",
 
-    "directories": {
-      "output": "dist"
-    },
-
-    "files": [
-      "**/*"
-    ],
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "betheaakashhh",
+      "repo": "weddingcardmaker"
+    }
+  ],
 
     "win": {
   "target": "nsis",
