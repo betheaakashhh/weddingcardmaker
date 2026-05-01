@@ -1,3 +1,4 @@
+
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const { autoUpdater } = require("electron-updater");
@@ -12,7 +13,8 @@ function createWindow() {
     icon: path.join(__dirname, "icon.ico"),
     webPreferences: {
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      preload: path.join(__dirname, "preload.js")
     }
   });
 
@@ -20,18 +22,65 @@ function createWindow() {
 }
 
 // 🔹 Auto update logic
+function setupAutoUpdater() {
+  // Disable updater in development mode
+  if (!app.isPackaged) {
+    console.log("Auto-update disabled in development mode.");
+    return;
+  }
+
+  autoUpdater.on("checking-for-update", () => {
+    console.log("Checking for update...");
+  });
+
+  autoUpdater.on("update-available", () => {
+    console.log("Update available");
+  });
+
+  autoUpdater.on("update-not-available", () => {
+    console.log("No updates available");
+  });
+
+  autoUpdater.on("download-progress", (progressObj) => {
+    console.log(
+      `Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`
+    );
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    console.log("Update downloaded");
+    autoUpdater.quitAndInstall();
+  });
+
+  autoUpdater.on("error", (error) => {
+    console.error(
+      "Auto-updater error:",
+      error == null ? "unknown" : error.message
+    );
+  });
+
+  autoUpdater.checkForUpdatesAndNotify().catch((error) => {
+    console.error(
+      "Update check failed:",
+      error == null ? "unknown" : error.message
+    );
+  });
+}
+
 app.whenReady().then(() => {
   createWindow();
+  setupAutoUpdater();
 
-  autoUpdater.checkForUpdatesAndNotify();
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
 });
 
-// Optional logs
-autoUpdater.on("update-available", () => {
-  console.log("Update available");
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
 });
 
-autoUpdater.on("update-downloaded", () => {
-  console.log("Update downloaded");
-  autoUpdater.quitAndInstall();
-});
