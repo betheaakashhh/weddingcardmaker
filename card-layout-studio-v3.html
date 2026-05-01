@@ -131,14 +131,16 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .fold-label{position:absolute;background:rgba(0,200,255,.2);color:rgba(0,200,255,.9);font-size:9px;padding:1px 4px;border-radius:2px;pointer-events:none;z-index:951;white-space:nowrap;}
 
 /* ── BLOCK ELEMENTS ── */
-.text-block,.image-block,.shape-block{position:absolute;cursor:move;user-select:none;border:1.5px solid transparent;border-radius:2px;transition:border-color .1s;}
-.text-block{min-width:30px;min-height:16px;padding:2px 3px;white-space:pre-wrap;word-break:break-word;}
+.text-block,.image-block,.shape-block,.graphic-block{position:absolute;cursor:move;user-select:none;border:1.5px solid transparent;border-radius:2px;transition:border-color .1s;}
+/* FIX: text-block has ZERO default padding — padding is controlled via paddingH/V props */
+.text-block{min-width:30px;min-height:16px;padding:0;white-space:pre-wrap;word-break:break-word;}
 .image-block{min-width:20px;min-height:20px;overflow:hidden;}
 .image-block img{width:100%;height:100%;display:block;}
-.symbol-block{min-width:30px;min-height:20px;padding:3px 5px;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif Devanagari',serif;}
-.text-block:hover,.image-block:hover,.shape-block:hover,.symbol-block:hover{border-color:rgba(201,168,76,.35);}
-.text-block.selected,.image-block.selected,.shape-block.selected,.symbol-block.selected{border-color:#C9A84C !important;box-shadow:0 0 0 1px rgba(201,168,76,.25);}
-.text-block.locked,.image-block.locked,.shape-block.locked{cursor:default;opacity:.8;}
+.graphic-block{min-width:20px;min-height:20px;overflow:hidden;background:transparent;}
+.symbol-block{min-width:30px;min-height:20px;padding:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif Devanagari',serif;}
+.text-block:hover,.image-block:hover,.shape-block:hover,.symbol-block:hover,.graphic-block:hover{border-color:rgba(201,168,76,.35);}
+.text-block.selected,.image-block.selected,.shape-block.selected,.symbol-block.selected,.graphic-block.selected{border-color:#C9A84C !important;box-shadow:0 0 0 1px rgba(201,168,76,.25);}
+.text-block.locked,.image-block.locked,.shape-block.locked,.graphic-block.locked{cursor:default;opacity:.8;}
 
 /* ── RESIZE + ROTATE HANDLES ── */
 .resize-handle{position:absolute;width:9px;height:9px;background:#C9A84C;border-radius:2px;opacity:0;transition:opacity .15s;z-index:10;}
@@ -213,6 +215,8 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   background:#C9A84C;color:#000;font-size:9px;padding:1px 5px;border-radius:3px;
   font-family:'Poppins',sans-serif;white-space:nowrap;
 }
+/* bg panel */
+.bg-section{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;padding:9px;margin-bottom:8px;}
 .bg-section h5{font-size:10px;color:#C9A84C;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
 .bg-preview{width:100%;height:60px;border:1px solid #333;border-radius:4px;object-fit:cover;display:block;background:#222;margin-bottom:6px;}
 
@@ -253,7 +257,11 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="addTextBlock()">＋ Text</button>
   <button class="tb-btn green" onclick="triggerImageUpload()">🖼 Image</button>
-  <button class="tb-btn" onclick="addShapeBlock()">◻ Shape</button>
+  <div style="position:relative;display:inline-block;">
+    <button class="tb-btn" onclick="toggleShapeDropdown()" title="Add shape">◻ Shape ▾</button>
+    <div id="shapeDropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:170px;z-index:9999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.7);max-height:260px;overflow-y:auto;"></div>
+  </div>
+  <button class="tb-btn" style="background:#1a2a1a;border-color:#3a5a3a;color:#7ec87e;" onclick="triggerGraphicUpload()" title="Upload PNG/SVG icon from your computer">🎨 Graphic</button>
   <button class="tb-btn" title="Add symbol block" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">ॐ Symbol</button>
   <button class="tb-btn" onclick="duplicateSelected()">⧉ Dup</button>
   <button class="tb-btn" onclick="deleteSelected()" style="color:#e05565;">✕ Del</button>
@@ -289,6 +297,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
     <div class="tab-content active" id="tab-blocks">
       <button class="add-block-btn" onclick="addTextBlock()">＋ Add Text Block</button>
       <button class="add-block-btn" onclick="triggerImageUpload()">🖼 Add Image</button>
+      <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;">🎨 Add Graphic / Icon (PNG, SVG)</button>
       <button class="add-block-btn" onclick="addSymbolBlock()" style="border-color:#7a5c10;color:#C9A84C;">ॐ Add Symbol Block</button>
       <div id="blocksList"></div>
     </div>
@@ -424,7 +433,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   <span>Blocks: <span class="status-val" id="statusCount">0</span></span>
   <span>Canvas: <span class="status-val" id="statusCanvas">210×148 mm</span></span>
   <span>Page: <span class="status-val" id="statusPage">1/1</span></span>
-  <span style="margin-left:auto;color:#444;">Drag • SE/E/S resize (font auto-scales) • ↻ rotate • <strong style="color:#7a5c10">Alt+Drag = duplicate</strong> • Shift+Arrows=5mm • Ctrl+Z undo • Drag block across page tabs</span>
+  <span style="margin-left:auto;color:#444;">Drag move • <span style="color:#7a5c10">E handle</span>=width only (font fixed) • <span style="color:#7a5c10">S</span>=height only • <span style="color:#C9A84C">SE ◢ corner</span>=resize+scale font • ↻ rotate • <strong style="color:#7a5c10">Alt+Drag=duplicate</strong> • Shift+Arrows=5mm • Ctrl+Z undo</span>
 </div>
 
 <!-- TOAST -->
@@ -441,6 +450,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 
 <!-- HIDDEN INPUTS -->
 <input type="file" id="imageFileInput" accept="image/*" style="display:none" multiple onchange="loadImages(this)">
+<input type="file" id="graphicFileInput" accept="image/png,image/svg+xml,image/webp,.svg,.png" style="display:none" multiple onchange="loadGraphics(this)">
 
 <script>
 // ══════════════════════════════════════════════════════
@@ -714,10 +724,10 @@ function setBgTheme(theme) {
     else el.classList.add('checker-white');
   });
 
+  if (showGrid) { canvases.forEach(c => drawGrid(c.id)); }
   ['bgDark','bgLight','bgWhite'].forEach(id => {
     const el = document.getElementById(id); if (el) el.classList.remove('active-btn');
   });
-  const map = {dark:'bgDark',light:'bgLight',white:'bgWhite'};
   if (map[theme]) { const el = document.getElementById(map[theme]); if (el) el.classList.add('active-btn'); }
   toast('Canvas theme: ' + theme);
 }
@@ -869,12 +879,18 @@ function drawGrid(cid) {
   const ctx = bgc.getContext('2d');
   ctx.clearRect(0,0,bgc.width,bgc.height);
   const step = mm2px(5), step10 = mm2px(10);
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 0.5;
+  // Pick grid colors based on current theme for visibility
+  const isLight = bgTheme === 'light' || bgTheme === 'white';
+  const fineColor = isLight ? 'rgba(0,0,0,0.10)' : 'rgba(255,255,255,0.07)';
+  const boldColor = isLight ? 'rgba(0,0,0,0.22)' : 'rgba(255,255,255,0.18)';
+  ctx.strokeStyle = fineColor; ctx.lineWidth = 0.5;
   for (let x = 0; x <= bgc.width; x += step) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,bgc.height); ctx.stroke(); }
   for (let y = 0; y <= bgc.height; y += step) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(bgc.width,y); ctx.stroke(); }
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 0.7;
+  ctx.strokeStyle = boldColor; ctx.lineWidth = 0.8;
   for (let x = 0; x <= bgc.width; x += step10) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,bgc.height); ctx.stroke(); }
   for (let y = 0; y <= bgc.height; y += step10) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(bgc.width,y); ctx.stroke(); }
+  // Redraw when theme changes
+  ctx._lastTheme = bgTheme;
 }
 
 function toggleGuides() {
@@ -947,15 +963,15 @@ function createBlock(opts = {}) {
   return {
     id: 'b' + Date.now() + '_' + globalBlockCounter,
     type,
-    name: opts.name || (type==='image'?'Image ':type==='shape'?'Shape ':type==='symbol'?'Symbol ':'Block ') + localCounter,
+    name: opts.name || (type==='image'?'Image ':type==='shape'?'Shape ':type==='symbol'?'Symbol ':type==='graphic'?'Graphic ':'Block ') + localCounter,
     text: opts.text !== undefined ? opts.text : (type==='symbol'?'ॐ':'।। नमस्ते ।।'),
     x: opts.x !== undefined ? opts.x : 50,
     y: opts.y !== undefined ? opts.y : 20,
-    w: opts.w !== undefined ? opts.w : (type==='image'?50:type==='symbol'?20:100),
-    h: opts.h !== undefined ? opts.h : (type==='image'?40:type==='symbol'?20:null),
+    w: opts.w !== undefined ? opts.w : (type==='image'||type==='graphic'?50:type==='symbol'?20:100),
+    h: opts.h !== undefined ? opts.h : (type==='image'||type==='graphic'?40:type==='symbol'?20:null),
     fontSize: opts.fontSize || (type==='symbol'?24:14),
     fontFamily: opts.fontFamily || 'Noto Serif Devanagari',
-    fontWeight: opts.fontWeight || (type==='symbol'?'400':'400'),
+    fontWeight: opts.fontWeight || '400',
     color: opts.color || '#C9A84C',
     align: opts.align || 'center',
     lineHeight: opts.lineHeight || 1.7,
@@ -966,15 +982,26 @@ function createBlock(opts = {}) {
     locked: opts.locked || false,
     src: opts.src || null,
     objectFit: opts.objectFit || 'contain',
+    // Graphic-specific
+    graphicTint: opts.graphicTint || null,         // CSS color tint for SVG/PNG icons
+    graphicFlipH: opts.graphicFlipH || false,
+    graphicFlipV: opts.graphicFlipV || false,
+    graphicDropShadow: opts.graphicDropShadow || false,
+    // Shape
     shapeType: opts.shapeType || 'rect',
     shapeFill: opts.shapeFill || '#8B1A2E',
     shapeStroke: opts.shapeStroke || 'none',
     shapeStrokeW: opts.shapeStrokeW || 0,
+    shapeSVG: opts.shapeSVG || null,               // for prebuilt SVG shapes
+    // Text style
     underline: opts.underline || false,
     strikethrough: opts.strikethrough || false,
     textShadow: opts.textShadow || false,
     bgColor: opts.bgColor || '#ffffff',
     bgOpacity: opts.bgOpacity !== undefined ? opts.bgOpacity : 0,
+    // FIX: separate padding from sizing — default 0 so text block has NO extra space
+    paddingH: opts.paddingH !== undefined ? opts.paddingH : 0,  // left+right padding mm
+    paddingV: opts.paddingV !== undefined ? opts.paddingV : 0,  // top+bottom padding mm
     _renderedH: null,
   };
 }
@@ -985,15 +1012,74 @@ function addTextBlock(opts) {
   c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
 }
 
-function addShapeBlock() {
+// Shape picker dropdown
+let shapeDropdownOpen = false;
+function toggleShapeDropdown() {
+  shapeDropdownOpen = !shapeDropdownOpen;
+  document.getElementById('shapeDropdown').style.display = shapeDropdownOpen ? 'block' : 'none';
+}
+function closeShapeDropdown() {
+  shapeDropdownOpen = false;
+  const dd = document.getElementById('shapeDropdown');
+  if (dd) dd.style.display = 'none';
+}
+
+const PRESET_SHAPES = [
+  { label:'▬ Rectangle', type:'rect', w:60, h:20 },
+  { label:'⬛ Square', type:'rect', w:30, h:30 },
+  { label:'⬤ Circle', type:'circle', w:30, h:30 },
+  { label:'▣ Rounded Rect', type:'rounded', w:60, h:20 },
+  { label:'◢ Triangle', type:'triangle', w:40, h:30 },
+  { label:'◇ Diamond', type:'diamond', w:40, h:30 },
+  { label:'⬡ Hexagon', type:'hexagon', w:40, h:35 },
+  { label:'⭐ Star 5pt', type:'star5', w:35, h:35 },
+  { label:'✦ Star 4pt', type:'star4', w:35, h:35 },
+  { label:'❤ Heart', type:'heart', w:35, h:30 },
+  { label:'➤ Arrow Right', type:'arrow_right', w:50, h:20 },
+  { label:'◀ Arrow Left', type:'arrow_left', w:50, h:20 },
+  { label:'⸺ Line H', type:'line_h', w:60, h:2 },
+  { label:'| Line V', type:'line_v', w:2, h:40 },
+  { label:'◩ Half Rect', type:'half_rect', w:60, h:20 },
+  { label:'◎ Donut/Ring', type:'ring', w:35, h:35 },
+  { label:'⬢ Octagon', type:'octagon', w:35, h:35 },
+  { label:'⌂ Banner', type:'banner', w:60, h:22 },
+];
+
+function addShapeBlock(shapeType, w, h) {
   const c = ac(); if (!c) return;
-  const b = createBlock({ type: 'shape', w: 60, h: 20, x: 30, y: 30 });
+  closeShapeDropdown();
+  const b = createBlock({ type: 'shape', shapeType: shapeType||'rect', w: w||60, h: h||20, x: 30, y: 30 });
   c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
 }
 
-function addSymbolBlock() {
-  addSymbolBlockWith('ॐ');
+// Graphic block — uploaded PNG/SVG icon from local computer
+function addGraphicBlock(src, name, w, h) {
+  const c = ac(); if (!c) return;
+  const b = createBlock({ type: 'graphic', name: name||'Graphic', src, w: w||30, h: h||30, x: 20, y: 20 });
+  c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
+  toast('Graphic added: ' + (name||'icon'));
 }
+
+function triggerGraphicUpload() {
+  const inp = document.getElementById('graphicFileInput');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+function loadGraphics(input) {
+  const c = ac(); if (!c) { toast('No active canvas'); return; }
+  Array.from(input.files).forEach(file => {
+    const isSVG = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const name = file.name.replace(/\.[^.]+$/,'');
+      addGraphicBlock(ev.target.result, name, 30, 30);
+    };
+    if (isSVG) reader.readAsText(file);
+    else reader.readAsDataURL(file);
+  });
+}
+
+function addSymbolBlock() { addSymbolBlockWith('ॐ'); }
 
 function addSymbolBlockWith(sym) {
   const c = ac(); if (!c) return;
@@ -1056,13 +1142,106 @@ function mm2px(mm) { return mm * PX_PER_MM * zoom; }
 function px2mm(px) { return px / (PX_PER_MM * zoom); }
 
 // ══════════════════════════════════════════════════════
+//  SVG SHAPE GENERATOR
+// ══════════════════════════════════════════════════════
+function getShapeSVG(b, pxW, pxH) {
+  const fill = b.shapeFill === 'none' ? 'transparent' : (b.shapeFill || '#8B1A2E');
+  const sw = (b.shapeStrokeW || 0);
+  const stroke = sw > 0 ? b.shapeStroke : 'none';
+  const half = sw / 2;
+  const W = pxW, H = pxH;
+  let path = '';
+  switch(b.shapeType) {
+    case 'triangle':
+      path = `<polygon points="${W/2},${half} ${W-half},${H-half} ${half},${H-half}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    case 'diamond':
+      path = `<polygon points="${W/2},${half} ${W-half},${H/2} ${W/2},${H-half} ${half},${H/2}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    case 'hexagon': {
+      const cx=W/2, cy=H/2, rx=(W-sw)/2, ry=(H-sw)/2;
+      const pts=[0,1,2,3,4,5].map(i=>`${cx+rx*Math.cos(Math.PI/180*(60*i-30))},${cy+ry*Math.sin(Math.PI/180*(60*i-30))}`).join(' ');
+      path = `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'octagon': {
+      const s=Math.min(W,H)*0.29;
+      const ox=W/2, oy=H/2;
+      const pts=[[ox,oy-H/2+half],[ox+W/2-half-s,oy-H/2+half],[ox+W/2-half,oy-H/2+half+s],[ox+W/2-half,oy+H/2-half-s],[ox+W/2-half-s,oy+H/2-half],[ox,oy+H/2-half],[ox-W/2+half+s,oy+H/2-half],[ox-W/2+half,oy+H/2-half-s],[ox-W/2+half,oy-H/2+half+s],[ox-W/2+half+s,oy-H/2+half]].map(p=>p.join(',')).join(' ');
+      path = `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'star5': {
+      const cx=W/2, cy=H/2, R=Math.min(W,H)/2-sw, r=R*0.4;
+      const pts=[...Array(10)].map((_,i)=>{const a=Math.PI/180*(36*i-90);const rad=i%2===0?R:r;return`${cx+rad*Math.cos(a)},${cy+rad*Math.sin(a)}`}).join(' ');
+      path = `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'star4': {
+      const cx=W/2, cy=H/2, R=Math.min(W,H)/2-sw, r=R*0.35;
+      const pts=[...Array(8)].map((_,i)=>{const a=Math.PI/180*(45*i-45);const rad=i%2===0?R:r;return`${cx+rad*Math.cos(a)},${cy+rad*Math.sin(a)}`}).join(' ');
+      path = `<polygon points="${pts}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'heart': {
+      path = `<path d="M${W/2},${H*0.8} C${W*0.1},${H*0.5} ${-W*0.1},${H*0.1} ${W/2},${H*0.35} C${W*1.1},${H*0.1} ${W*0.9},${H*0.5} ${W/2},${H*0.8}Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'arrow_right': {
+      const ah=H*0.4, aw=W*0.35;
+      path = `<polygon points="${half},${H*0.3} ${W-aw-half},${H*0.3} ${W-aw-half},${half} ${W-half},${H/2} ${W-aw-half},${H-half} ${W-aw-half},${H*0.7} ${half},${H*0.7}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'arrow_left': {
+      const aw=W*0.35;
+      path = `<polygon points="${W-half},${H*0.3} ${aw+half},${H*0.3} ${aw+half},${half} ${half},${H/2} ${aw+half},${H-half} ${aw+half},${H*0.7} ${W-half},${H*0.7}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'line_h':
+      path = `<line x1="${half}" y1="${H/2}" x2="${W-half}" y2="${H/2}" stroke="${fill}" stroke-width="${Math.max(1,H)}"/>`;
+      break;
+    case 'line_v':
+      path = `<line x1="${W/2}" y1="${half}" x2="${W/2}" y2="${H-half}" stroke="${fill}" stroke-width="${Math.max(1,W)}"/>`;
+      break;
+    case 'half_rect':
+      path = `<rect x="${half}" y="${H/2}" width="${W-sw}" height="${H/2-half}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    case 'ring': {
+      const cx=W/2, cy=H/2, R2=Math.min(W,H)/2-sw, r2=R2*0.55;
+      path = `<circle cx="${cx}" cy="${cy}" r="${R2}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>
+              <circle cx="${cx}" cy="${cy}" r="${r2}" fill="${bgColorForCanvas()}" stroke="none"/>`;
+      break;
+    }
+    case 'banner': {
+      const notch=H*0.25;
+      path = `<polygon points="${half},${half} ${W-half},${half} ${W-half},${H-half} ${W/2},${H-notch-half} ${half},${H-half}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    }
+    case 'circle':
+      path = `<ellipse cx="${W/2}" cy="${H/2}" rx="${W/2-half}" ry="${H/2-half}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    case 'rounded':
+      path = `<rect x="${half}" y="${half}" width="${W-sw}" height="${H-sw}" rx="8" ry="8" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      break;
+    default:
+      path = `<rect x="${half}" y="${half}" width="${W-sw}" height="${H-sw}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;overflow:visible">${path}</svg>`;
+}
+
+function bgColorForCanvas() {
+  if (bgTheme === 'white') return '#f5f5f5';
+  if (bgTheme === 'light') return '#ddd5c5';
+  return '#1e1e1e';
+}
+
+// ══════════════════════════════════════════════════════
 //  RENDER BLOCKS (active canvas)
 // ══════════════════════════════════════════════════════
 function renderBlocks() {
   const c = ac(); if (!c) return;
   const canvas = document.getElementById('canvas-' + c.id); if (!canvas) return;
-  // Remove only block elements, preserve bg image, overlay canvas, fold lines
-  canvas.querySelectorAll('.text-block,.image-block,.shape-block,.symbol-block').forEach(el => el.remove());
+  canvas.querySelectorAll('.text-block,.image-block,.shape-block,.symbol-block,.graphic-block').forEach(el => el.remove());
 
   c.blocks.forEach(b => {
     const el = document.createElement('div');
@@ -1070,6 +1249,7 @@ function renderBlocks() {
     if (b.type === 'image') cls = 'image-block';
     else if (b.type === 'shape') cls = 'shape-block';
     else if (b.type === 'symbol') cls = 'symbol-block text-block';
+    else if (b.type === 'graphic') cls = 'graphic-block image-block';
     else cls = 'text-block';
     if (b.id === selectedId) cls += ' selected';
     if (b.locked) cls += ' locked';
@@ -1077,16 +1257,20 @@ function renderBlocks() {
     el.dataset.id = b.id;
 
     const bH = b.h ? mm2px(b.h) : null;
+    // FIX: padding is now separate from dimensions — applied via CSS padding, NOT changing width/height
+    const pH = mm2px(b.paddingH || 0);
+    const pV = mm2px(b.paddingV || 0);
     el.style.cssText = `
       left:${mm2px(b.x)}px;top:${mm2px(b.y)}px;
       width:${mm2px(b.w)}px;${bH?`height:${bH}px;`:''}
       opacity:${b.opacity/100};
       transform:rotate(${b.rotation}deg);transform-origin:center center;
       position:absolute;z-index:${c.blocks.indexOf(b)+2};
+      padding:${pV}px ${pH}px;
+      box-sizing:border-box;
     `;
 
     if (b.type === 'text' || b.type === 'symbol') {
-      // FIX: font-size applied to element, text scales correctly
       el.style.fontSize = (b.fontSize * zoom) + 'px';
       el.style.fontFamily = b.fontFamily + ',serif';
       el.style.fontWeight = b.fontWeight;
@@ -1101,15 +1285,18 @@ function renderBlocks() {
         const hex = b.bgColor || '#ffffff';
         const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), bv = parseInt(hex.slice(5,7),16);
         el.style.background = `rgba(${r},${g},${bv},${b.bgOpacity/100})`;
-        el.style.padding = '2px 5px'; el.style.borderRadius = '2px';
+        el.style.borderRadius = '2px';
       }
+      el.style.whiteSpace = 'pre-wrap';
+      el.style.wordBreak = 'break-word';
       el.textContent = b.text;
       if (b.type === 'symbol') {
-        el.style.justifyContent = 'center'; el.style.alignItems = 'center';
         el.style.display = 'flex';
+        el.style.justifyContent = 'center';
+        el.style.alignItems = 'center';
       }
     } else if (b.type === 'image') {
-      el.style.overflow = 'hidden'; el.style.cursor = 'move';
+      el.style.overflow = 'hidden'; el.style.cursor = 'move'; el.style.padding = '0';
       if (b.src) {
         const img = document.createElement('img');
         img.src = b.src; img.style.cssText = `width:100%;height:100%;object-fit:${b.objectFit};display:block;`;
@@ -1119,34 +1306,86 @@ function renderBlocks() {
         el.style.background = '#333'; el.style.border = '1px dashed #555';
         el.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#555;font-size:11px;">No image</div>';
       }
+    } else if (b.type === 'graphic') {
+      // Graphic block — local PNG/SVG icon with own editing tools
+      el.style.overflow = 'hidden'; el.style.cursor = 'move'; el.style.padding = '0'; el.style.background = 'transparent';
+      if (b.src) {
+        const isSVG = b.src.startsWith('<svg') || b.src.startsWith('<?xml');
+        if (isSVG) {
+          el.innerHTML = b.src;
+          const svgEl = el.querySelector('svg');
+          if (svgEl) {
+            svgEl.style.cssText = `width:100%;height:100%;display:block;`;
+            if (b.graphicTint) svgEl.style.filter = `drop-shadow(0 0 0 ${b.graphicTint})`;
+          }
+        } else {
+          const img = document.createElement('img');
+          img.src = b.src;
+          img.style.cssText = `width:100%;height:100%;object-fit:contain;display:block;`;
+          if (b.graphicTint) img.style.filter = `drop-shadow(0 0 0 1px ${b.graphicTint}) hue-rotate(0deg)`;
+          if (b.graphicDropShadow) img.style.filter = (img.style.filter||'') + ' drop-shadow(2px 3px 4px rgba(0,0,0,0.4))';
+          const scaleX = b.graphicFlipH ? -1 : 1;
+          const scaleY = b.graphicFlipV ? -1 : 1;
+          if (scaleX !== 1 || scaleY !== 1) img.style.transform = `scale(${scaleX},${scaleY})`;
+          img.draggable = false;
+          el.appendChild(img);
+        }
+      } else {
+        el.style.background = '#1a2a1a'; el.style.border = '1px dashed #3a5a3a';
+        el.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#3a7a3a;font-size:11px;">No graphic</div>';
+      }
     } else if (b.type === 'shape') {
-      el.style.background = b.shapeFill === 'none' ? 'transparent' : b.shapeFill;
-      if (b.shapeStrokeW > 0) el.style.border = `${b.shapeStrokeW * zoom}px solid ${b.shapeStroke}`;
-      if (b.shapeType === 'circle') el.style.borderRadius = '50%';
-      else if (b.shapeType === 'rounded') el.style.borderRadius = '8px';
-      else el.style.borderRadius = '0';
+      el.style.padding = '0'; el.style.overflow = 'hidden'; el.style.background = 'transparent';
+      const pxW = mm2px(b.w), pxH = mm2px(b.h || 20);
+      // Use SVG for complex shapes, CSS for simple ones
+      const complexShapes = ['triangle','diamond','hexagon','octagon','star5','star4','heart','arrow_right','arrow_left','ring','banner','line_h','line_v','half_rect'];
+      if (complexShapes.includes(b.shapeType)) {
+        el.innerHTML = getShapeSVG(b, pxW, pxH);
+      } else {
+        // Simple CSS shapes (rect, circle, rounded)
+        el.style.background = b.shapeFill === 'none' ? 'transparent' : b.shapeFill;
+        if (b.shapeStrokeW > 0) el.style.border = `${b.shapeStrokeW * zoom}px solid ${b.shapeStroke}`;
+        if (b.shapeType === 'circle') el.style.borderRadius = '50%';
+        else if (b.shapeType === 'rounded') el.style.borderRadius = '8px';
+        else el.style.borderRadius = '0';
+      }
       if (!b.h) { el.style.height = mm2px(20) + 'px'; }
     }
 
-    // Handles (only if selected and unlocked)
+    // Resize + rotate handles (only selected + unlocked)
     if (b.id === selectedId && !b.locked) {
-      // Resize SE
-      ['se','e','s'].forEach(dir => {
-        const rh = document.createElement('div');
-        rh.className = `resize-handle resize-${dir}`;
-        rh.addEventListener('mousedown', e => startResize(e, b, el, dir));
-        el.appendChild(rh);
-      });
+      // E handle — width only (no font change for text)
+      const rhE = document.createElement('div');
+      rhE.className = 'resize-handle resize-e';
+      rhE.title = (b.type==='text'||b.type==='symbol') ? '↔ Width only — font size stays fixed' : '↔ Width';
+      rhE.addEventListener('mousedown', ev => startResize(ev, b, el, 'e'));
+      el.appendChild(rhE);
+
+      // S handle — height only
+      const rhS = document.createElement('div');
+      rhS.className = 'resize-handle resize-s';
+      rhS.title = '↕ Height only';
+      rhS.addEventListener('mousedown', ev => startResize(ev, b, el, 's'));
+      el.appendChild(rhS);
+
+      // SE corner — width + height + font scaling for text
+      const rhSE = document.createElement('div');
+      rhSE.className = 'resize-handle resize-se';
+      rhSE.title = (b.type==='text'||b.type==='symbol') ? '↘ Resize + scale font size' : '↘ Resize';
+      // Make SE corner slightly larger and gold-outlined so it's visually distinct
+      rhSE.style.cssText = 'width:11px;height:11px;right:-5px;bottom:-5px;background:#C9A84C;border:1.5px solid #fff;border-radius:3px;';
+      rhSE.addEventListener('mousedown', ev => startResize(ev, b, el, 'se'));
+      el.appendChild(rhSE);
+
       // Rotate handle
       const rotH = document.createElement('div');
       rotH.className = 'rotate-handle'; rotH.title = 'Drag to rotate'; rotH.innerHTML = '↻';
-      rotH.addEventListener('mousedown', e => startRotate(e, b, el));
+      rotH.addEventListener('mousedown', ev => startRotate(ev, b, el));
       el.appendChild(rotH);
     }
 
     if (!b.locked) makeDraggable(el, b, c);
     el.addEventListener('click', e => { e.stopPropagation(); selectBlock(b.id); });
-    // Cross-canvas drag (HTML5)
     el.draggable = !b.locked;
     el.addEventListener('dragstart', e => {
       e.dataTransfer.setData('text/plain', JSON.stringify({ blockData: JSON.parse(JSON.stringify(b)), fromCanvas: c.id }));
@@ -1154,7 +1393,6 @@ function renderBlocks() {
     });
     canvas.appendChild(el);
 
-    // Measure height after paint
     requestAnimationFrame(() => {
       if (!b.h && (b.type === 'text' || b.type === 'symbol')) {
         b._renderedH = el.offsetHeight / (PX_PER_MM * zoom);
@@ -1169,7 +1407,7 @@ function renderBlocksList() {
   [...c.blocks].reverse().forEach(b => {
     const item = document.createElement('div');
     item.className = 'block-item' + (b.id === selectedId ? ' selected' : '');
-    const icon = b.type==='image'?'🖼':b.type==='shape'?'◻':b.type==='symbol'?'ॐ':'📝';
+    const icon = b.type==='image'?'🖼':b.type==='shape'?'◻':b.type==='symbol'?'ॐ':b.type==='graphic'?'🎨':'📝';
     item.innerHTML = `
       <div class="block-item-type">${icon} ${b.type}</div>
       <div class="block-item-name">${escHtml(b.name)}</div>
@@ -1298,6 +1536,20 @@ function renderPropsPanel() {
       </div>
       ${posAndSize(false)}
       <div class="prop-group">
+        <span class="prop-label">Inner Padding (mm) — Canva-style</span>
+        <div style="font-size:9px;color:#555;margin-bottom:4px;">Controls space around text inside the block. Does NOT change the block's bounding box size.</div>
+        <div class="prop-row">
+          <span style="font-size:10px;color:#555;width:28px;flex-shrink:0">←→</span>
+          <input type="range" class="prop-range" min="0" max="20" step="0.5" value="${(b.paddingH||0)}" oninput="updateProp('paddingH',parseFloat(this.value));this.nextElementSibling.textContent=parseFloat(this.value).toFixed(1)+'mm'">
+          <span class="prop-slider-val">${(b.paddingH||0).toFixed(1)}mm</span>
+        </div>
+        <div class="prop-row">
+          <span style="font-size:10px;color:#555;width:28px;flex-shrink:0">↑↓</span>
+          <input type="range" class="prop-range" min="0" max="20" step="0.5" value="${(b.paddingV||0)}" oninput="updateProp('paddingV',parseFloat(this.value));this.nextElementSibling.textContent=parseFloat(this.value).toFixed(1)+'mm'">
+          <span class="prop-slider-val">${(b.paddingV||0).toFixed(1)}mm</span>
+        </div>
+      </div>
+      <div class="prop-group">
         <span class="prop-label">Line Height</span>
         <div class="prop-slider-row">
           <input type="range" class="prop-range" min="1" max="3" step="0.05" value="${b.lineHeight}" oninput="updateProp('lineHeight',parseFloat(this.value));this.nextElementSibling.textContent=parseFloat(this.value).toFixed(2)">
@@ -1352,7 +1604,44 @@ function renderPropsPanel() {
       ${opacityRot()}
       ${zOrder()}
     `;
+  } else if (b.type === 'graphic') {
+    // Graphic-specific editing panel
+    panel.innerHTML = `
+      <div class="prop-group">
+        <span class="prop-label">🖼 Graphic / Icon</span>
+        <input class="prop-input" style="width:100%" value="${escHtml(b.name)}" oninput="updateProp('name',this.value)">
+      </div>
+      <div class="prop-group">
+        <span class="prop-label">Replace Graphic</span>
+        <button class="add-block-btn" onclick="replaceGraphic('${b.id}')">📁 Choose PNG / SVG</button>
+      </div>
+      ${posAndSize(true)}
+      <div class="prop-group">
+        <span class="prop-label">Tint Color (PNG icons)</span>
+        <div class="prop-row">
+          <input type="color" class="color-swatch" value="${b.graphicTint||'#000000'}" oninput="updateProp('graphicTint',this.value)">
+          <input class="prop-input" value="${b.graphicTint||'none'}" oninput="updateProp('graphicTint',this.value);this.previousElementSibling.value=this.value||'#000000'">
+          <button class="tb-btn" style="font-size:10px;" onclick="updatePropAndRefresh('graphicTint',null)">✕ None</button>
+        </div>
+      </div>
+      <div class="prop-group">
+        <span class="prop-label">Flip</span>
+        <div class="prop-row" style="gap:8px;">
+          <label class="prop-checkbox"><input type="checkbox" ${b.graphicFlipH?'checked':''} onchange="updateProp('graphicFlipH',this.checked)"> ↔ Flip H</label>
+          <label class="prop-checkbox"><input type="checkbox" ${b.graphicFlipV?'checked':''} onchange="updateProp('graphicFlipV',this.checked)"> ↕ Flip V</label>
+        </div>
+      </div>
+      <div class="prop-group">
+        <span class="prop-label">Effects</span>
+        <div class="prop-row">
+          <label class="prop-checkbox"><input type="checkbox" ${b.graphicDropShadow?'checked':''} onchange="updateProp('graphicDropShadow',this.checked)"> Drop Shadow</label>
+        </div>
+      </div>
+      ${opacityRot()}
+      ${zOrder()}
+    `;
   } else if (b.type === 'shape') {
+    const allShapeTypes = PRESET_SHAPES.map(s => s.type);
     panel.innerHTML = `
       <div class="prop-group">
         <span class="prop-label">Block Name</span>
@@ -1360,24 +1649,25 @@ function renderPropsPanel() {
       </div>
       <div class="prop-group">
         <span class="prop-label">Shape Type</span>
-        <div class="align-btns">
-          ${['rect','rounded','circle'].map(s=>`<div class="align-btn ${b.shapeType===s?'active':''}" onclick="updatePropAndRefresh('shapeType','${s}')">${s}</div>`).join('')}
-        </div>
+        <select class="prop-input" style="width:100%;font-size:11px;" onchange="updatePropAndRefresh('shapeType',this.value)">
+          ${PRESET_SHAPES.map(s=>`<option value="${s.type}" ${b.shapeType===s.type?'selected':''}>${s.label}</option>`).join('')}
+        </select>
       </div>
       <div class="prop-group">
         <span class="prop-label">Fill Color</span>
         <div class="prop-row">
-          <input type="color" class="color-swatch" value="${b.shapeFill==='none'?'#000000':b.shapeFill}" oninput="updateProp('shapeFill',this.value)">
-          <input class="prop-input" value="${b.shapeFill}" oninput="updateProp('shapeFill',this.value);this.previousElementSibling.value=this.value">
-          <label class="prop-checkbox"><input type="checkbox" ${b.shapeFill==='none'?'checked':''} onchange="updatePropAndRefresh('shapeFill',this.checked?'none':'#8B1A2E')"> None</label>
+          <input type="color" class="color-swatch" value="${b.shapeFill==='none'?'#8B1A2E':b.shapeFill}" oninput="updateProp('shapeFill',this.value)">
+          <input class="prop-input" value="${b.shapeFill}" oninput="updateProp('shapeFill',this.value);this.previousElementSibling.value=this.value||'#8B1A2E'">
+          <label class="prop-checkbox"><input type="checkbox" ${b.shapeFill==='none'?'checked':''} onchange="updatePropAndRefresh('shapeFill',this.checked?'none':'#8B1A2E')"> No fill</label>
         </div>
+        <div class="quick-colors">${quickCols.map(c=>`<div class="qc" style="background:${c}" onclick="updatePropAndRefresh('shapeFill','${c}')" title="${c}"></div>`).join('')}</div>
       </div>
       <div class="prop-group">
-        <span class="prop-label">Stroke</span>
+        <span class="prop-label">Stroke / Border</span>
         <div class="prop-row">
           <input type="color" class="color-swatch" value="${b.shapeStroke==='none'?'#000000':b.shapeStroke}" oninput="updateProp('shapeStroke',this.value)">
-          <input class="prop-input" type="number" step="0.5" min="0" value="${b.shapeStrokeW}" oninput="updateProp('shapeStrokeW',parseFloat(this.value))" style="width:55px">
-          <span style="font-size:10px;color:#555">px</span>
+          <span style="font-size:10px;color:#555;white-space:nowrap;">Width px:</span>
+          <input class="prop-input" type="number" step="0.5" min="0" value="${b.shapeStrokeW}" oninput="updateProp('shapeStrokeW',parseFloat(this.value)||0)" style="width:50px">
         </div>
       </div>
       ${posAndSize(true)}
@@ -1505,42 +1795,51 @@ function makeDraggable(el, b, canvasObj) {
 }
 
 // ══════════════════════════════════════════════════════
-//  RESIZE  — FIXED: text fontSize & symbol glyph scale with box
+//  RESIZE
+//  ┌──────────── [E] ──────────────┐
+//  │   right edge = width only     │  ← NO font size change
+//  │   (text reflows inside box)   │
+//  └──────── [S] ──────── [SE] ────┘
+//    bottom = height only   corner = width + height + font scale
 // ══════════════════════════════════════════════════════
 function startResize(e, b, el, dir) {
   e.stopPropagation(); e.preventDefault();
   const startX = e.clientX, startY = e.clientY;
   const startW = b.w;
   const startH = b.h || (b._renderedH || 20);
-  const startFontSize = b.fontSize; // capture original font size
+  const startFontSize = b.fontSize; // only used by SE corner
   document.body.style.cursor = dir==='e'?'e-resize':dir==='s'?'s-resize':'se-resize';
 
   const onMove = e2 => {
     const dw = px2mm(e2.clientX - startX);
     const dh = px2mm(e2.clientY - startY);
 
-    if (dir==='se'||dir==='e') b.w = Math.max(8, startW + dw);
-    if (dir==='se'||dir==='s') b.h = Math.max(5, startH + dh);
-
-    // For text/symbol: scale font size proportionally to width change
-    if (b.type === 'text' || b.type === 'symbol') {
-      if (dir==='e'||dir==='se') {
-        // Scale font with width ratio
-        const ratio = b.w / startW;
-        b.fontSize = Math.max(6, Math.round(startFontSize * ratio * 10) / 10);
-      }
-      // Apply to live element immediately
+    // ── Width (E and SE) ──
+    if (dir === 'e' || dir === 'se') {
+      b.w = Math.max(8, startW + dw);
       el.style.width = mm2px(b.w) + 'px';
-      if (b.h) el.style.height = mm2px(b.h) + 'px';
-      el.style.fontSize = (b.fontSize * zoom) + 'px';
-    } else {
-      // Image / shape: just resize box
-      el.style.width = mm2px(b.w) + 'px';
-      if (dir==='s'||dir==='se') el.style.height = mm2px(b.h) + 'px';
     }
 
+    // ── Height (S and SE) ──
+    if (dir === 's' || dir === 'se') {
+      b.h = Math.max(5, startH + dh);
+      el.style.height = mm2px(b.h) + 'px';
+    }
+
+    // ── Font scaling: ONLY on SE corner, NEVER on E or S ──
+    if (dir === 'se' && (b.type === 'text' || b.type === 'symbol')) {
+      const ratio = b.w / startW;
+      b.fontSize = Math.max(6, Math.round(startFontSize * ratio * 10) / 10);
+      el.style.fontSize = (b.fontSize * zoom) + 'px';
+    }
+    // E and S: font stays exactly as-is, text just reflows in new box width
+
+    // Status bar feedback
+    const fontInfo = (b.type === 'text' || b.type === 'symbol')
+      ? `  font:${b.fontSize.toFixed(1)}pt${dir==='e'?' (locked)':''}`
+      : '';
     document.getElementById('statusSize').textContent =
-      `W:${b.w.toFixed(1)} H:${(b.h||startH).toFixed(1)}mm  ${b.type==='text'||b.type==='symbol'?`font:${b.fontSize.toFixed(1)}pt`:''}`;
+      `W:${b.w.toFixed(1)} H:${(b.h||startH).toFixed(1)}mm${fontInfo}`;
   };
 
   const onUp = () => {
@@ -1619,6 +1918,24 @@ function replaceImage(id) {
       if (b) { b.src = ev.target.result; snapshot(); renderAll(); toast('Image replaced'); }
     };
     reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function replaceGraphic(id) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/png,image/svg+xml,image/webp,image/gif,.svg';
+  input.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const isSVG = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const c = ac(); if (!c) return;
+      const b = c.blocks.find(b => b.id === id);
+      if (b) { b.src = ev.target.result; b.name = file.name.replace(/\.[^.]+$/,''); snapshot(); renderAll(); toast('Graphic replaced'); }
+    };
+    if (isSVG) reader.readAsText(file);
+    else reader.readAsDataURL(file);
   };
   input.click();
 }
@@ -1835,7 +2152,9 @@ async function exportPNG() {
   c.blocks.forEach(b => {
     const el = document.createElement('div');
     const mmPx = PX_PER_MM * scale;
-    el.style.cssText = `position:absolute;left:${b.x*mmPx}px;top:${b.y*mmPx}px;width:${b.w*mmPx}px;${b.h?`height:${b.h*mmPx}px;`:''}opacity:${b.opacity/100};transform:rotate(${b.rotation}deg);transform-origin:center center;background:transparent;overflow:hidden;`;
+    const pH = (b.paddingH || 0) * mmPx;
+    const pV = (b.paddingV || 0) * mmPx;
+    el.style.cssText = `position:absolute;left:${b.x*mmPx}px;top:${b.y*mmPx}px;width:${b.w*mmPx}px;${b.h?`height:${b.h*mmPx}px;`:''}opacity:${b.opacity/100};transform:rotate(${b.rotation}deg);transform-origin:center center;background:transparent;overflow:hidden;box-sizing:border-box;padding:${pV}px ${pH}px;`;
 
     if (b.type === 'text' || b.type === 'symbol') {
       el.style.cssText += `font-size:${b.fontSize*scale}px;font-family:${b.fontFamily},serif;font-weight:${b.fontWeight};color:${b.color};text-align:${b.align};line-height:${b.lineHeight};font-style:${b.italic?'italic':'normal'};letter-spacing:${b.letterSpacing*scale}px;text-decoration:${[b.underline?'underline':'',b.strikethrough?'line-through':''].filter(Boolean).join(' ')||'none'};white-space:pre-wrap;word-break:break-word;`;
@@ -1843,19 +2162,41 @@ async function exportPNG() {
       if (b.bgOpacity > 0) {
         const hex = b.bgColor||'#ffffff', r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), bv=parseInt(hex.slice(5,7),16);
         el.style.background = `rgba(${r},${g},${bv},${b.bgOpacity/100})`;
-        el.style.padding = `${2*scale}px ${5*scale}px`;
       }
       el.innerText = b.text;
-      if (b.type === 'symbol') { el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; }
+      if (b.type === 'symbol') { el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.padding='0'; }
     } else if (b.type === 'image' && b.src) {
+      el.style.padding = '0';
       const img = document.createElement('img');
       img.src = b.src; img.style.cssText = `width:100%;height:100%;object-fit:${b.objectFit};display:block;`;
       el.appendChild(img);
+    } else if (b.type === 'graphic' && b.src) {
+      el.style.padding = '0'; el.style.background = 'transparent';
+      const isSVG = b.src.startsWith('<svg') || b.src.startsWith('<?xml');
+      if (isSVG) {
+        el.innerHTML = b.src;
+        const svgEl = el.querySelector('svg');
+        if (svgEl) svgEl.style.cssText = `width:100%;height:100%;display:block;`;
+      } else {
+        const img = document.createElement('img');
+        img.src = b.src; img.style.cssText = `width:100%;height:100%;object-fit:contain;display:block;`;
+        const scaleX = b.graphicFlipH ? -1 : 1, scaleY = b.graphicFlipV ? -1 : 1;
+        if (scaleX !== 1 || scaleY !== 1) img.style.transform = `scale(${scaleX},${scaleY})`;
+        if (b.graphicDropShadow) img.style.filter = 'drop-shadow(2px 3px 4px rgba(0,0,0,0.4))';
+        el.appendChild(img);
+      }
     } else if (b.type === 'shape') {
-      el.style.background = b.shapeFill==='none'?'transparent':b.shapeFill;
-      if (b.shapeStrokeW > 0) el.style.border = `${b.shapeStrokeW*scale}px solid ${b.shapeStroke}`;
-      if (b.shapeType==='circle') el.style.borderRadius='50%';
-      else if (b.shapeType==='rounded') el.style.borderRadius='8px';
+      el.style.padding = '0'; el.style.overflow = 'hidden'; el.style.background = 'transparent';
+      const pxW = b.w * mmPx, pxH = (b.h || 20) * mmPx;
+      const complexShapes = ['triangle','diamond','hexagon','octagon','star5','star4','heart','arrow_right','arrow_left','ring','banner','line_h','line_v','half_rect'];
+      if (complexShapes.includes(b.shapeType)) {
+        el.innerHTML = getShapeSVG(b, pxW, pxH);
+      } else {
+        el.style.background = b.shapeFill === 'none' ? 'transparent' : b.shapeFill;
+        if (b.shapeStrokeW > 0) el.style.border = `${b.shapeStrokeW*scale}px solid ${b.shapeStroke}`;
+        if (b.shapeType==='circle') el.style.borderRadius='50%';
+        else if (b.shapeType==='rounded') el.style.borderRadius='8px';
+      }
     }
     container.appendChild(el);
   });
@@ -1961,12 +2302,29 @@ document.addEventListener('keydown', e => {
   }
 });
 
+function buildShapeDropdown() {
+  const dd = document.getElementById('shapeDropdown'); if (!dd) return;
+  dd.innerHTML = '';
+  PRESET_SHAPES.forEach(s => {
+    const btn = document.createElement('div');
+    btn.style.cssText = 'padding:5px 8px;cursor:pointer;font-size:11px;color:#ccc;border-radius:4px;white-space:nowrap;transition:background .1s;';
+    btn.textContent = s.label;
+    btn.onmouseenter = () => btn.style.background = '#2a1018';
+    btn.onmouseleave = () => btn.style.background = '';
+    btn.onclick = () => addShapeBlock(s.type, s.w, s.h);
+    dd.appendChild(btn);
+  });
+}
+
 // ══════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════
 (function init() {
   // Restore custom fonts saved in previous sessions (Electron persistence)
   restorePersistedFonts();
+
+  // Build shape dropdown
+  buildShapeDropdown();
 
   // Create first canvas
   const firstCanvas = createCanvas({ name: 'Page 1' });
@@ -1977,9 +2335,12 @@ document.addEventListener('keydown', e => {
   resizeActiveCanvas();
   renderFontsTabs();
   snapshot();
-  // Set initial BG theme indicator
   document.getElementById('bgDark') && document.getElementById('bgDark').classList.add('active-btn');
-  toast('Card Layout Studio v3 — Multi-canvas ready!');
+  // Close shape dropdown on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#shapeDropdown') && !e.target.textContent.includes('Shape ▾')) closeShapeDropdown();
+  });
+  toast('Card Layout Studio v3 — ready!');
 })();
 </script>
 </body>
