@@ -187,20 +187,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .img-fit-btn.active{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
 .history-btns{display:flex;gap:3px;}
 
-/* ── GRAPHICS LIBRARY ── */
-.glib-card{background:#222;border:1px solid #333;border-radius:5px;cursor:pointer;overflow:hidden;position:relative;transition:border-color .15s;aspect-ratio:1;}
-.glib-card:hover{border-color:#C9A84C;}
-.glib-card img,.glib-card svg{width:100%;height:100%;object-fit:contain;display:block;padding:5px;box-sizing:border-box;}
-.glib-card .glib-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);border:none;color:#e05;font-size:10px;padding:1px 3px;border-radius:2px;cursor:pointer;opacity:0;transition:opacity .15s;line-height:1;}
-.glib-card:hover .glib-del{opacity:1;}
-.glib-card .glib-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);color:#ccc;font-size:8px;padding:2px 3px;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
-.glib-card.prebundled{border-color:#1a3a1a;background:#0e1e0e;}
-.glib-card.prebundled:hover{border-color:#3a7a3a;}
-.gcat-btn{padding:3px 7px;font-size:9px;background:#222;border:1px solid #333;border-radius:10px;color:#666;cursor:pointer;white-space:nowrap;transition:all .15s;}
-.gcat-btn:hover,.gcat-btn.active{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
-.glib-placeholder{background:#1a1a1a;border:1.5px dashed #2a5a2a;border-radius:5px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;color:#2a5a2a;font-size:18px;cursor:default;}
-/* drag highlight on graphic library cards */
-.glib-card.dragging-out{opacity:.5;}
+/* ── TOAST ── */
 .toast{position:fixed;bottom:38px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #444;color:#eee;padding:7px 16px;border-radius:6px;font-size:12px;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;}
 .toast.show{opacity:1;}
 
@@ -298,13 +285,12 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   <!-- ── LEFT PANEL ── -->
   <div class="left-panel">
     <div class="panel-tabs">
-      <div class="panel-tab active" onclick="switchTab('blocks',this)">📄 Layers</div>
-      <div class="panel-tab" onclick="switchTab('props',this)">⚙ Props</div>
-      <div class="panel-tab" onclick="switchTab('canvasbg',this)">🖼 BG</div>
-      <div class="panel-tab" onclick="switchTab('fonts',this)">Aa Font</div>
-      <div class="panel-tab" onclick="switchTab('graphics',this)">🎨 Lib</div>
-      <div class="panel-tab" onclick="switchTab('symbols',this)">ॐ Sym</div>
-      <div class="panel-tab" onclick="switchTab('templates',this)">📋 Tmpl</div>
+      <div class="panel-tab active" onclick="switchTab('blocks',this)">Layers</div>
+      <div class="panel-tab" onclick="switchTab('props',this)">Props</div>
+      <div class="panel-tab" onclick="switchTab('canvasbg',this)">BG</div>
+      <div class="panel-tab" onclick="switchTab('fonts',this)">Font</div>
+      <div class="panel-tab" onclick="switchTab('symbols',this)">Sym</div>
+      <div class="panel-tab" onclick="switchTab('templates',this)">Tmpl</div>
     </div>
 
     <!-- LAYERS TAB -->
@@ -359,56 +345,6 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
       <div id="customFontsList"></div>
       <div class="section-label" style="margin-top:10px;">Built-in Devanagari Fonts</div>
       <div id="builtinFontsList"></div>
-    </div>
-
-    <!-- GRAPHICS LIBRARY TAB -->
-    <div class="tab-content" id="tab-graphics">
-
-      <!-- Search bar -->
-      <div style="position:relative;margin-bottom:7px;">
-        <input id="graphicSearch" class="prop-input" style="width:100%;padding-left:24px;" placeholder="Search graphics..." oninput="filterGraphicsLib(this.value)">
-        <span style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#555;">🔍</span>
-      </div>
-
-      <!-- Category filter tabs -->
-      <div id="graphicCatTabs" style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:8px;"></div>
-
-      <!-- Pre-bundled (from assets/ folder) -->
-      <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
-        <span>📦 Pre-bundled Assets</span>
-        <span id="prebundledCount" style="color:#555;font-size:9px;">loading…</span>
-      </div>
-      <div id="prebundledGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:10px;min-height:40px;">
-        <div style="grid-column:1/-1;color:#444;font-size:10px;text-align:center;padding:10px;">Loading assets…</div>
-      </div>
-
-      <!-- Divider -->
-      <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
-        <span>💾 My Saved Graphics</span>
-        <span id="savedCount" style="color:#555;font-size:9px;">0 items</span>
-      </div>
-      <div style="font-size:9px;color:#444;margin-bottom:6px;">Uploads are saved locally and persist between sessions.</div>
-
-      <!-- Upload button -->
-      <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;margin-bottom:6px;">
-        ＋ Upload PNG / SVG to Library
-      </button>
-
-      <!-- Manage -->
-      <div style="display:flex;gap:4px;margin-bottom:6px;">
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="exportGraphicsLib()">⬇ Export All</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="importGraphicsLib()">⬆ Import Pack</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;color:#e05;" onclick="clearSavedGraphics()">🗑 Clear</button>
-      </div>
-
-      <!-- Saved graphics grid -->
-      <div id="savedGraphicsGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;"></div>
-
-      <!-- Empty state -->
-      <div id="graphicsEmptyState" style="color:#444;font-size:10px;text-align:center;padding:16px;display:none;">
-        No saved graphics yet.<br>Upload PNG/SVG files to build your library.
-      </div>
-
     </div>
 
     <!-- SYMBOLS TAB -->
@@ -2144,7 +2080,6 @@ function switchTab(name, el) {
   if (el) el.classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'fonts') renderFontsTabs();
-  if (name === 'graphics') { glibBuildCatTabs(); renderGraphicsLib(); }
   if (name === 'canvasbg') {
     const c = ac();
     if (c && c.bgSrc) { const p = document.getElementById('bgPreviewImg'); p.src = c.bgSrc; p.style.display = 'block'; }
@@ -2367,318 +2302,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-// ══════════════════════════════════════════════════════
-//  GRAPHICS LIBRARY  — Local persistence + pre-bundled assets
-// ══════════════════════════════════════════════════════
-const GLIB_STORAGE_KEY = 'cardStudio_graphicsLib_v1';
-
-// In-memory library state
-let glibSaved = [];       // user-uploaded, persisted in localStorage
-let glibPrebundled = [];  // loaded from assets/graphics/ manifest.json
-let glibActiveCat = 'all';
-let glibSearchTerm = '';
-
-// ── Persist / restore saved graphics ──────────────────
-function glibPersist() {
-  try {
-    // Store only name, category, src — no extra bloat
-    const slim = glibSaved.map(g => ({ id: g.id, name: g.name, category: g.category, src: g.src, type: g.srcType }));
-    localStorage.setItem(GLIB_STORAGE_KEY, JSON.stringify(slim));
-  } catch(e) { toast('⚠ Storage full — try removing some graphics'); }
-}
-
-function glibRestore() {
-  try {
-    const raw = localStorage.getItem(GLIB_STORAGE_KEY);
-    if (!raw) return;
-    glibSaved = JSON.parse(raw);
-    glibSaved.forEach(g => { if (!g.id) g.id = 'g' + Date.now() + Math.random().toString(36).slice(2); });
-  } catch(e) { glibSaved = []; }
-}
-
-// ── Load pre-bundled assets from assets/graphics/manifest.json ──
-async function glibLoadPrebundled() {
-  try {
-    // Try to fetch manifest — works in Electron (file://) and local server
-    const res = await fetch('./assets/graphics/manifest.json');
-    if (!res.ok) throw new Error('manifest not found');
-    const manifest = await res.json();
-    // manifest format: [ { name, file, category }, ... ]
-    glibPrebundled = manifest.map(item => ({
-      id: 'pre_' + item.file,
-      name: item.name || item.file.replace(/\.[^.]+$/, ''),
-      category: item.category || 'general',
-      src: './assets/graphics/' + item.file,
-      srcType: item.file.endsWith('.svg') ? 'svg-url' : 'img-url',
-      prebundled: true,
-    }));
-    document.getElementById('prebundledCount').textContent = glibPrebundled.length + ' items';
-  } catch(e) {
-    // No manifest or not running from file server — show placeholder instructions
-    glibPrebundled = [];
-    document.getElementById('prebundledCount').textContent = 'not loaded';
-    document.getElementById('prebundledGrid').innerHTML = `
-      <div style="grid-column:1/-1;background:#0e1a0e;border:1px dashed #2a4a2a;border-radius:6px;padding:10px;font-size:10px;color:#3a7a3a;line-height:1.7;">
-        📂 Put your graphics in:<br>
-        <code style="color:#C9A84C;font-size:9px;">assets/graphics/</code><br>
-        and create a <code style="color:#C9A84C;font-size:9px;">manifest.json</code><br>
-        (see 📋 folder guide below)
-      </div>`;
-  }
-  renderGraphicsLib();
-}
-
-// ── Build category filter tabs ─────────────────────────
-function glibBuildCatTabs() {
-  const cats = new Set(['all']);
-  glibPrebundled.forEach(g => cats.add(g.category));
-  glibSaved.forEach(g => cats.add(g.category || 'my uploads'));
-  const bar = document.getElementById('graphicCatTabs'); if (!bar) return;
-  bar.innerHTML = '';
-  cats.forEach(cat => {
-    const btn = document.createElement('div');
-    btn.className = 'gcat-btn' + (glibActiveCat === cat ? ' active' : '');
-    btn.textContent = cat === 'all' ? '✦ All' : cat.charAt(0).toUpperCase() + cat.slice(1);
-    btn.onclick = () => { glibActiveCat = cat; glibBuildCatTabs(); renderGraphicsLib(); };
-    bar.appendChild(btn);
-  });
-}
-
-// ── Render both grids ──────────────────────────────────
-function renderGraphicsLib() {
-  glibBuildCatTabs();
-  const search = glibSearchTerm.toLowerCase();
-
-  const matchesCat = (g) => glibActiveCat === 'all' || g.category === glibActiveCat || (glibActiveCat === 'my uploads' && !g.prebundled);
-  const matchesSearch = (g) => !search || g.name.toLowerCase().includes(search);
-
-  // Pre-bundled
-  const preFiltered = glibPrebundled.filter(g => matchesCat(g) && matchesSearch(g));
-  const preGrid = document.getElementById('prebundledGrid');
-  if (preGrid) {
-    preGrid.innerHTML = '';
-    if (preFiltered.length === 0 && glibPrebundled.length > 0) {
-      preGrid.innerHTML = '<div style="grid-column:1/-1;color:#333;font-size:10px;text-align:center;padding:8px;">No match</div>';
-    } else if (glibPrebundled.length === 0) {
-      // Already set by glibLoadPrebundled error handler, don't overwrite
-    } else {
-      preFiltered.forEach(g => preGrid.appendChild(buildGlibCard(g, false)));
-    }
-  }
-
-  // Saved
-  const savedFiltered = glibSaved.filter(g => matchesCat(g) && matchesSearch(g));
-  const savedGrid = document.getElementById('savedGraphicsGrid');
-  const emptyState = document.getElementById('graphicsEmptyState');
-  if (savedGrid) {
-    savedGrid.innerHTML = '';
-    if (savedFiltered.length === 0) {
-      if (emptyState) emptyState.style.display = 'block';
-    } else {
-      if (emptyState) emptyState.style.display = 'none';
-      savedFiltered.forEach(g => savedGrid.appendChild(buildGlibCard(g, true)));
-    }
-    document.getElementById('savedCount').textContent = glibSaved.length + ' items';
-  }
-}
-
-// ── Build a single graphic card element ────────────────
-function buildGlibCard(g, allowDelete) {
-  const card = document.createElement('div');
-  card.className = 'glib-card' + (g.prebundled ? ' prebundled' : '');
-  card.title = g.name + (g.category ? ' · ' + g.category : '');
-
-  // Thumbnail
-  if (g.srcType === 'svg-url' || g.srcType === 'svg') {
-    // SVG: show as <img> if URL, or innerHTML if raw string
-    if (g.srcType === 'svg-url') {
-      const img = document.createElement('img');
-      img.src = g.src; img.alt = g.name;
-      card.appendChild(img);
-    } else {
-      // raw SVG text
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:5px;box-sizing:border-box;';
-      wrap.innerHTML = g.src;
-      const svgEl = wrap.querySelector('svg');
-      if (svgEl) { svgEl.style.width = '100%'; svgEl.style.height = '100%'; }
-      card.appendChild(wrap);
-    }
-  } else {
-    const img = document.createElement('img');
-    img.src = g.src; img.alt = g.name;
-    card.appendChild(img);
-  }
-
-  // Name label
-  const lbl = document.createElement('div');
-  lbl.className = 'glib-name';
-  lbl.textContent = g.name;
-  card.appendChild(lbl);
-
-  // Delete button (only saved, not prebundled)
-  if (allowDelete) {
-    const del = document.createElement('button');
-    del.className = 'glib-del'; del.textContent = '✕'; del.title = 'Remove from library';
-    del.onclick = e => { e.stopPropagation(); glibRemove(g.id); };
-    card.appendChild(del);
-  }
-
-  // Click → add to canvas
-  card.onclick = () => glibAddToCanvas(g);
-
-  return card;
-}
-
-// ── Add to canvas from library ─────────────────────────
-function glibAddToCanvas(g) {
-  const c = ac(); if (!c) return;
-  // For URL-based assets, we need to fetch/convert or use src directly
-  if (g.srcType === 'svg-url' || g.srcType === 'img-url') {
-    // Fetch and convert to inline for full offline/export support
-    fetch(g.src)
-      .then(r => {
-        if (g.srcType === 'svg-url') return r.text();
-        return r.blob().then(blob => new Promise(res => {
-          const reader = new FileReader();
-          reader.onload = ev => res(ev.target.result);
-          reader.readAsDataURL(blob);
-        }));
-      })
-      .then(data => {
-        const b = createBlock({ type: 'graphic', name: g.name, src: data, w: 30, h: 30, x: 20, y: 20 });
-        c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
-        toast('Added: ' + g.name);
-      })
-      .catch(() => {
-        // Fallback: use src URL directly (works in Electron)
-        const b = createBlock({ type: 'graphic', name: g.name, src: g.src, w: 30, h: 30, x: 20, y: 20 });
-        c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
-        toast('Added: ' + g.name);
-      });
-  } else {
-    // Already inline (base64 or raw SVG)
-    const b = createBlock({ type: 'graphic', name: g.name, src: g.src, w: 30, h: 30, x: 20, y: 20 });
-    c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
-    toast('Added: ' + g.name);
-  }
-}
-
-// ── Upload to library ──────────────────────────────────
-function glibUpload(files) {
-  const cats = ['general','borders','flowers','ganesh','dividers','icons','wedding','diya','paisley'];
-  Array.from(files).forEach(file => {
-    const isSVG = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
-    const reader = new FileReader();
-    reader.onload = ev => {
-      // Auto-detect category from filename
-      const fname = file.name.toLowerCase();
-      let cat = 'general';
-      if (/flower|lotus|rose|phool/.test(fname)) cat = 'flowers';
-      else if (/border|frame|rekha/.test(fname)) cat = 'borders';
-      else if (/ganesh|ganesha|vinayak/.test(fname)) cat = 'ganesh';
-      else if (/diya|deepak|lamp/.test(fname)) cat = 'diya';
-      else if (/divider|line|separator/.test(fname)) cat = 'dividers';
-      else if (/paisley|kalka/.test(fname)) cat = 'paisley';
-      else if (/icon|symbol|logo/.test(fname)) cat = 'icons';
-      else if (/wedding|vivah|shaadi/.test(fname)) cat = 'wedding';
-
-      const g = {
-        id: 'g' + Date.now() + '_' + Math.random().toString(36).slice(2),
-        name: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-        category: cat,
-        src: ev.target.result,
-        srcType: isSVG ? 'svg' : 'img',
-      };
-      glibSaved.unshift(g);
-      glibPersist();
-      renderGraphicsLib();
-      toast('Saved to library: ' + g.name);
-    };
-    if (isSVG) reader.readAsText(file);
-    else reader.readAsDataURL(file);
-  });
-}
-
-function glibRemove(id) {
-  glibSaved = glibSaved.filter(g => g.id !== id);
-  glibPersist(); renderGraphicsLib();
-  toast('Removed from library');
-}
-
-function clearSavedGraphics() {
-  if (!confirm('Remove all saved graphics from library?')) return;
-  glibSaved = [];
-  glibPersist(); renderGraphicsLib();
-  toast('Library cleared');
-}
-
-// ── Search ─────────────────────────────────────────────
-function filterGraphicsLib(term) {
-  glibSearchTerm = term;
-  renderGraphicsLib();
-}
-
-// ── Export all saved as JSON pack ──────────────────────
-function exportGraphicsLib() {
-  if (glibSaved.length === 0) { toast('No saved graphics to export'); return; }
-  const pack = { version: 1, graphics: glibSaved };
-  const blob = new Blob([JSON.stringify(pack, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'graphics-pack-' + Date.now() + '.json';
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('Graphics pack exported');
-}
-
-// ── Import a JSON graphics pack ────────────────────────
-function importGraphicsLib() {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = '.json';
-  input.onchange = e => {
-    const file = e.target.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const pack = JSON.parse(ev.target.result);
-        const items = pack.graphics || pack;
-        let added = 0;
-        items.forEach(g => {
-          if (!glibSaved.find(s => s.id === g.id)) { glibSaved.push(g); added++; }
-        });
-        glibPersist(); renderGraphicsLib();
-        toast(added + ' graphics imported');
-      } catch(err) { toast('Invalid pack file'); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
-
-// ── Hook triggerGraphicUpload to also save to library ──
-function triggerGraphicUpload() {
-  const inp = document.getElementById('graphicFileInput');
-  if (inp) { inp.value = ''; inp.click(); }
-}
-
-// Override loadGraphics to also save to library
-function loadGraphics(input) {
-  const c = ac(); if (!c) { toast('No active canvas'); return; }
-  const files = Array.from(input.files);
-  // Save to library AND add to canvas
-  glibUpload(files);
-  files.forEach(file => {
-    const isSVG = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const name = file.name.replace(/\.[^.]+$/, '');
-      const b = createBlock({ type: 'graphic', name, src: ev.target.result, w: 30, h: 30, x: 20, y: 20 });
-      c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
-    };
-    if (isSVG) reader.readAsText(file);
-    else reader.readAsDataURL(file);
-  });
-}
 function buildShapeDropdown() {
   const dd = document.getElementById('shapeDropdown'); if (!dd) return;
   dd.innerHTML = '';
@@ -2697,12 +2320,8 @@ function buildShapeDropdown() {
 //  INIT
 // ══════════════════════════════════════════════════════
 (function init() {
-  // Restore custom fonts
+  // Restore custom fonts saved in previous sessions (Electron persistence)
   restorePersistedFonts();
-  // Restore saved graphics library
-  glibRestore();
-  // Attempt to load pre-bundled assets from assets/graphics/manifest.json
-  glibLoadPrebundled();
 
   // Build shape dropdown
   buildShapeDropdown();
@@ -2717,6 +2336,7 @@ function buildShapeDropdown() {
   renderFontsTabs();
   snapshot();
   document.getElementById('bgDark') && document.getElementById('bgDark').classList.add('active-btn');
+  // Close shape dropdown on outside click
   document.addEventListener('click', e => {
     if (!e.target.closest('#shapeDropdown') && !e.target.textContent.includes('Shape ▾')) closeShapeDropdown();
   });

@@ -1,0 +1,18 @@
+[
+  { "name": "Border Corner 01",       "file": "borders/border-corner-01.svg",     "category": "borders"  },
+  { "name": "Border Corner 02",       "file": "borders/border-corner-02.svg",     "category": "borders"  },
+  { "name": "Border Line Ornate",     "file": "borders/border-line-ornate.svg",   "category": "borders"  },
+  { "name": "Lotus Flower",           "file": "flowers/lotus-01.svg",             "category": "flowers"  },
+  { "name": "Decorative Flower",      "file": "flowers/flower-decorative.svg",    "category": "flowers"  },
+  { "name": "Om Ornate",              "file": "ganesh/om-ornate.svg",             "category": "ganesh"   },
+  { "name": "Ganesh Symbol",          "file": "ganesh/ganesh-symbol.svg",         "category": "ganesh"   },
+  { "name": "Diya Simple",            "file": "diya/diya-simple.svg",             "category": "diya"     },
+  { "name": "Divider Lotus",          "file": "dividers/divider-lotus.svg",       "category": "dividers" },
+  { "name": "Divider Om",             "file": "dividers/divider-om.svg",          "category": "dividers" },
+  { "name": "Divider Diamond",        "file": "dividers/divider-diamond.svg",     "category": "dividers" },
+  { "name": "Paisley 01",             "file": "paisley/paisley-01.svg",           "category": "paisley"  },
+  { "name": "Star Ornate",            "file": "icons/star-ornate.svg",            "category": "icons"    },
+  { "name": "Swastik",                "file": "icons/swastik.svg",               "category": "icons"    },
+  { "name": "Mangalsutra Icon",       "file": "wedding/mangalsutra-icon.svg",     "category": "wedding"  },
+  { "name": "Wedding Rings",          "file": "wedding/wedding-rings.svg",        "category": "wedding"  }
+]
