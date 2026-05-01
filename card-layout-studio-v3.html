@@ -108,6 +108,16 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   background-image:linear-gradient(45deg,#252525 25%,transparent 25%),linear-gradient(-45deg,#252525 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#252525 75%),linear-gradient(-45deg,transparent 75%,#252525 75%);
   background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#1e1e1e;
 }
+/* Light theme canvas — subtle warm checker */
+.card-canvas.checker-light{
+  background-image:linear-gradient(45deg,#c8bfb0 25%,transparent 25%),linear-gradient(-45deg,#c8bfb0 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#c8bfb0 75%),linear-gradient(-45deg,transparent 75%,#c8bfb0 75%);
+  background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#ddd5c5;
+}
+/* White theme canvas — very light grey checker */
+.card-canvas.checker-white{
+  background-image:linear-gradient(45deg,#e0e0e0 25%,transparent 25%),linear-gradient(-45deg,#e0e0e0 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e0e0e0 75%),linear-gradient(-45deg,transparent 75%,#e0e0e0 75%);
+  background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#f5f5f5;
+}
 .card-canvas{box-shadow:0 0 0 1px rgba(255,255,255,.08),0 12px 60px rgba(0,0,0,.7);}
 .canvas-area.light-bg .card-canvas{box-shadow:0 0 0 1px rgba(0,0,0,.15),0 8px 40px rgba(0,0,0,.3);}
 
@@ -193,8 +203,16 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .modal-btn.ok{background:#8B1A2E;color:#fff;border-color:#a02535;}
 .modal-btn.cancel{background:#2a2a2a;color:#aaa;}
 
-/* bg panel */
-.bg-section{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;padding:9px;margin-bottom:8px;}
+/* Alt+drag ghost */
+.dup-ghost{
+  position:absolute;border:2px dashed #C9A84C;background:rgba(201,168,76,0.1);
+  pointer-events:none;z-index:9998;border-radius:3px;
+}
+.dup-ghost::after{
+  content:'+ copy';position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  background:#C9A84C;color:#000;font-size:9px;padding:1px 5px;border-radius:3px;
+  font-family:'Poppins',sans-serif;white-space:nowrap;
+}
 .bg-section h5{font-size:10px;color:#C9A84C;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
 .bg-preview{width:100%;height:60px;border:1px solid #333;border-radius:4px;object-fit:cover;display:block;background:#222;margin-bottom:6px;}
 
@@ -263,8 +281,8 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
       <div class="panel-tab" onclick="switchTab('props',this)">Props</div>
       <div class="panel-tab" onclick="switchTab('canvasbg',this)">BG</div>
       <div class="panel-tab" onclick="switchTab('fonts',this)">Font</div>
-      <div class="panel-tab" onclick="switchTab('symbols',this)">ॐ Sym</div>
-      <div class="panel-tab" onclick="switchTab('templates',this)">Template</div>
+      <div class="panel-tab" onclick="switchTab('symbols',this)">Sym</div>
+      <div class="panel-tab" onclick="switchTab('templates',this)">Tmpl</div>
     </div>
 
     <!-- LAYERS TAB -->
@@ -291,12 +309,12 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
         <input type="file" id="bgFileInput" accept="image/*" style="display:none" onchange="loadCanvasBg(this)">
       </div>
       <div class="bg-section">
-        <h5>🌓 Canvas Display BG</h5>
-        <div style="font-size:10px;color:#666;margin-bottom:7px;">Toggle canvas area colour for better visibility while designing.</div>
+        <h5>🌓 Canvas Theme</h5>
+        <div style="font-size:10px;color:#666;margin-bottom:7px;">Changes the <strong style="color:#C9A84C">canvas itself</strong> (where text sits) — helpful to see light text on dark canvas, or vice versa. Does not affect print output.</div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button class="tb-btn" onclick="setBgTheme('dark')" id="bgDark" style="flex:1">Dark</button>
-          <button class="tb-btn" onclick="setBgTheme('light')" id="bgLight" style="flex:1">Parchment</button>
-          <button class="tb-btn" onclick="setBgTheme('white')" id="bgWhite" style="flex:1">White</button>
+          <button class="tb-btn" onclick="setBgTheme('dark')" id="bgDark" style="flex:1">⬛ Dark</button>
+          <button class="tb-btn" onclick="setBgTheme('light')" id="bgLight" style="flex:1">🟤 Parchment</button>
+          <button class="tb-btn" onclick="setBgTheme('white')" id="bgWhite" style="flex:1">⬜ White</button>
         </div>
       </div>
       <div class="bg-section">
@@ -406,7 +424,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   <span>Blocks: <span class="status-val" id="statusCount">0</span></span>
   <span>Canvas: <span class="status-val" id="statusCanvas">210×148 mm</span></span>
   <span>Page: <span class="status-val" id="statusPage">1/1</span></span>
-  <span style="margin-left:auto;color:#444;">Drag • SE/E/S resize • ↻ rotate • Shift+Arrows=5mm • Ctrl+Z undo • Drag across pages</span>
+  <span style="margin-left:auto;color:#444;">Drag • SE/E/S resize (font auto-scales) • ↻ rotate • <strong style="color:#7a5c10">Alt+Drag = duplicate</strong> • Shift+Arrows=5mm • Ctrl+Z undo • Drag block across page tabs</span>
 </div>
 
 <!-- TOAST -->
@@ -531,6 +549,14 @@ function switchToCanvas(id) {
   resizeActiveCanvas();
   renderAll();
   updateStatusBar();
+  // Update bg preview for newly active canvas
+  const c = canvases.find(cx => cx.id === id);
+  if (c) {
+    const prev = document.getElementById('bgPreviewImg');
+    if (c.bgSrc) { prev.src = c.bgSrc; prev.style.display = 'block'; }
+    else { prev.src = ''; prev.style.display = 'none'; }
+    updateFoldBtnStates(c);
+  }
 }
 
 function removeCanvas(id) {
@@ -572,14 +598,21 @@ function buildCanvasDom(c) {
   const area = document.getElementById('canvasArea');
   const div = document.createElement('div');
   div.id = 'canvas-' + c.id;
-  div.className = 'card-canvas checker' + (c.id === activeCanvasId ? ' active-canvas' : '');
-  // background overlay canvas for grid
+  // Apply checker variant based on current theme
+  const checkerClass = bgTheme === 'light' ? 'checker-light' : bgTheme === 'white' ? 'checker-white' : 'checker';
+  div.className = 'card-canvas ' + checkerClass + (c.id === activeCanvasId ? ' active-canvas' : '');
+
+  // Grid overlay canvas
   const bgCanv = document.createElement('canvas');
   bgCanv.id = 'bgOverlay-' + c.id;
   bgCanv.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:1;';
   div.appendChild(bgCanv);
   area.appendChild(div);
   resizeCanvasDom(c);
+
+  // If this canvas already has a background (e.g. loaded from file), apply it
+  if (c.bgSrc) applyCanvasBg(c);
+
   // Cross-canvas drag-drop
   div.addEventListener('dragover', e => { e.preventDefault(); div.classList.add('drag-over'); });
   div.addEventListener('dragleave', () => div.classList.remove('drag-over'));
@@ -589,22 +622,18 @@ function buildCanvasDom(c) {
     if (!data) return;
     try {
       const { blockData, fromCanvas } = JSON.parse(data);
-      if (fromCanvas === c.id) return; // same canvas, ignore
-      // Remove from source canvas
+      if (fromCanvas === c.id) return;
       const srcC = canvases.find(cx => cx.id === fromCanvas);
       if (srcC) {
         srcC.blocks = srcC.blocks.filter(b => b.id !== blockData.id);
-        // snapshot source
         srcC.history = srcC.history.slice(0, srcC.historyIndex + 1);
         srcC.history.push(JSON.stringify(srcC.blocks));
         srcC.historyIndex = srcC.history.length - 1;
       }
-      // Add to this canvas
       c.blocks.push(blockData);
       c.history = c.history.slice(0, c.historyIndex + 1);
       c.history.push(JSON.stringify(c.blocks));
       c.historyIndex = c.history.length - 1;
-      // Switch to this canvas
       switchToCanvas(c.id);
       selectedId = blockData.id;
       renderAll();
@@ -668,40 +697,56 @@ function cycleBg() {
   setBgTheme(bgThemes[bgThemeIdx]);
 }
 function setBgTheme(theme) {
+  bgTheme = theme;
+  // Update the canvas AREA background (the workspace around cards)
   const area = document.getElementById('canvasArea');
   area.classList.remove('light-bg','white-bg');
   if (theme === 'light') area.classList.add('light-bg');
   else if (theme === 'white') area.classList.add('white-bg');
-  // also adjust checker on canvases
+
+  // Update each canvas's OWN checker pattern for visibility
   canvases.forEach(c => {
-    const el = document.getElementById('canvas-' + c.id);
-    if (!el) return;
-    if (!c.bgSrc) el.classList.add('checker');
+    const el = document.getElementById('canvas-' + c.id); if (!el) return;
+    if (c.bgSrc) return; // has background image, don't touch checker
+    el.classList.remove('checker','checker-light','checker-white');
+    if (theme === 'dark') el.classList.add('checker');
+    else if (theme === 'light') el.classList.add('checker-light');
+    else el.classList.add('checker-white');
   });
-  bgTheme = theme;
-  ['bgDark','bgLight','bgWhite'].forEach(id => document.getElementById(id) && document.getElementById(id).classList.remove('active-btn'));
+
+  ['bgDark','bgLight','bgWhite'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.classList.remove('active-btn');
+  });
   const map = {dark:'bgDark',light:'bgLight',white:'bgWhite'};
-  if (map[theme]) document.getElementById(map[theme]) && document.getElementById(map[theme]).classList.add('active-btn');
-  toast('Background: ' + theme);
+  if (map[theme]) { const el = document.getElementById(map[theme]); if (el) el.classList.add('active-btn'); }
+  toast('Canvas theme: ' + theme);
 }
 
 // ══════════════════════════════════════════════════════
 //  CANVAS BACKGROUND IMAGE
 // ══════════════════════════════════════════════════════
 function triggerBgUpload() {
-  document.getElementById('bgFileInput').click();
+  // CRITICAL FIX: always reset value so same file can be re-selected after removal
+  const inp = document.getElementById('bgFileInput');
+  inp.value = '';
+  inp.click();
 }
 
 function loadCanvasBg(input) {
   const file = input.files[0]; if (!file) return;
+  // Capture the active canvas ID *now* before the async read completes
+  const targetCanvasId = activeCanvasId;
   const reader = new FileReader();
   reader.onload = ev => {
-    const c = ac(); if (!c) return;
+    // FIX: look up by captured ID, not ac() which might have changed
+    const c = canvases.find(cx => cx.id === targetCanvasId); if (!c) return;
     c.bgSrc = ev.target.result;
     applyCanvasBg(c);
-    // Update preview
-    const prev = document.getElementById('bgPreviewImg');
-    prev.src = ev.target.result; prev.style.display = 'block';
+    // Only update preview if this canvas is still active
+    if (activeCanvasId === targetCanvasId) {
+      const prev = document.getElementById('bgPreviewImg');
+      prev.src = ev.target.result; prev.style.display = 'block';
+    }
     toast('Background set for ' + c.name);
   };
   reader.readAsDataURL(file);
@@ -709,17 +754,28 @@ function loadCanvasBg(input) {
 
 function applyCanvasBg(c) {
   const el = document.getElementById('canvas-' + c.id); if (!el) return;
-  // Remove old bg img
+  // Remove old bg img elements for THIS canvas only
   el.querySelectorAll('.canvas-bg-img').forEach(i => i.remove());
   if (c.bgSrc) {
     el.classList.remove('checker');
+    el.style.backgroundImage = 'none';
+    el.style.backgroundColor = 'transparent';
     const img = document.createElement('img');
     img.className = 'canvas-bg-img';
     img.src = c.bgSrc;
     img.draggable = false;
-    el.insertBefore(img, el.firstChild);
+    // Insert after the grid overlay canvas but before blocks
+    const gridCanvas = document.getElementById('bgOverlay-' + c.id);
+    if (gridCanvas && gridCanvas.nextSibling) {
+      el.insertBefore(img, gridCanvas.nextSibling);
+    } else {
+      el.insertBefore(img, el.firstChild);
+    }
   } else {
+    // Restore checker pattern
     el.classList.add('checker');
+    el.style.backgroundImage = '';
+    el.style.backgroundColor = '';
   }
 }
 
@@ -727,6 +783,8 @@ function clearCanvasBg() {
   const c = ac(); if (!c) return;
   c.bgSrc = null;
   applyCanvasBg(c);
+  // Reset file input so the same file can be re-selected
+  document.getElementById('bgFileInput').value = '';
   const prev = document.getElementById('bgPreviewImg');
   prev.src = ''; prev.style.display = 'none';
   toast('Background removed');
@@ -1346,6 +1404,7 @@ function updatePropAndRefresh(key, val) { updateProp(key, val); renderPropsPanel
 // ══════════════════════════════════════════════════════
 function makeDraggable(el, b, canvasObj) {
   let startX, startY, startBX, startBY, dragging = false;
+  let altDupMode = false, dupGhost = null, dupBlock = null;
   const canvas = document.getElementById('canvas-' + canvasObj.id);
 
   el.addEventListener('mousedown', e => {
@@ -1353,29 +1412,92 @@ function makeDraggable(el, b, canvasObj) {
     if (e.target.classList.contains('rotate-handle')) return;
     if (b.locked) return;
     dragging = true;
+    altDupMode = e.altKey;
     startX = e.clientX; startY = e.clientY;
     startBX = b.x; startBY = b.y;
-    document.body.style.cursor = 'move';
+    document.body.style.cursor = altDupMode ? 'copy' : 'move';
+
+    if (altDupMode) {
+      // Create a ghost element showing where duplicate will land
+      dupGhost = document.createElement('div');
+      dupGhost.className = 'dup-ghost';
+      dupGhost.style.cssText = `
+        left:${mm2px(b.x)}px;top:${mm2px(b.y)}px;
+        width:${mm2px(b.w)}px;${b.h?`height:${mm2px(b.h)}px;`:'min-height:20px;'}
+      `;
+      canvas.appendChild(dupGhost);
+    }
+
     e.preventDefault();
   });
 
   const onMove = e => {
     if (!dragging) return;
-    b.x = Math.max(0, startBX + px2mm(e.clientX - startX));
-    b.y = Math.max(0, startBY + px2mm(e.clientY - startY));
+    const newX = Math.max(0, startBX + px2mm(e.clientX - startX));
+    const newY = Math.max(0, startBY + px2mm(e.clientY - startY));
     const bH = b.h || (b._renderedH || 20);
-    const snap = computeSnap({...b, h: bH}, canvasObj.blocks, canvas);
-    b.x = Math.max(0, b.x + px2mm(snap.dx));
-    b.y = Math.max(0, b.y + px2mm(snap.dy));
-    el.style.left = mm2px(b.x) + 'px'; el.style.top = mm2px(b.y) + 'px';
-    document.getElementById('statusPos').textContent = `X:${b.x.toFixed(1)} Y:${b.y.toFixed(1)}mm`;
+
+    if (altDupMode) {
+      // Move ghost, keep original in place, show smart guides for ghost
+      if (dupGhost) {
+        dupGhost.style.left = mm2px(newX) + 'px';
+        dupGhost.style.top  = mm2px(newY) + 'px';
+      }
+      // Show snap guides based on ghost position
+      const snap = computeSnap({...b, x: newX, y: newY, h: bH}, canvasObj.blocks, canvas);
+      if (dupGhost) {
+        dupGhost.style.left = mm2px(newX + px2mm(snap.dx)) + 'px';
+        dupGhost.style.top  = mm2px(newY + px2mm(snap.dy)) + 'px';
+      }
+    } else {
+      // Normal drag — move block
+      b.x = newX; b.y = newY;
+      const snap = computeSnap({...b, h: bH}, canvasObj.blocks, canvas);
+      b.x = Math.max(0, b.x + px2mm(snap.dx));
+      b.y = Math.max(0, b.y + px2mm(snap.dy));
+      el.style.left = mm2px(b.x) + 'px';
+      el.style.top  = mm2px(b.y) + 'px';
+      document.getElementById('statusPos').textContent = `X:${b.x.toFixed(1)} Y:${b.y.toFixed(1)}mm`;
+    }
   };
 
-  const onUp = () => {
-    if (dragging) {
-      dragging = false; document.body.style.cursor = '';
-      clearGuideLines(); renderPropsPanel(); snapshot();
+  const onUp = e => {
+    if (!dragging) return;
+    dragging = false;
+    document.body.style.cursor = '';
+    clearGuideLines();
+
+    if (altDupMode && dupGhost) {
+      // Compute final ghost position with snap
+      const newX = Math.max(0, startBX + px2mm(e.clientX - startX));
+      const newY = Math.max(0, startBY + px2mm(e.clientY - startY));
+      const bH = b.h || (b._renderedH || 20);
+      const snap = computeSnap({...b, x: newX, y: newY, h: bH}, canvasObj.blocks, canvas);
+      const finalX = Math.max(0, newX + px2mm(snap.dx));
+      const finalY = Math.max(0, newY + px2mm(snap.dy));
+
+      // Remove ghost
+      dupGhost.remove(); dupGhost = null;
+
+      // Only create duplicate if moved more than 2mm
+      const moved = Math.sqrt(Math.pow(finalX - startBX, 2) + Math.pow(finalY - startBY, 2));
+      if (moved > 2) {
+        globalBlockCounter++;
+        dupBlock = JSON.parse(JSON.stringify(b));
+        dupBlock.id = 'b' + Date.now() + '_' + globalBlockCounter;
+        dupBlock.name = b.name + ' (copy)';
+        dupBlock.x = finalX;
+        dupBlock.y = finalY;
+        canvasObj.blocks.push(dupBlock);
+        selectedId = dupBlock.id;
+        snapshot();
+        renderAll();
+        toast('Alt+Drag: block duplicated');
+      }
+    } else {
+      renderPropsPanel(); snapshot();
     }
+    altDupMode = false; dupBlock = null;
   };
 
   document.addEventListener('mousemove', onMove);
@@ -1383,27 +1505,44 @@ function makeDraggable(el, b, canvasObj) {
 }
 
 // ══════════════════════════════════════════════════════
-//  RESIZE
+//  RESIZE  — FIXED: text fontSize & symbol glyph scale with box
 // ══════════════════════════════════════════════════════
 function startResize(e, b, el, dir) {
   e.stopPropagation(); e.preventDefault();
   const startX = e.clientX, startY = e.clientY;
-  const startW = b.w, startH = b.h || 40;
+  const startW = b.w;
+  const startH = b.h || (b._renderedH || 20);
+  const startFontSize = b.fontSize; // capture original font size
   document.body.style.cursor = dir==='e'?'e-resize':dir==='s'?'s-resize':'se-resize';
 
   const onMove = e2 => {
-    const dw = px2mm(e2.clientX - startX), dh = px2mm(e2.clientY - startY);
+    const dw = px2mm(e2.clientX - startX);
+    const dh = px2mm(e2.clientY - startY);
+
     if (dir==='se'||dir==='e') b.w = Math.max(8, startW + dw);
     if (dir==='se'||dir==='s') b.h = Math.max(5, startH + dh);
-    // FIX: update width AND height together — also update font size for text scaling
-    el.style.width = mm2px(b.w) + 'px';
-    if (dir==='s'||dir==='se') el.style.height = mm2px(b.h) + 'px';
-    // FIX: re-apply font size so text scales with element
+
+    // For text/symbol: scale font size proportionally to width change
     if (b.type === 'text' || b.type === 'symbol') {
+      if (dir==='e'||dir==='se') {
+        // Scale font with width ratio
+        const ratio = b.w / startW;
+        b.fontSize = Math.max(6, Math.round(startFontSize * ratio * 10) / 10);
+      }
+      // Apply to live element immediately
+      el.style.width = mm2px(b.w) + 'px';
+      if (b.h) el.style.height = mm2px(b.h) + 'px';
       el.style.fontSize = (b.fontSize * zoom) + 'px';
+    } else {
+      // Image / shape: just resize box
+      el.style.width = mm2px(b.w) + 'px';
+      if (dir==='s'||dir==='se') el.style.height = mm2px(b.h) + 'px';
     }
-    document.getElementById('statusSize').textContent = `W:${b.w.toFixed(1)} H:${(b.h||0).toFixed(1)}mm`;
+
+    document.getElementById('statusSize').textContent =
+      `W:${b.w.toFixed(1)} H:${(b.h||startH).toFixed(1)}mm  ${b.type==='text'||b.type==='symbol'?`font:${b.fontSize.toFixed(1)}pt`:''}`;
   };
+
   const onUp = () => {
     document.body.style.cursor = '';
     document.removeEventListener('mousemove', onMove);
@@ -1485,8 +1624,42 @@ function replaceImage(id) {
 }
 
 // ══════════════════════════════════════════════════════
-//  CUSTOM FONTS
+//  CUSTOM FONTS  — persisted via localStorage (Electron-safe)
 // ══════════════════════════════════════════════════════
+const FONTS_STORAGE_KEY = 'cardStudio_customFonts_v3';
+
+function persistFonts() {
+  try {
+    // Store font data (base64 URLs) — each entry: {name, family, ext, url}
+    localStorage.setItem(FONTS_STORAGE_KEY, JSON.stringify(
+      customFonts.map(f => ({ name: f.name, family: f.family, ext: f.ext || 'ttf', url: f.url }))
+    ));
+  } catch(e) { /* storage full or unavailable */ }
+}
+
+function restorePersistedFonts() {
+  try {
+    const raw = localStorage.getItem(FONTS_STORAGE_KEY);
+    if (!raw) return;
+    const fonts = JSON.parse(raw);
+    fonts.forEach(f => {
+      registerFontFace(f);
+      if (!customFonts.find(cf => cf.family === f.family)) {
+        customFonts.push(f);
+      }
+    });
+    if (fonts.length) renderFontsTabs();
+  } catch(e) { /* ignore */ }
+}
+
+function registerFontFace(f) {
+  const ext = f.ext || (f.name ? f.name.split('.').pop().toLowerCase() : 'ttf');
+  const fmt = ext==='ttf'?'truetype':ext==='otf'?'opentype':ext;
+  const style = document.createElement('style');
+  style.textContent = `@font-face{font-family:'${f.family}';src:url('${f.url}') format('${fmt}');}`;
+  document.head.appendChild(style);
+}
+
 function triggerFontUpload() { document.getElementById('fontFileInput').click(); }
 
 function loadCustomFonts(input) {
@@ -1494,18 +1667,33 @@ function loadCustomFonts(input) {
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = ev => {
-      const family = file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
       const ext = file.name.split('.').pop().toLowerCase();
-      const fmt = ext==='ttf'?'truetype':ext==='otf'?'opentype':ext;
-      const style = document.createElement('style');
-      style.textContent = `@font-face{font-family:'${family}';src:url('${ev.target.result}') format('${fmt}');}`;
-      document.head.appendChild(style);
-      customFonts.push({ name: file.name, family, url: ev.target.result });
+      const family = file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+      const fontObj = { name: file.name, family, ext, url: ev.target.result };
+      registerFontFace(fontObj);
+      // Avoid duplicate families
+      if (!customFonts.find(cf => cf.family === family)) {
+        customFonts.push(fontObj);
+      } else {
+        // Update existing entry
+        const idx = customFonts.findIndex(cf => cf.family === family);
+        customFonts[idx] = fontObj;
+      }
       loaded++;
-      if (loaded === files.length) { renderFontsTabs(); toast(`Font${loaded>1?'s':''} loaded: ${customFonts.slice(-loaded).map(f=>f.family).join(', ')}`); }
+      if (loaded === files.length) {
+        persistFonts();
+        renderFontsTabs();
+        toast(`Font${loaded>1?'s':''} saved & loaded: ${files.map(f=>f.name.replace(/\.[^.]+$/,'')).join(', ')}`);
+      }
     };
     reader.readAsDataURL(file);
   });
+}
+
+function removeCustomFont(family) {
+  customFonts = customFonts.filter(f => f.family !== family);
+  persistFonts(); renderFontsTabs();
+  toast('Font removed: ' + family);
 }
 
 const BUILTIN_FONTS = [
@@ -1519,12 +1707,17 @@ const BUILTIN_FONTS = [
 function renderFontsTabs() {
   const customList = document.getElementById('customFontsList'); customList.innerHTML = '';
   if (!customFonts.length) {
-    customList.innerHTML = '<div style="color:#444;font-size:11px;text-align:center;padding:8px;">No custom fonts yet</div>';
+    customList.innerHTML = '<div style="color:#444;font-size:11px;text-align:center;padding:8px;">No custom fonts yet.<br>Fonts are saved automatically.</div>';
   } else {
     customFonts.forEach(f => {
       const item = document.createElement('div');
       item.className = 'font-preview-item';
-      item.innerHTML = `<div class="fp-name">${f.name}</div><div class="fp-sample" style="font-family:'${f.family}',serif;">विवाह पत्रिका</div>`;
+      item.style.position = 'relative';
+      item.innerHTML = `
+        <div class="fp-name">${f.name} <span style="color:#2a6a2a;font-size:9px;">💾 saved</span></div>
+        <div class="fp-sample" style="font-family:'${f.family}',serif;">विवाह पत्रिका</div>
+        <button onclick="event.stopPropagation();removeCustomFont('${f.family}')" style="position:absolute;right:6px;top:6px;background:none;border:none;color:#444;cursor:pointer;font-size:12px;" title="Remove font">✕</button>
+      `;
       item.onclick = () => applyFontToSelected(f.family);
       customList.appendChild(item);
     });
@@ -1772,6 +1965,9 @@ document.addEventListener('keydown', e => {
 //  INIT
 // ══════════════════════════════════════════════════════
 (function init() {
+  // Restore custom fonts saved in previous sessions (Electron persistence)
+  restorePersistedFonts();
+
   // Create first canvas
   const firstCanvas = createCanvas({ name: 'Page 1' });
   canvases.push(firstCanvas);
