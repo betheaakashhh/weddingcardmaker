@@ -2,19 +2,24 @@
 // preload.js
 
 const { contextBridge, ipcRenderer } = require("electron");
+const fs = require("fs");
+const path = require("path");
+const { pathToFileURL } = require("url");
 
-// Securely expose APIs to the renderer process
+// ════════════════════════════════════════════════
+// Electron APIs
+// ════════════════════════════════════════════════
+
 contextBridge.exposeInMainWorld("electronAPI", {
-  // Send data to main process
+
   send: (channel, data) => {
     const validChannels = ["app-ready", "message", "update-check"];
-    
+
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
   },
 
-  // Receive data from main process
   receive: (channel, callback) => {
     const validChannels = [
       "message-reply",
@@ -27,17 +32,24 @@ contextBridge.exposeInMainWorld("electronAPI", {
     }
   },
 
-  // Remove listeners
   removeAllListeners: (channel) => {
     ipcRenderer.removeAllListeners(channel);
   },
 
-  // Simple app info
   platform: process.platform,
   versions: process.versions
 });
 
-// Optional preload loaded log
+// ════════════════════════════════════════════════
+// FONT DISCOVERY SYSTEM
+// ════════════════════════════════════════════════
+
+
+contextBridge.exposeInMainWorld("electronFonts", {
+  getBundledFonts
+});  
+
 window.addEventListener("DOMContentLoaded", () => {
   console.log("Preload script loaded successfully");
 });
+

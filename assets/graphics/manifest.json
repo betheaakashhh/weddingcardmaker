@@ -14,5 +14,6 @@
   { "name": "Star Ornate",            "file": "icons/star-ornate.svg",            "category": "icons"    },
   { "name": "Swastik",                "file": "icons/swastik.svg",               "category": "icons"    },
   { "name": "Mangalsutra Icon",       "file": "wedding/mangalsutra-icon.svg",     "category": "wedding"  },
-  { "name": "Wedding Rings",          "file": "wedding/wedding-rings.svg",        "category": "wedding"  }
+  { "name": "Wedding Rings",          "file": "wedding/wedding-rings.svg",        "category": "wedding"  },
+  { "name": "subh vivah",             "file": "paisley/shubh-vivah.png",       "category": "paisley"  }
 ]

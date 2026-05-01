@@ -1,9 +1,16 @@
 
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const fs = require("fs");
 const { autoUpdater } = require("electron-updater");
 
 let win;
+
+app.whenReady().then(() => {
+  console.log("App is ready. Starting initialization...");
+  console.log("APP PATHS:", app.getAppPath());
+  console.log("DIRNAME:", __dirname);
+});
 
 function createWindow() {
   win = new BrowserWindow({
