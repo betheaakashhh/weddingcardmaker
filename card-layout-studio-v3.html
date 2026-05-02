@@ -466,9 +466,19 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 
     <!-- FONTS TAB -->
     <div class="tab-content" id="tab-fonts">
-      <div class="section-label">Custom Font Upload</div>
-      <div style="font-size:10px;color:#666;margin-bottom:6px;">Upload .ttf / .otf / .woff / .woff2</div>
-      <button class="add-block-btn" onclick="triggerFontUpload()">＋ Upload Custom Font</button>
+      <div class="section-label">Asset Folder Fonts</div>
+      <div style="font-size:10px;color:#555;margin-bottom:6px;">Fonts from <code style="color:#C9A84C;font-size:9px;">assets/fonts/</code> are loaded automatically.</div>
+      <div id="assetFontsList">
+        <div style="color:#444;font-size:10px;text-align:center;padding:6px;" id="assetFontsLoading">Loading asset fonts…</div>
+      </div>
+      <div style="background:#0e1a0e;border:1px dashed #2a4a2a;border-radius:5px;padding:7px;margin-top:5px;font-size:9px;color:#3a7a3a;line-height:1.7;">
+        📄 <strong style="color:#C9A84C;">assets/fonts/manifest.json</strong> format:<br>
+        <code style="color:#aaa;">[{"name":"Baloo2","file":"Baloo2.ttf","family":"Baloo 2","sample":"नमस्ते"}]</code><br>
+        Put .ttf/.otf/.woff files in <code style="color:#C9A84C;">assets/fonts/</code>
+      </div>
+      <div class="section-label" style="margin-top:8px;">Upload Custom Font</div>
+      <div style="font-size:10px;color:#666;margin-bottom:6px;">Upload .ttf / .otf / .woff / .woff2 — saved in browser for next session.</div>
+      <button class="add-block-btn" onclick="triggerFontUpload()">＋ Upload Font File</button>
       <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" style="display:none" multiple onchange="loadCustomFonts(this)">
       <div id="customFontsList"></div>
       <div class="section-label" style="margin-top:8px;">Built-in Devanagari Fonts</div>
@@ -1296,19 +1306,33 @@ function duplicateSelected(){
   snapshot();renderAll();toast('Duplicated');
 }
 function selectBlock(id,shift){
+  const c=ac();if(!c)return;
+  const b=c.blocks.find(x=>x.id===id);
   if(shift){
-    if(selectedIds.includes(id)) selectedIds=selectedIds.filter(x=>x!==id);
-    else selectedIds.push(id);
+    // Shift-click: if block is in group, toggle all group members together
+    if(b&&b.groupId){
+      const gids=getGroupIds(b,c.blocks);
+      const alreadyIn=gids.every(gid=>selectedIds.includes(gid));
+      if(alreadyIn)selectedIds=selectedIds.filter(x=>!gids.includes(x));
+      else gids.forEach(gid=>{if(!selectedIds.includes(gid))selectedIds.push(gid);});
+    }else{
+      if(selectedIds.includes(id))selectedIds=selectedIds.filter(x=>x!==id);
+      else selectedIds.push(id);
+    }
     selectedId=selectedIds[selectedIds.length-1]||null;
   }else{
-    selectedId=id; selectedIds=[id];
+    // Normal click: if block is in group, select ENTIRE group as one unit
+    if(b&&b.groupId){
+      const gids=getGroupIds(b,c.blocks);
+      selectedIds=gids; selectedId=id;
+    }else{
+      selectedId=id; selectedIds=[id];
+    }
   }
   renderAll();
   switchTab('props',document.querySelectorAll('.panel-tab')[1]);
   renderPropsPanel();
-  // Update note area
-  const c=ac(); const b=c&&c.blocks.find(x=>x.id===id);
-  const na=document.getElementById('blockNoteArea'); if(na) na.value=b&&b.note?b.note:'';
+  const na=document.getElementById('blockNoteArea');if(na)na.value=b&&b.note?b.note:'';
   document.getElementById('statusSel').textContent=selectedIds.length;
 }
 function selectAll(){
@@ -1335,7 +1359,8 @@ function moveBlockDown(id){
 }
 
 // ══════════════════════════════════════════════════════
-//  GROUPING
+//  GROUPING — true group: clicking any member selects
+//  all members and drags move the whole group as one.
 // ══════════════════════════════════════════════════════
 function groupSelected(){
   const c=ac();if(!c)return;
@@ -1343,7 +1368,9 @@ function groupSelected(){
   if(!ids){toast('Select 2+ blocks to group');return;}
   const gid='grp'+Date.now();
   ids.forEach(id=>{const b=c.blocks.find(x=>x.id===id);if(b)b.groupId=gid;});
-  snapshot();renderAll();toast('Grouped '+ids.length+' blocks (gid:'+gid.slice(-4)+')');
+  // After grouping, select all group members so the outline shows the full group
+  selectedIds=[...ids]; selectedId=ids[0];
+  snapshot();renderAll();toast('Grouped '+ids.length+' blocks — they now move as one unit');
 }
 function ungroupSelected(){
   const c=ac();if(!c||!selectedId)return;
@@ -1351,7 +1378,24 @@ function ungroupSelected(){
   if(!b||!b.groupId){toast('No group selected');return;}
   const gid=b.groupId;
   c.blocks.forEach(x=>{if(x.groupId===gid)x.groupId=null;});
-  snapshot();renderAll();toast('Ungrouped');
+  snapshot();renderAll();toast('Ungrouped — blocks are now individual');
+}
+
+// When a block that belongs to a group is clicked,
+// expand selection to the full group automatically.
+function expandSelectionToGroup(id){
+  const c=ac();if(!c)return;
+  const b=c.blocks.find(x=>x.id===id);if(!b||!b.groupId)return;
+  const gid=b.groupId;
+  const groupIds=c.blocks.filter(x=>x.groupId===gid).map(x=>x.id);
+  selectedIds=groupIds; selectedId=id;
+  document.getElementById('statusSel').textContent=groupIds.length;
+}
+
+// Get all group-sibling IDs for a block (empty array if not in group)
+function getGroupIds(b,blocks){
+  if(!b||!b.groupId)return[];
+  return blocks.filter(x=>x.groupId===b.groupId).map(x=>x.id);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1861,7 +1905,14 @@ function renderBlocksList(){
       <div class="block-item-preview">${b.type==='text'||b.type==='symbol'?escHtml(b.text.substring(0,40)):(b.type==='qr'?b.text.substring(0,30):(b.src?'Image':'Shape'))}</div>
       <button class="block-item-lock ${b.locked?'locked':''}" onclick="event.stopPropagation();toggleLock('${b.id}')">${b.locked?'🔒':'🔓'}</button>
       <button class="block-item-del" onclick="event.stopPropagation();deleteBlock('${b.id}')">✕</button>`;
-    item.onclick=(e)=>selectBlock(b.id,e.shiftKey);
+    item.onclick=(e)=>{
+      if(b.groupId){
+        // Clicking any group member in layers panel → select whole group
+        selectBlock(b.id, e.shiftKey);
+      } else {
+        selectBlock(b.id,e.shiftKey);
+      }
+    };
     list.appendChild(item);
   });
   document.getElementById('statusCount').textContent=c.blocks.length;
@@ -1884,7 +1935,7 @@ function renderPropsPanel(){
   const b=c.blocks.find(b=>b.id===selectedId);
   const panel=document.getElementById('propsPanel');
   if(!b){panel.innerHTML='<div style="color:#444;font-size:11px;text-align:center;padding:20px;">Select a block</div>';return;}
-  const allFonts=['Noto Serif Devanagari','Noto Sans Devanagari','Tiro Devanagari Hindi','Hind','Baloo 2',...customFonts.map(f=>f.family)];
+  const allFonts=getAllFontFamilies();
   const weights=[['100','Thin'],['300','Light'],['400','Regular'],['500','Medium'],['600','SemiBold'],['700','Bold'],['800','ExtraBold'],['900','Black']];
   const quickCols=['#8B1A2E','#9B2335','#C9A84C','#000000','#333333','#555555','#8B0000','#4a0e1a','#2C5530','#1a3a5c','#6B2D8B','#ffffff','#FF6B35','#FF0000'];
   const posAndSize=(hasH)=>`<div class="prop-group"><span class="prop-label">Position & Size (mm)</span><div class="prop-row"><span style="font-size:10px;color:#555;width:12px">X</span><input class="prop-input" type="number" step="0.5" value="${b.x.toFixed(1)}" oninput="updateProp('x',parseFloat(this.value))"><span style="font-size:10px;color:#555;width:12px">Y</span><input class="prop-input" type="number" step="0.5" value="${b.y.toFixed(1)}" oninput="updateProp('y',parseFloat(this.value))"></div><div class="prop-row"><span style="font-size:10px;color:#555;width:12px">W</span><input class="prop-input" type="number" step="1" value="${b.w.toFixed(1)}" oninput="updateProp('w',parseFloat(this.value))">${hasH?`<span style="font-size:10px;color:#555;width:12px">H</span><input class="prop-input" type="number" step="1" value="${(b.h||20).toFixed(1)}" oninput="updateProp('h',parseFloat(this.value))">`:''}</div></div>`;
@@ -1976,16 +2027,32 @@ function updateProp(key,val){
 function updatePropAndRefresh(key,val){updateProp(key,val);renderPropsPanel();}
 
 // ══════════════════════════════════════════════════════
-//  DRAG
+//  DRAG — group-aware: dragging any block in a group
+//  moves ALL members together as a single unit.
 // ══════════════════════════════════════════════════════
 function makeDraggable(el,b,canvasObj){
-  let startX,startY,startBX,startBY,dragging=false,altDupMode=false,dupGhost=null;
+  let startX,startY,startPositions={},dragging=false,altDupMode=false,dupGhost=null;
   const canvas=document.getElementById('canvas-'+canvasObj.id);
+
   el.addEventListener('mousedown',e=>{
     if(e.target.classList.contains('resize-handle')||e.target.classList.contains('rotate-handle'))return;
     if(b.locked)return;
     dragging=true; altDupMode=e.altKey;
-    startX=e.clientX;startY=e.clientY;startBX=b.x;startBY=b.y;
+    startX=e.clientX; startY=e.clientY;
+
+    // Record start positions of ALL blocks that will move:
+    // - if block is in a group → all group members
+    // - if multi-select includes this block → all selected
+    // - else → just this block
+    startPositions={};
+    const moveIds = b.groupId
+      ? canvasObj.blocks.filter(x=>x.groupId===b.groupId).map(x=>x.id)
+      : (selectedIds.includes(b.id)&&selectedIds.length>1 ? selectedIds : [b.id]);
+    moveIds.forEach(id=>{
+      const mb=canvasObj.blocks.find(x=>x.id===id);
+      if(mb) startPositions[id]={x:mb.x,y:mb.y};
+    });
+
     document.body.style.cursor=altDupMode?'copy':'move';
     if(altDupMode){
       dupGhost=document.createElement('div');dupGhost.className='dup-ghost';
@@ -1994,41 +2061,52 @@ function makeDraggable(el,b,canvasObj){
     }
     e.preventDefault();
   });
+
   const onMove=e=>{
     if(!dragging)return;
-    const newX=Math.max(0,startBX+px2mm(e.clientX-startX));
-    const newY=Math.max(0,startBY+px2mm(e.clientY-startY));
-    const bH=b.h||(b._renderedH||20);
+    const rawDX=px2mm(e.clientX-startX);
+    const rawDY=px2mm(e.clientY-startY);
+
     if(altDupMode){
+      // Ghost follows primary block only
+      const newX=Math.max(0,startPositions[b.id].x+rawDX);
+      const newY=Math.max(0,startPositions[b.id].y+rawDY);
       if(dupGhost){dupGhost.style.left=mm2px(newX)+'px';dupGhost.style.top=mm2px(newY)+'px';}
     } else {
-      b.x=newX;b.y=newY;
-      const snap=computeSnap({...b,h:bH},canvasObj.blocks,canvas);
-      b.x=Math.max(0,b.x+px2mm(snap.dx));b.y=Math.max(0,b.y+px2mm(snap.dy));
-      el.style.left=mm2px(b.x)+'px';el.style.top=mm2px(b.y)+'px';
+      // Move ALL tracked blocks by the same delta
+      const snap=computeSnap({...b,x:Math.max(0,startPositions[b.id].x+rawDX),y:Math.max(0,startPositions[b.id].y+rawDY),h:b.h||(b._renderedH||20)},canvasObj.blocks,canvas);
+      const snapDXmm=px2mm(snap.dx); const snapDYmm=px2mm(snap.dy);
+
+      Object.entries(startPositions).forEach(([id,startPos])=>{
+        const mb=canvasObj.blocks.find(x=>x.id===id);if(!mb)return;
+        mb.x=Math.max(0,startPos.x+rawDX+snapDXmm);
+        mb.y=Math.max(0,startPos.y+rawDY+snapDYmm);
+        // Update the DOM element for this block directly (fast path — no full re-render)
+        const mEl=canvas.querySelector(`[data-id="${id}"]`);
+        if(mEl){mEl.style.left=mm2px(mb.x)+'px';mEl.style.top=mm2px(mb.y)+'px';}
+      });
       document.getElementById('statusPos').textContent=`X:${b.x.toFixed(1)} Y:${b.y.toFixed(1)}mm`;
-      // Move grouped blocks together
-      if(b.groupId){
-        const gDX=b.x-newX+px2mm(computeSnap({...b,h:bH},canvasObj.blocks,canvas).dx);
-        const gDY=b.y-newY+px2mm(computeSnap({...b,h:bH},canvasObj.blocks,canvas).dy);
-      }
     }
   };
+
   const onUp=e=>{
     if(!dragging)return;
     dragging=false;document.body.style.cursor='';clearGuideLines();
     if(altDupMode&&dupGhost){
-      const newX=Math.max(0,startBX+px2mm(e.clientX-startX));
-      const newY=Math.max(0,startBY+px2mm(e.clientY-startY));
+      const rawDX=px2mm(e.clientX-startX);
+      const rawDY=px2mm(e.clientY-startY);
       dupGhost.remove();dupGhost=null;
-      const moved=Math.sqrt(Math.pow(newX-startBX,2)+Math.pow(newY-startBY,2));
+      const newX=Math.max(0,(startPositions[b.id]?.x||b.x)+rawDX);
+      const newY=Math.max(0,(startPositions[b.id]?.y||b.y)+rawDY);
+      const moved=Math.sqrt(rawDX*rawDX+rawDY*rawDY);
       if(moved>2){
         globalBlockCounter++;
         const nb=JSON.parse(JSON.stringify(b));
-        nb.id='b'+Date.now()+'_'+globalBlockCounter;nb.name=b.name+' (copy)';nb.x=newX;nb.y=newY;
+        nb.id='b'+Date.now()+'_'+globalBlockCounter;nb.name=b.name+' (copy)';
+        nb.x=newX;nb.y=newY;nb.groupId=null; // duplicate is not in the group
         canvasObj.blocks.push(nb);selectedId=nb.id;selectedIds=[nb.id];snapshot();renderAll();toast('Alt+Drag: duplicated');
       }
-    } else { renderPropsPanel();snapshot(); }
+    }else{renderPropsPanel();snapshot();}
     altDupMode=false;
   };
   document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
@@ -2392,9 +2470,12 @@ function loadLayout(){
 }
 
 // ══════════════════════════════════════════════════════
-//  CUSTOM FONTS
+//  CUSTOM FONTS — upload (persisted) + asset folder auto-load
 // ══════════════════════════════════════════════════════
 const FONTS_STORAGE_KEY='cardStudio_customFonts_v4';
+let assetFonts = []; // fonts loaded from assets/fonts/
+
+// ── Persist / restore uploaded fonts ──────────────────
 function persistFonts(){try{localStorage.setItem(FONTS_STORAGE_KEY,JSON.stringify(customFonts.map(f=>({name:f.name,family:f.family,ext:f.ext||'ttf',url:f.url}))));}catch(e){}}
 function restorePersistedFonts(){
   try{const raw=localStorage.getItem(FONTS_STORAGE_KEY);if(!raw)return;const fonts=JSON.parse(raw);
@@ -2403,11 +2484,42 @@ function restorePersistedFonts(){
 }
 function registerFontFace(f){
   const ext=f.ext||(f.name?f.name.split('.').pop().toLowerCase():'ttf');
-  const fmt=ext==='ttf'?'truetype':ext==='otf'?'opentype':ext;
+  const fmt=ext==='ttf'?'truetype':ext==='otf'?'opentype':ext==='woff2'?'woff2':'woff';
   const style=document.createElement('style');
   style.textContent=`@font-face{font-family:'${f.family}';src:url('${f.url}') format('${fmt}');}`;
   document.head.appendChild(style);
 }
+
+// ── Load fonts from assets/fonts/ via manifest ─────────
+// Expected: assets/fonts/manifest.json = [{name:"Baloo2-Bold", file:"Baloo2-Bold.ttf", family:"Baloo 2", sample:"नमस्ते"}, ...]
+// If no manifest.json, tries to load a flat list of common font files directly.
+async function loadAssetFonts(){
+  const loadingEl=document.getElementById('assetFontsLoading');
+  const listEl=document.getElementById('assetFontsList');
+  try{
+    const res=await fetch('./assets/fonts/manifest.json');
+    if(!res.ok) throw new Error('no manifest');
+    const manifest=await res.json();
+    assetFonts=[];
+    manifest.forEach(item=>{
+      const family=item.family||item.name.replace(/[-_]/g,' ').replace(/\.[^.]+$/,'');
+      const ext=(item.file||'').split('.').pop().toLowerCase()||'ttf';
+      const fontObj={name:item.name||item.file,family,ext,url:'./assets/fonts/'+item.file,sample:item.sample||'विवाह पत्रिका',fromAssets:true};
+      registerFontFace(fontObj);
+      if(!assetFonts.find(f=>f.family===family))assetFonts.push(fontObj);
+    });
+    if(loadingEl)loadingEl.style.display='none';
+    renderFontsTabs();
+    toast('Asset fonts loaded: '+assetFonts.length+' fonts');
+  }catch(e){
+    // No manifest — try scanning known font file extensions in assets/fonts/
+    if(loadingEl)loadingEl.textContent='No manifest.json found in assets/fonts/. Create one to auto-list fonts, or use Upload below.';
+    assetFonts=[];
+    renderFontsTabs();
+  }
+}
+
+// ── Upload custom font ────────────────────────────────
 function triggerFontUpload(){document.getElementById('fontFileInput').click();}
 function loadCustomFonts(input){
   const files=Array.from(input.files);let loaded=0;
@@ -2416,7 +2528,7 @@ function loadCustomFonts(input){
     reader.onload=ev=>{
       const ext=file.name.split('.').pop().toLowerCase();
       const family=file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
-      const fontObj={name:file.name,family,ext,url:ev.target.result};
+      const fontObj={name:file.name,family,ext,url:ev.target.result,sample:'विवाह पत्रिका'};
       registerFontFace(fontObj);
       const idx=customFonts.findIndex(cf=>cf.family===family);
       if(idx>=0)customFonts[idx]=fontObj;else customFonts.push(fontObj);
@@ -2426,6 +2538,7 @@ function loadCustomFonts(input){
   });
 }
 function removeCustomFont(family){customFonts=customFonts.filter(f=>f.family!==family);persistFonts();renderFontsTabs();}
+
 const BUILTIN_FONTS=[
   {family:'Noto Serif Devanagari',sample:'वक्रतुण्ड महाकाय'},
   {family:'Noto Sans Devanagari',sample:'श्री गणेशाय नमः'},
@@ -2433,13 +2546,72 @@ const BUILTIN_FONTS=[
   {family:'Hind',sample:'आमंत्रण पत्र'},
   {family:'Baloo 2',sample:'सादर निमंत्रण'},
 ];
+
 function renderFontsTabs(){
-  const customList=document.getElementById('customFontsList');customList.innerHTML='';
-  if(!customFonts.length){customList.innerHTML='<div style="color:#444;font-size:11px;text-align:center;padding:8px;">No custom fonts yet.</div>';}
-  else{customFonts.forEach(f=>{const item=document.createElement('div');item.className='font-preview-item';item.style.position='relative';item.innerHTML=`<div class="fp-name">${f.name} <span style="color:#2a6a2a;font-size:9px;">💾</span></div><div class="fp-sample" style="font-family:'${f.family}',serif;">विवाह पत्रिका</div><button onclick="event.stopPropagation();removeCustomFont('${f.family}')" style="position:absolute;right:6px;top:6px;background:none;border:none;color:#444;cursor:pointer;font-size:12px;">✕</button>`;item.onclick=()=>applyFontToSelected(f.family);customList.appendChild(item);});}
-  const builtinList=document.getElementById('builtinFontsList');builtinList.innerHTML='';
-  BUILTIN_FONTS.forEach(f=>{const item=document.createElement('div');const c=ac();const b=c?c.blocks.find(b=>b.id===selectedId):null;item.className='font-preview-item'+(b&&b.fontFamily===f.family?' active':'');item.innerHTML=`<div class="fp-name">${f.family}</div><div class="fp-sample" style="font-family:'${f.family}',serif;">${f.sample}</div>`;item.onclick=()=>applyFontToSelected(f.family);builtinList.appendChild(item);});
+  // ── Asset fonts section ──────────────────────────────
+  const assetList=document.getElementById('assetFontsList');
+  const loadingEl=document.getElementById('assetFontsLoading');
+  if(assetList){
+    // Clear everything except the loading message element
+    Array.from(assetList.children).forEach(ch=>{if(ch.id!=='assetFontsLoading')ch.remove();});
+    if(assetFonts.length===0){
+      if(loadingEl){loadingEl.style.display='block';loadingEl.textContent='No asset fonts loaded. Create assets/fonts/manifest.json or upload fonts below.';}
+    } else {
+      if(loadingEl)loadingEl.style.display='none';
+      const c=ac();const b=c?c.blocks.find(b=>b.id===selectedId):null;
+      assetFonts.forEach(f=>{
+        const item=document.createElement('div');
+        item.className='font-preview-item'+(b&&b.fontFamily===f.family?' active':'');
+        item.innerHTML=`<div class="fp-name" style="display:flex;justify-content:space-between;align-items:center;"><span>${escHtml(f.name)} <span style="color:#2a6a2a;font-size:8px;">📁 asset</span></span></div><div class="fp-sample" style="font-family:'${f.family}',serif;">${f.sample||'विवाह पत्रिका'}</div>`;
+        item.onclick=()=>applyFontToSelected(f.family);
+        assetList.appendChild(item);
+      });
+    }
+  }
+
+  // ── Uploaded custom fonts ────────────────────────────
+  const customList=document.getElementById('customFontsList');
+  if(customList){
+    customList.innerHTML='';
+    if(!customFonts.length){
+      customList.innerHTML='<div style="color:#444;font-size:10px;text-align:center;padding:6px;">No uploaded fonts yet.</div>';
+    }else{
+      const c=ac();const b=c?c.blocks.find(b=>b.id===selectedId):null;
+      customFonts.forEach(f=>{
+        const item=document.createElement('div');
+        item.className='font-preview-item'+(b&&b.fontFamily===f.family?' active':'');
+        item.style.position='relative';
+        item.innerHTML=`<div class="fp-name">${escHtml(f.name)} <span style="color:#2a6a2a;font-size:9px;">💾 uploaded</span></div><div class="fp-sample" style="font-family:'${f.family}',serif;">${f.sample||'विवाह पत्रिका'}</div><button onclick="event.stopPropagation();removeCustomFont('${f.family}')" style="position:absolute;right:6px;top:6px;background:none;border:none;color:#444;cursor:pointer;font-size:12px;" title="Remove font">✕</button>`;
+        item.onclick=()=>applyFontToSelected(f.family);
+        customList.appendChild(item);
+      });
+    }
+  }
+
+  // ── Built-in fonts ───────────────────────────────────
+  const builtinList=document.getElementById('builtinFontsList');
+  if(builtinList){
+    builtinList.innerHTML='';
+    const c=ac();const b=c?c.blocks.find(b=>b.id===selectedId):null;
+    BUILTIN_FONTS.forEach(f=>{
+      const item=document.createElement('div');
+      item.className='font-preview-item'+(b&&b.fontFamily===f.family?' active':'');
+      item.innerHTML=`<div class="fp-name">${f.family}</div><div class="fp-sample" style="font-family:'${f.family}',serif;">${f.sample}</div>`;
+      item.onclick=()=>applyFontToSelected(f.family);
+      builtinList.appendChild(item);
+    });
+  }
 }
+
+// All available font families (for props dropdown)
+function getAllFontFamilies(){
+  return [
+    ...BUILTIN_FONTS.map(f=>f.family),
+    ...assetFonts.map(f=>f.family),
+    ...customFonts.map(f=>f.family),
+  ].filter((v,i,a)=>a.indexOf(v)===i); // deduplicate
+}
+
 function applyFontToSelected(family){
   const c=ac();if(!c)return;
   const b=c.blocks.find(b=>b.id===selectedId);
@@ -2626,6 +2798,7 @@ function buildShapeDropdown(){
   restorePersistedFonts();
   glibRestore();
   glibLoadPrebundled();
+  loadAssetFonts(); // auto-load fonts from assets/fonts/manifest.json
   loadPalette();
   buildShapeDropdown();
   const firstCanvas=createCanvas({name:'Page 1'});
