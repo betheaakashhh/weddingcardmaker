@@ -25,7 +25,7 @@ function createWindow() {
     }
   });
 
-  win.loadFile("card-layout-studio-v3.html");
+  win.loadFile("WeddingStudio.html");
 }
 
 // 🔹 Auto update logic
