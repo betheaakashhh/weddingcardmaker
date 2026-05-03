@@ -3,14 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Layout Studio v4 — Screen Print Pro</title>
+<title>Wedding Card Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@400;500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<!-- Sanscript.js — proper ITRANS→Devanagari transliteration engine -->
-<script src="https://cdn.jsdelivr.net/npm/@indic-transliteration/sanscript@3.1.1/sanscript.min.js"
-  onerror="console.warn('Sanscript CDN failed — using built-in ITRANS fallback engine')"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
@@ -203,11 +200,27 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .template-card h4{font-size:11px;color:#C9A84C;margin-bottom:2px;}
 .template-card p{font-size:10px;color:#555;}
 .section-label{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.7px;margin:9px 0 4px;padding-bottom:3px;border-bottom:1px solid #2a2a2a;}
-.font-preview-item{background:#222;border:1px solid #333;border-radius:5px;padding:6px 8px;margin-bottom:4px;cursor:pointer;transition:all .15s;}
-.font-preview-item:hover{border-color:#555;}
-.font-preview-item.active{border-color:#C9A84C;background:#2a2010;}
-.font-preview-item .fp-name{font-size:10px;color:#777;margin-bottom:2px;}
-.font-preview-item .fp-sample{font-size:15px;color:#eee;line-height:1.4;}
+.font-preview-item{background:#222;border:1px solid #333;border-radius:6px;padding:7px 9px;margin-bottom:5px;cursor:pointer;transition:all .15s;position:relative;}
+.font-preview-item:hover{border-color:#666;background:#2a2a2a;}
+.font-preview-item.active{border-color:#C9A84C;background:#2a2010;box-shadow:0 0 0 1px rgba(201,168,76,.3);}
+.font-preview-item .fp-name{font-size:10px;color:#888;margin-bottom:3px;display:flex;align-items:center;gap:4px;}
+.font-preview-item .fp-name-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.font-preview-item .fp-active-badge{font-size:9px;background:#C9A84C;color:#000;padding:1px 5px;border-radius:10px;flex-shrink:0;font-weight:600;}
+.font-preview-item .fp-sample{font-size:16px;color:#eee;line-height:1.45;margin-top:2px;}
+.font-preview-item .fp-sample-latin{font-size:11px;color:#666;line-height:1.3;margin-top:2px;}
+.font-preview-item .fp-apply-hint{font-size:9px;color:#555;margin-top:3px;}
+.font-preview-item:hover .fp-apply-hint{color:#C9A84C;}
+.font-preview-item.active .fp-apply-hint{color:#C9A84C;}
+/* Flash animation when font applied */
+@keyframes fontApplied{0%{background:#3a2a00;}100%{background:#2a2010;}}
+.font-preview-item.just-applied{animation:fontApplied .4s ease-out;}
+/* Font search bar */
+.font-search-bar{position:relative;margin-bottom:6px;}
+.font-search-bar input{width:100%;background:#222;border:1px solid #333;border-radius:4px;color:#eee;padding:4px 6px 4px 24px;font-size:11px;}
+.font-search-bar input:focus{outline:none;border-color:#8B1A2E;}
+.font-search-bar .fs-icon{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#555;pointer-events:none;}
+/* No-selection notice */
+.font-no-sel{background:#1e1e1e;border:1px dashed #333;border-radius:5px;padding:8px;font-size:10px;color:#555;text-align:center;margin-bottom:7px;line-height:1.5;}
 .img-fit-btns{display:flex;gap:3px;}
 .img-fit-btn{flex:1;background:#222;border:1px solid #333;border-radius:4px;color:#777;padding:3px;cursor:pointer;font-size:10px;text-align:center;}
 .img-fit-btn.active{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
@@ -276,30 +289,6 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 .fr-row{display:flex;gap:5px;align-items:center;margin-bottom:6px;}
 .fr-input{flex:1;background:#222;border:1px solid #333;border-radius:4px;color:#eee;padding:4px 7px;font-size:11px;}
 .fr-input:focus{outline:none;border-color:#8B1A2E;}
-
-/* ── HINDI IME ── */
-.ime-bar{display:flex;align-items:center;gap:5px;margin-bottom:5px;background:#141414;border:1px solid #2a2a2a;border-radius:5px;padding:3px 6px;}
-.ime-toggle{display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none;}
-.ime-toggle input[type=checkbox]{accent-color:#C9A84C;width:13px;height:13px;cursor:pointer;}
-.ime-toggle span{font-size:10px;color:#888;}
-.ime-toggle span b{color:#C9A84C;}
-.ime-mode-btns{display:flex;gap:2px;margin-left:4px;}
-.ime-mode-btn{padding:1px 6px;font-size:9px;border-radius:3px;border:1px solid #333;background:#222;color:#666;cursor:pointer;transition:all .1s;}
-.ime-mode-btn.active{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
-.ime-suggestions{display:flex;flex-wrap:wrap;gap:3px;padding:3px 0;min-height:0;max-height:0;overflow:hidden;transition:max-height .2s;}
-.ime-suggestions.open{max-height:120px;}
-.ime-sug{background:#1e1e1e;border:1px solid #333;border-radius:4px;padding:2px 8px;font-size:14px;cursor:pointer;color:#e8e0d0;font-family:'Noto Serif Devanagari',serif;transition:all .1s;white-space:nowrap;}
-.ime-sug:hover,.ime-sug.sel{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
-.ime-sug.sel{outline:1.5px solid #C9A84C;}
-.ime-input-preview{font-size:11px;color:#555;padding:1px 4px;border-left:2px solid #8B1A2E;background:#1a0a10;border-radius:0 3px 3px 0;margin-left:2px;font-family:'Noto Serif Devanagari',serif;}
-.ime-kbd{display:none;background:#181818;border:1px solid #2a2a2a;border-radius:6px;padding:5px;margin-top:4px;}
-.ime-kbd.open{display:block;}
-.ime-kbd-row{display:flex;gap:2px;margin-bottom:2px;justify-content:center;}
-.vkey{background:#222;border:1px solid #333;border-radius:4px;padding:4px 2px;min-width:22px;text-align:center;cursor:pointer;font-size:12px;color:#ddd;font-family:'Noto Serif Devanagari',serif;line-height:1.2;transition:all .1s;}
-.vkey:hover{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
-.vkey.wide{min-width:40px;}
-.vkey.wider{min-width:55px;}
-.vkey .sub{font-size:8px;color:#555;display:block;line-height:1;}
 </style>
 </head>
 <body>
@@ -493,6 +482,12 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 
     <!-- FONTS TAB -->
     <div class="tab-content" id="tab-fonts">
+
+      <!-- Font search bar (filters all sections) -->
+      <div class="font-search-bar">
+        <span class="fs-icon">🔍</span>
+        <input placeholder="Search fonts…" oninput="filterFontsPanel(this.value)" id="fontPanelSearch">
+      </div>
 
       <!-- System Fonts (Local Font Access API) -->
       <div class="section-label">💻 System Fonts</div>
@@ -1384,6 +1379,9 @@ function selectBlock(id,shift){
   renderAll();
   switchTab('props',document.querySelectorAll('.panel-tab')[1]);
   renderPropsPanel();
+  // Update font panel active indicator if it's open
+  const fontsTab=document.getElementById('tab-fonts');
+  if(fontsTab&&fontsTab.classList.contains('active'))renderFontsTabs();
   const na=document.getElementById('blockNoteArea');if(na)na.value=b&&b.note?b.note:'';
   document.getElementById('statusSel').textContent=selectedIds.length;
 }
@@ -1802,7 +1800,7 @@ function renderBlocks(){
         el.style.background=`rgba(${r},${g},${bv},${b.bgOpacity/100})`;el.style.borderRadius='2px';
       } else { el.style.background=''; }
       el.style.whiteSpace='pre-wrap';el.style.wordBreak='break-word';
-      el.textContent=b.text;
+      el.textContent=getDisplayText(b.text, b.fontFamily);
       if(b.type==='symbol'){el.style.display='flex';el.style.justifyContent='center';el.style.alignItems='center';}
     } else if(b.type==='image'){
       el.style.overflow='hidden';el.style.cursor='move';el.style.padding='0';
@@ -2009,52 +2007,7 @@ function renderPropsPanel(){
 
       <!-- Text Content -->
       <div class="prop-group"><span class="prop-label">${b.type==='symbol'?'Symbol Character':'Text Content'}</span>
-
-        <!-- ── INPUT MODE BAR ── -->
-        <div class="ime-bar">
-          <div class="ime-mode-btns" style="flex:1;">
-            <div class="ime-mode-btn ${imeMode==='normal'?'active':''}"   onclick="setImeMode('normal')"   title="Type normally — Unicode Devanagari or any language">EN</div>
-            <div class="ime-mode-btn ${imeMode==='hinglish'?'active':''}" onclick="setImeMode('hinglish')" title="Type in English, get Hindi — aakash→आकाश">हिं Hinglish</div>
-            <div class="ime-mode-btn ${imeMode==='legacy'?'active':''}"   onclick="setImeMode('legacy')"   title="KrutiDev/Devlys/RAJ font mode — shows Devanagari in textarea">KD Legacy</div>
-          </div>
-          <button onclick="toggleVKeyboard()" style="background:none;border:1px solid #333;border-radius:3px;color:#555;padding:1px 6px;cursor:pointer;font-size:10px;white-space:nowrap;" title="Virtual Devanagari Keyboard">⌨ Keys</button>
-        </div>
-
-        <!-- Mode description -->
-        <div id="imeModeDesc" style="font-size:9px;color:#555;margin-bottom:4px;padding:0 2px;">
-          ${imeMode==='normal'   ? 'Normal mode — type Unicode Hindi (अ आ इ) or English directly' :
-            imeMode==='hinglish' ? '✨ Hinglish — type <b style="color:#C9A84C">aakash</b> → get <b style="color:#C9A84C">आकाश</b>. Space commits word.' :
-            'KrutiDev/Legacy mode — type using Hindi keyboard layout, textarea shows Devanagari'}
-        </div>
-
-        <!-- Hinglish suggestions popup -->
-        <div class="ime-suggestions" id="imeSuggestions"></div>
-
-        <!-- Virtual Keyboard -->
-        <div class="ime-kbd" id="imeVKeyboard"></div>
-
-        <!-- THE TEXTAREA — font matches selected block font in legacy mode -->
-        <textarea class="prop-textarea" id="textContentArea"
-          oninput="onTextAreaInput(event)"
-          onkeydown="onTextAreaKeydown(event)"
-          onkeyup="onTextAreaKeyup(event)"
-          style="font-family:${imeMode==='legacy'?`'${b.fontFamily}',serif`:"'Noto Serif Devanagari',serif"};min-height:75px;"
-        >${escHtml(b.text)}</textarea>
-
-        <!-- Legacy mode info / Hinglish hint -->
-        ${imeMode==='legacy' ? `
-        <div style="background:#0e1a0e;border:1px solid #2a4a2a;border-radius:4px;padding:5px 7px;margin-top:4px;font-size:9px;color:#3a8a3a;line-height:1.7;">
-          ⌨ <b>KrutiDev / Legacy font mode</b><br>
-          The textarea shows your text <b>rendered in <span style="font-family:'${b.fontFamily}',serif;font-size:12px;color:#C9A84C;">${b.fontFamily}</span></b> font.<br>
-          Type using the Hindi keyboard layout (Remington/Typewriter).<br>
-          Keys like <code style="color:#C9A84C;">v</code>→<span style="font-family:'${b.fontFamily}',serif;">v</span>=आ, <code style="color:#C9A84C;">d</code>→<span style="font-family:'${b.fontFamily}',serif;">d</span>=क etc.<br>
-          Use the <b>⌨ Keys</b> button above for a visual layout reference.
-        </div>` : imeMode==='hinglish' ? `
-        <div style="background:#1a1a0e;border:1px solid #4a4a2a;border-radius:4px;padding:5px 7px;margin-top:4px;font-size:9px;color:#8a8a3a;line-height:1.7;">
-          Type Roman: <b style="color:#C9A84C;">vivah</b>→विवाह  <b style="color:#C9A84C;">aakash</b>→आकाश  <b style="color:#C9A84C;">shubh</b>→शुभ<br>
-          <b>Space</b> = commit best match &nbsp;|&nbsp; <b>Tab/→</b> = next suggestion &nbsp;|&nbsp; <b>1–9</b> = pick by number<br>
-          <b>Esc</b> = cancel buffer &nbsp;|&nbsp; <b>Backspace</b> = undo last letter
-        </div>` : ''}
+        <textarea class="prop-textarea" id="textContentArea" oninput="updateProp('text',this.value)">${escHtml(b.text)}</textarea>
       </div>
 
       <!-- ── FONT FAMILY ── -->
@@ -2063,7 +2016,7 @@ function renderPropsPanel(){
         <!-- Quick search filter -->
         <input class="prop-input" style="width:100%;margin-bottom:4px;" placeholder="🔍 Type to filter fonts…" id="fontFamilySearch" oninput="filterPropsFont(this.value,'fontFamilySelect')" value="">
         <select class="prop-input" style="width:100%;font-size:11px;height:28px;" id="fontFamilySelect"
-          onchange="updatePropAndRefresh('fontFamily',this.value);autoDetectLegacyMode(this.value);document.getElementById('fontPreviewEl').style.fontFamily=this.value+',serif'">
+          onchange="updatePropAndRefresh('fontFamily',this.value);document.getElementById('fontPreviewEl').style.fontFamily=this.value+',serif'">
           ${allFonts.map(f=>`<option value="${f}" ${b.fontFamily===f?'selected':''}>${f}</option>`).join('')}
         </select>
         <!-- Live font preview -->
@@ -2533,7 +2486,7 @@ async function buildExportContainer(c, scale, transparent, blueprintOverride){
       // Force black on white
       if(b.type==='text'||b.type==='symbol'){
         el.style.cssText+=`font-size:${b.fontSize*sc}px;font-family:${b.fontFamily},serif;font-weight:${b.fontWeight};color:#000000;text-align:${b.align};line-height:${b.lineHeight};font-style:${b.italic?'italic':'normal'};letter-spacing:${b.letterSpacing*sc}px;white-space:pre-wrap;word-break:break-word;`;
-        el.innerText=b.text;
+        el.innerText=getDisplayText(b.text, b.fontFamily);
       } else if(b.type==='shape'){
         const bBlue=JSON.parse(JSON.stringify(b));bBlue.shapeFill='#000000';bBlue.shapeStroke=bBlue.shapeStrokeW>0?'#000000':'none';
         el.style.padding='0';el.style.overflow='hidden';el.style.background='transparent';
@@ -2552,7 +2505,7 @@ async function buildExportContainer(c, scale, transparent, blueprintOverride){
         el.style.cssText+=`font-size:${b.fontSize*sc}px;font-family:${b.fontFamily},serif;font-weight:${b.fontWeight};color:${b.color};text-align:${b.align};line-height:${b.lineHeight};font-style:${b.italic?'italic':'normal'};letter-spacing:${b.letterSpacing*sc}px;text-decoration:${[b.underline?'underline':'',b.strikethrough?'line-through':''].filter(Boolean).join(' ')||'none'};white-space:pre-wrap;word-break:break-word;`;
         if(b.textShadow)el.style.textShadow='1px 2px 4px rgba(0,0,0,0.5)';
         if(b.bgOpacity>0){const hex=b.bgColor||'#ffffff';const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),bv=parseInt(hex.slice(5,7),16);el.style.background=`rgba(${r},${g},${bv},${b.bgOpacity/100})`;}
-        el.innerText=b.text;
+        el.innerText=getDisplayText(b.text, b.fontFamily);
         if(b.type==='symbol'){el.style.display='flex';el.style.alignItems='center';el.style.justifyContent='center';el.style.padding='0';}
       } else if(b.type==='image'&&b.src){
         el.style.padding='0';if(b.imgCornerRadius)el.style.borderRadius=b.imgCornerRadius+'%';
@@ -2655,7 +2608,7 @@ async function exportColorLayers(){
       el.style.cssText=`position:absolute;left:${b.x*mmPx}px;top:${b.y*mmPx}px;width:${b.w*mmPx}px;${b.h?`height:${b.h*mmPx}px;`:''}opacity:${b.opacity/100};transform:rotate(${b.rotation}deg);transform-origin:center center;background:transparent;overflow:hidden;box-sizing:border-box;padding:${pV}px ${pH}px;`;
       if(b.type==='text'||b.type==='symbol'){
         el.style.cssText+=`font-size:${b.fontSize*sc}px;font-family:${b.fontFamily},serif;font-weight:${b.fontWeight};color:#000000;text-align:${b.align};line-height:${b.lineHeight};white-space:pre-wrap;word-break:break-word;`;
-        el.innerText=b.text;
+        el.innerText=getDisplayText(b.text, b.fontFamily);
       } else if(b.type==='shape'){
         const bBlue=JSON.parse(JSON.stringify(b));bBlue.shapeFill='#000000';bBlue.shapeStroke=b.shapeStrokeW>0?'#000000':'none';
         el.style.padding='0';el.style.overflow='hidden';el.style.background='transparent';
@@ -2772,14 +2725,7 @@ const FONTS_STORAGE_KEY='cardStudio_customFonts_v4';
 function persistFonts(){
   try{
     localStorage.setItem(FONTS_STORAGE_KEY,JSON.stringify(
-      customFonts
-        .filter(f=>!f.fromSystem) // never persist system fonts — they're always re-loaded via queryLocalFonts
-        .map(f=>({
-          name:f.name, family:f.family, subfamily:f.subfamily||'',
-          ext:f.ext||'ttf', url:f.url,
-          sample:f.sample||'विवाह पत्रिका',
-          fromFolder:!!f.fromFolder
-        }))
+      customFonts.map(f=>({name:f.name,family:f.family,ext:f.ext||'ttf',url:f.url,sample:f.sample||'विवाह पत्रिका',fromFolder:!!f.fromFolder}))
     ));
   }catch(e){toast('⚠ Storage full — remove unused fonts');}
 }
@@ -2795,36 +2741,239 @@ function restorePersistedFonts(){
   }catch(e){}
 }
 function registerFontFace(f){
-  const ext=f.ext||(f.name?f.name.split('.').pop().toLowerCase():'ttf');
-  const fmt=ext==='ttf'?'truetype':ext==='otf'?'opentype':ext==='woff2'?'woff2':'woff';
-
-  // Determine weight and style from subfamily so browser maps correctly
-  const sub=(f.subfamily||'').toLowerCase();
-  let fwSpec='normal'; // default
-  if(sub.includes('thin'))          fwSpec='100';
-  else if(sub.includes('extralight')||sub.includes('ultra light')) fwSpec='200';
-  else if(sub.includes('light'))    fwSpec='300';
-  else if(sub.includes('medium'))   fwSpec='500';
-  else if(sub.includes('semibold')||sub.includes('demi')) fwSpec='600';
-  else if(sub.includes('extrabold')||sub.includes('ultra bold')) fwSpec='800';
-  else if(sub.includes('black')||sub.includes('heavy')) fwSpec='900';
-  else if(sub.includes('bold'))     fwSpec='700';
-  const fsSpec = sub.includes('italic')||sub.includes('oblique') ? 'italic' : 'normal';
-
-  const styleId = 'font-face-'+f.family.replace(/[\s']/g,'-')+'-'+fwSpec+'-'+fsSpec;
-  const old=document.getElementById(styleId); if(old) old.remove();
-  const s=document.createElement('style');
-  s.id=styleId;
-  // Register the font so browser uses it at ANY weight (font-weight: 100 900)
-  // This way selecting Bold in the UI uses this file correctly.
-  s.textContent=`@font-face{`+
-    `font-family:'${f.family}';`+
-    `src:url('${f.url}') format('${fmt}');`+
-    `font-weight:100 900;`+   // accept all weights — prevents browser substitution
-    `font-style:${fsSpec};`+
-    `font-display:swap;`+     // show fallback while loading, then swap
-  `}`;
+  const ext = f.ext || (f.name ? f.name.split('.').pop().toLowerCase() : 'ttf');
+  const fmt = ext === 'ttf' ? 'truetype' :
+              ext === 'otf' ? 'opentype' :
+              ext === 'woff2' ? 'woff2' : 'woff';
+  const quotedFamily = `'${f.family}'`;
+  const s = document.createElement('style');
+  s.id = 'font-face-' + f.family.replace(/\s+/g, '-');
+  // Remove old if exists
+  const old = document.getElementById(s.id);
+  if (old) old.remove();
+  s.textContent = `@font-face{
+    font-family: ${quotedFamily};
+    src: url('${f.url}') format('${fmt}');
+    font-weight: 100 900;
+    font-style: normal;
+  }`;
   document.head.appendChild(s);
+}
+
+// ══════════════════════════════════════════════════════
+//  LEGACY FONT DETECTION & KRUTIDEV/ASCII-HINDI ENCODING
+// ══════════════════════════════════════════════════════
+//
+//  WHAT IS KRUTIDEV?
+//  -----------------
+//  RAJ 09, Kruti Dev, Shusha, Chanakya, DevLys etc. are "legacy"
+//  Devanagari fonts from the 1990s-2000s. They store Hindi SHAPES
+//  at ASCII codepoints (a-z, A-Z, 0-9, punctuation). When Windows
+//  sent byte 0x6C ('l') to the font, the font drew 'स'. Modern
+//  software stored text as raw ASCII/ANSI bytes, not Unicode.
+//
+//  WHY THEY FAIL IN BROWSERS
+//  --------------------------
+//  Browsers are Unicode. When you type 'स' it is stored as U+0938.
+//  The browser asks the font for glyph U+0938 → NOT FOUND (the font
+//  has NO glyphs at U+0900–U+097F). The browser falls back to system
+//  Devanagari font (Mangal/Noto). The RAJ 09 style is NEVER seen.
+//
+//  THE FIX
+//  -------
+//  Detect these fonts. When rendering text with one, convert the
+//  Unicode string to the equivalent ASCII keystrokes ("Krutidev
+//  encoding") so the browser sends the correct bytes to the glyph
+//  engine. 'स' → 'l', 'ा' → 'k', 'ह' → 'g', 'ू' → 'w' etc.
+// ══════════════════════════════════════════════════════
+
+// Known legacy font family name patterns (case-insensitive)
+const LEGACY_FONT_PATTERNS = [
+  /^raj\s*\d/i, /^kruti\s*dev/i, /^krutidev/i, /^shusha/i,
+  /^chanakya/i, /^devlys/i, /^dev\s*lys/i, /^shivaji/i,
+  /^akruti/i, /^walkman/i, /^dvb\s*/i, /^mangal\b/i,
+  /^saras/i, /^priya/i, /^lekhani/i, /^yogesh/i,
+  /^kiran/i, /^lata/i, /^hemal/i,
+];
+
+// The authoritative Unicode → Krutidev ASCII mapping.
+// Based on the standard table used by Padma Firefox extension,
+// Baraha software, and all major open-source converters.
+// Order matters: longer sequences before shorter ones.
+const UNICODE_TO_KD_MAP = [
+  // === Standalone vowels (full form) ===
+  ['\u0906', 'vk'],   // आ
+  ['\u0913', 'vks'],  // ओ
+  ['\u0914', 'vkS'],  // औ
+  ['\u0908', 'bZ'],   // ई
+  ['\u090a', 'Å'],    // ऊ  ← real char, not ASCII
+  ['\u090b', 'Ñ'],    // ऋ
+  ['\u0905', 'v'],    // अ
+  ['\u0907', 'b'],    // इ
+  ['\u0909', 'q'],    // उ (standalone)
+  ['\u090f', 'b'],    // ए (approx)
+  ['\u0910', 'S'],    // ऐ (approx)
+  // === Consonants ===
+  ['\u0915', 'd'],    // क
+  ['\u0916', 'D'],    // ख
+  ['\u0917', 'x'],    // ग
+  ['\u0918', 'X'],    // घ
+  ['\u0919', 'Ä'],    // ङ
+  ['\u091a', 'p'],    // च
+  ['\u091b', 'N'],    // छ (P in some maps — N used here)
+  ['\u091c', 't'],    // ज
+  ['\u091d', 'T'],    // झ
+  ['\u091e', '¥'],    // ञ
+  ['\u091f', ','],    // ट
+  ['\u0920', '.'],    // ठ
+  ['\u0921', 'M+'],   // ड
+  ['\u0922', '>'],    // ढ
+  ['\u0923', 'U'],    // ण
+  ['\u0924', 'r'],    // त
+  ['\u0925', 'F'],    // थ
+  ['\u0926', 'n'],    // द
+  ['\u0927', 'N'],    // ध (N conflict — see note)
+  ['\u0928', 'u'],    // न
+  ['\u092a', 'i'],    // प (conflict with ि — context resolved)
+  ['\u092b', 'Q'],    // फ
+  ['\u092c', 'c'],    // ब
+  ['\u092d', 'H'],    // भ
+  ['\u092e', 'e'],    // म
+  ['\u092f', 'y'],    // य
+  ['\u0930', 'j'],    // र
+  ['\u0932', 'y'],    // ल (same key as य — font differentiates by position)
+  ['\u0935', 'o'],    // व
+  ['\u0936', 'k'],    // श (same as ा matra — context resolved)
+  ['\u0937', ';'],    // ष
+  ['\u0938', 'l'],    // स
+  ['\u0939', 'g'],    // ह
+  // === Matras (vowel signs) ===
+  ['\u093e', 'k'],    // ा
+  ['\u093f', 'f'],    // ि  (comes BEFORE consonant in Krutidev: fi = िक → कि)
+  ['\u0940', 'h'],    // ी
+  ['\u0941', 'q'],    // ु
+  ['\u0942', 'w'],    // ू
+  ['\u0943', '`'],    // ृ
+  ['\u0947', 's'],    // े
+  ['\u0948', 'S'],    // ै
+  ['\u094b', 'ks'],   // ो = क + s? No: ks = ो directly
+  ['\u094c', 'kS'],   // ौ
+  // === Special marks ===
+  ['\u0902', 'a'],    // ं anusvara
+  ['\u0901', '^'],    // ँ chandrabindu
+  ['\u0903', 'A'],    // ः visarga
+  ['\u094d', '~'],    // ् halant/virama
+  ['\u093c', 'z'],    // ़ nukta
+  // === Digits ===
+  ['\u0966', '0'],['\u0967', '1'],['\u0968', '2'],['\u0969', '3'],
+  ['\u096a', '4'],['\u096b', '5'],['\u096c', '6'],['\u096d', '7'],
+  ['\u096e', '8'],['\u096f', '9'],
+  // === Punctuation ===
+  ['\u0964', '\\'],   // ।
+  ['\u0965', '\\\\'], // ॥
+];
+
+// Build lookup Map for O(1) single-char lookups
+const _KD_MAP = new Map(UNICODE_TO_KD_MAP);
+
+/**
+ * Detect if a font family is a legacy Krutidev-style font.
+ * These fonts store Devanagari shapes at ASCII codepoints.
+ */
+function isLegacyFont(familyName){
+  if(!familyName) return false;
+  return LEGACY_FONT_PATTERNS.some(re => re.test(familyName));
+}
+
+/**
+ * Convert Unicode Devanagari text to Krutidev ASCII encoding.
+ *
+ * Key rules that differ from naive char-by-char conversion:
+ *  1. ि (U+093F) must come BEFORE its consonant in Krutidev
+ *     e.g. कि → Unicode: क + ि, Krutidev: fd (f before d)
+ *  2. ो (094B) → 'ks' and ौ (094C) → 'kS' are two-char outputs
+ *  3. Virama (094D) + consonant = half-form: handled by '~'
+ *  4. Halant r (094D + 0930) = 'Z' (special ra suffix)
+ *  5. ँ anusvara before matra
+ */
+function unicodeToKrutidev(text){
+  if(!text) return text;
+  let out = '';
+  const chars = [...text]; // proper unicode grapheme splitting
+  let i = 0;
+
+  while(i < chars.length){
+    const ch = chars[i];
+    const cp = ch.codePointAt(0);
+
+    // Pass through ASCII and non-Devanagari unchanged
+    if(cp < 0x0900 || cp > 0x097F){
+      out += ch;
+      i++;
+      continue;
+    }
+
+    // Special rule: ि (093F) must appear BEFORE its base consonant in KD
+    // In Unicode: consonant + ि; In Krutidev: 'f' + consonant-key
+    if(cp === 0x093F){ // ि
+      out += 'f';
+      i++;
+      continue;
+    }
+
+    // Special rule: ो = 'ks', ौ = 'kS'
+    if(cp === 0x094B){ out += 'ks'; i++; continue; }
+    if(cp === 0x094C){ out += 'kS'; i++; continue; }
+
+    // Special rule: virama + र = 'Z' (र् suffix form)
+    if(cp === 0x094D && i+1 < chars.length && chars[i+1].codePointAt(0) === 0x0930){
+      out += 'Z';
+      i += 2;
+      continue;
+    }
+
+    // ् halant — next char is half-consonant; output '~' + consonant
+    if(cp === 0x094D){
+      out += '~';
+      i++;
+      continue;
+    }
+
+    // Standalone vowel आ needs two chars
+    if(cp === 0x0906){ out += 'vk'; i++; continue; }
+    if(cp === 0x0913){ out += 'vks'; i++; continue; }
+    if(cp === 0x0914){ out += 'vkS'; i++; continue; }
+
+    // All other mappings
+    const kd = _KD_MAP.get(ch);
+    if(kd !== undefined){
+      out += kd;
+    } else {
+      out += ch; // unmapped — keep original
+    }
+    i++;
+  }
+  return out;
+}
+
+/**
+ * Get the text to actually SET on a DOM element.
+ * For legacy fonts: convert to Krutidev encoding.
+ * For modern Unicode fonts: return original text.
+ */
+function getDisplayText(text, fontFamily){
+  if(isLegacyFont(fontFamily)){
+    return unicodeToKrutidev(text);
+  }
+  return text;
+}
+
+/**
+ * Mark a font as legacy in its stored object so we don't re-detect every frame.
+ */
+function tagFontAsLegacy(familyName){
+  const cf = customFonts.find(f => f.family === familyName);
+  if(cf) cf.isLegacy = true;
 }
 
 // ── Smart family name auto-detected from filename ─────
@@ -2970,6 +3119,9 @@ function _processFontFiles(files, fromFolder){
 
       registerFontFace(fontObj);
 
+      // Auto-detect and tag legacy/Krutidev fonts
+      if(isLegacyFont(family)) fontObj.isLegacy = true;
+
       // Replace if same internal family already loaded
       const idx = customFonts.findIndex(cf => cf.family === family);
       if(idx >= 0) customFonts[idx] = fontObj; else customFonts.push(fontObj);
@@ -3057,18 +3209,26 @@ function renderSystemFontsList(fonts){
   list.innerHTML='';
   if(!fonts.length){list.innerHTML='<div style="color:#444;font-size:10px;text-align:center;padding:6px;">No match</div>';return;}
   const c=ac();const b=c?c.blocks.find(b=>b.id===selectedId):null;
-  fonts.slice(0,200).forEach(f=>{ // cap at 200 for performance
+  fonts.slice(0,200).forEach(f=>{
+    const active=b&&b.fontFamily===f.family;
+    const legacy=isLegacyFont(f.family);
     const item=document.createElement('div');
-    const isActive=b&&b.fontFamily===f.family;
-    item.className='font-preview-item'+(isActive?' active':'');
-    item.style.cssText='padding:4px 6px;margin-bottom:2px;';
+    item.className='font-preview-item'+(active?' active':'');
+    const activeBadge=active?'<span class="fp-active-badge">✓ active</span>':'';
+    const legacyBadge=legacy?'<span style="font-size:8px;background:#3a2000;color:#C9A84C;border:1px solid #7a5c10;padding:1px 4px;border-radius:8px;flex-shrink:0;">⚠ legacy</span>':'';
+    const devaSample='विवाह पत्रिका — Wedding';
+    const displaySample=legacy?unicodeToKrutidev(devaSample):devaSample;
+    const latinSample=legacy?unicodeToKrutidev('विवाह')+'  Wedding':'Aa Bb Cc · 123 · Bold Italic';
     item.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:10px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px;">${escHtml(f.family)}</span>
+      <div class="fp-name">
+        <span class="fp-name-text" title="${escHtml(f.family)}">${escHtml(f.family)}</span>
+        ${activeBadge}${legacyBadge}
         <span style="font-size:8px;color:#555;">${f.variants.length} style${f.variants.length>1?'s':''}</span>
       </div>
-      <div style="font-family:'${f.family}',serif;font-size:13px;color:#ddd;line-height:1.4;margin-top:1px;">विवाह पत्रिका — Wedding</div>`;
-    item.onclick=()=>applyFontToSelected(f.family);
+      <div class="fp-sample" style="font-family:'${escHtml(f.family)}',serif;">${escHtml(displaySample)}</div>
+      <div class="fp-sample-latin" style="font-family:'${escHtml(f.family)}',serif;">${escHtml(latinSample)}</div>
+      <div class="fp-apply-hint">${active?'✓ Applied':'Click to apply to selected text'}</div>`;
+    item.onclick=()=>applyFontToSelected(f.family,item);
     list.appendChild(item);
   });
   if(fonts.length>200){
@@ -3103,22 +3263,18 @@ async function loadAssetFonts(){
       try{
         const fr=await fetch('./assets/fonts/'+filename);
         if(!fr.ok)continue;
-        const arrayBuf=await fr.arrayBuffer();
-        // Read real internal name from binary
-        const nameTable=readFontNameTable(arrayBuf);
-        const {family,subfamily}=bestFamilyName(nameTable,filename);
-        // Convert to dataURL for @font-face src
-        const blob=new Blob([arrayBuf]);
+        const blob=await fr.blob();
         const url=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(blob);});
         const ext=filename.split('.').pop().toLowerCase();
-        const fontObj={name:filename,family,subfamily,ext,url,sample:'विवाह पत्रिका — '+family,fromFolder:true};
+        const family=familyFromFilename(filename);
+        const fontObj={name:filename,family,ext,url,sample:'विवाह पत्रिका',fromFolder:true};
         registerFontFace(fontObj);
         if(!customFonts.find(cf=>cf.family===family))customFonts.push(fontObj);
         done++;
-      }catch(err){/* skip individual failures */}
+      }catch(err){/* skip */}
     }
     if(done>0){persistFonts();renderFontsTabs();toast('Auto-loaded '+done+' fonts from assets/fonts/');}
-  }catch(e){/* no index.json or not on server — normal */}
+  }catch(e){/* no index.json or not on server — normal, do nothing */}
 }
 
 // ── All available families (props dropdown) ───────────
@@ -3127,516 +3283,130 @@ function getAllFontFamilies(){
 }
 
 const BUILTIN_FONTS=[
-  {family:'Noto Serif Devanagari',sample:'वक्रतुण्ड महाकाय'},
-  {family:'Noto Sans Devanagari',sample:'श्री गणेशाय नमः'},
-  {family:'Tiro Devanagari Hindi',sample:'शुभ विवाह'},
-  {family:'Hind',sample:'आमंत्रण पत्र'},
-  {family:'Baloo 2',sample:'सादर निमंत्रण'},
+  {family:'Noto Serif Devanagari',sample:'वक्रतुण्ड महाकाय — शुभ विवाह'},
+  {family:'Noto Sans Devanagari',sample:'श्री गणेशाय नमः — सादर निमंत्रण'},
+  {family:'Tiro Devanagari Hindi',sample:'शुभ विवाह — विवाह पत्रिका'},
+  {family:'Hind',sample:'आमंत्रण पत्र — Wedding Card'},
+  {family:'Baloo 2',sample:'सादर निमंत्रण — Baloo Style'},
+  {family:'Poppins',sample:'Wedding Invitation — Poppins'},
 ];
 
 // ── Render all font sections in the panel ─────────────
+let _fontSearchTerm='';
 function renderFontsTabs(){
-  const c=ac(); const b=c?c.blocks.find(b=>b.id===selectedId):null;
+  const c=ac();const b=c?c.blocks.find(b=>b.id===selectedId):null;
+  const currentFont=b?b.fontFamily:null;
 
   // Count badge
   const countEl=document.getElementById('customFontCount');
-  if(countEl) countEl.textContent=customFonts.length?`(${customFonts.length} saved)`:'';
+  if(countEl)countEl.textContent=customFonts.length?`(${customFonts.length} saved)`:'';
 
-  // ── Saved fonts (folder + individual upload) ──────────
+  // No-selection notice (shared)
+  const noticeHtml=(!b||(b.type!=='text'&&b.type!=='symbol'))
+    ?`<div class="font-no-sel">⬆ Select a <b style="color:#C9A84C;">Text block</b> on canvas,<br>then click a font below to apply it.</div>`:'';
+
+  // Helper: build a font card element
+  function makeFontCard(f,extra){
+    const active=currentFont===f.family;
+    const legacy = f.isLegacy || isLegacyFont(f.family);
+    const item=document.createElement('div');
+    item.className='font-preview-item'+(active?' active':'');
+    const srcTag=f.fromSystem?'<span style="font-size:8px;color:#5a7a9a;flex-shrink:0;">🖥 system</span>'
+      :f.fromFolder?'<span style="font-size:8px;color:#3a7a3a;flex-shrink:0;">📁 folder</span>'
+      :f.fromBuiltin?'<span style="font-size:8px;color:#5a5a9a;flex-shrink:0;">🔤 built-in</span>'
+      :'<span style="font-size:8px;color:#3a5a9a;flex-shrink:0;">💾 upload</span>';
+    const activeBadge=active?'<span class="fp-active-badge">✓ active</span>':'';
+    const legacyBadge=legacy?'<span style="font-size:8px;background:#3a2000;color:#C9A84C;border:1px solid #7a5c10;padding:1px 4px;border-radius:8px;flex-shrink:0;">⚠ legacy</span>':'';
+    const extraBtns=extra||'';
+    const devaSample = f.sample||'विवाह पत्रिका';
+    // Legacy fonts: convert sample to Krutidev so preview shows actual glyphs
+    const displaySample = legacy ? unicodeToKrutidev(devaSample) : devaSample;
+    const latinSample = legacy ? unicodeToKrutidev('विवाह पत्रिका') : 'Wedding Card · Aa Bb Cc 123';
+    const hint = legacy
+      ? `<div style="font-size:9px;color:#C9A84C;background:#1a1000;border:1px solid #3a2a00;border-radius:3px;padding:3px 5px;margin-top:3px;line-height:1.4;">⚠ Legacy encoding — Hindi text auto-converted when applied</div>`
+      : `<div class="fp-apply-hint">${active?'✓ Applied to selected block':'Click to apply to selected text'}</div>`;
+    item.innerHTML=`
+      <div class="fp-name">
+        <span class="fp-name-text" title="${escHtml(f.family)}">${escHtml(f.family)}</span>
+        ${activeBadge}${legacyBadge}${srcTag}
+      </div>
+      <div class="fp-sample" style="font-family:'${escHtml(f.family)}',serif;">${escHtml(displaySample)}</div>
+      <div class="fp-sample-latin" style="font-family:'${escHtml(f.family)}',serif;">${escHtml(latinSample)}</div>
+      ${hint}
+      ${extraBtns}`;
+    item.onclick=()=>applyFontToSelected(f.family,item);
+    return item;
+  }
+
+  // ── Saved fonts (folder + individual + system) ────────
   const customList=document.getElementById('customFontsList');
   if(customList){
-    customList.innerHTML='';
+    customList.innerHTML=noticeHtml;
     if(!customFonts.length){
-      customList.innerHTML=`<div style="color:#444;font-size:10px;text-align:center;padding:10px;line-height:1.8;">
-        No fonts saved yet.<br>
-        ➊ Select your <b style="color:#C9A84C;">assets/fonts/</b> folder<br>— or —<br>
-        ➋ Upload individual .ttf / .otf files above
-      </div>`;
-    } else {
-      // Sort: folder-loaded first, then uploaded, each group alphabetical
-      const sorted=[...customFonts].sort((a,bx)=>{
-        if(a.fromSystem && !bx.fromSystem) return 1;
-        if(!a.fromSystem && bx.fromSystem) return -1;
-        if(a.fromFolder && !bx.fromFolder) return -1;
-        if(!a.fromFolder && bx.fromFolder) return 1;
+      customList.innerHTML+=`<div style="color:#444;font-size:10px;text-align:center;padding:8px;line-height:1.6;">No fonts saved yet.<br>➊ Select your <b style="color:#C9A84C;">assets/fonts/</b> folder above<br>― or ―<br>➋ Upload individual font files</div>`;
+    }else{
+      const term=_fontSearchTerm.toLowerCase();
+      let sorted=[...customFonts].sort((a,bx)=>{
+        if(a.fromFolder&&!bx.fromFolder)return-1;
+        if(!a.fromFolder&&bx.fromFolder)return 1;
         return a.family.localeCompare(bx.family);
       });
-      sorted.forEach(f=>{
-        const isActive = b && b.fontFamily===f.family;
-        const subfam   = f.subfamily && f.subfamily!=='Regular' ? f.subfamily : '';
-        const tag      = f.fromSystem ? '🖥 system' : f.fromFolder ? '📁 folder' : '💾 upload';
-        const tagColor = f.fromSystem ? '#7a5c10' : f.fromFolder ? '#2a6a2a' : '#2a4a8a';
-
-        const item=document.createElement('div');
-        item.className='font-preview-item'+(isActive?' active':'');
-        item.style.position='relative';
-        item.innerHTML=`
-          <div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">
-            <span style="font-size:10px;color:#bbb;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;max-width:155px;"
-              title="${escHtml(f.family)}">${escHtml(f.family)}</span>
-            ${subfam?`<span style="font-size:8px;background:#2a1a0a;color:#C9A84C;border:1px solid #5a3a10;border-radius:3px;padding:0 4px;flex-shrink:0;">${escHtml(subfam)}</span>`:''}
-            <span style="font-size:8px;color:${tagColor};flex-shrink:0;">${tag}</span>
-          </div>
-          <!-- Live preview rendered in the actual font -->
-          <div style="font-family:'${f.family}',serif;font-size:15px;color:#e8e0d0;line-height:1.45;word-break:break-word;">
-            विवाह पत्रिका
-          </div>
-          <div style="font-family:'${f.family}',sans-serif;font-size:11px;color:#777;line-height:1.3;margin-top:1px;">
-            Abc 123 — ${escHtml(f.name)}
-          </div>
-          <button onclick="event.stopPropagation();removeCustomFont(this.dataset.fam)"
-            data-fam="${f.family}" style="position:absolute;right:4px;top:4px;background:rgba(0,0,0,.5);border:1px solid #333;
-              color:#666;cursor:pointer;font-size:10px;width:18px;height:18px;border-radius:3px;
-              display:flex;align-items:center;justify-content:center;padding:0;"
-            title="Remove ${escHtml(f.family)}">✕</button>`;
-        item.onclick=()=>applyFontToSelected(f.family);
-        customList.appendChild(item);
-      });
+      if(term)sorted=sorted.filter(f=>f.family.toLowerCase().includes(term));
+      if(!sorted.length){
+        customList.innerHTML+=`<div style="color:#444;font-size:10px;text-align:center;padding:8px;">No match for "${escHtml(_fontSearchTerm)}"</div>`;
+      }else{
+        sorted.forEach(f=>{
+          const delBtn=`<button onclick="event.stopPropagation();removeCustomFont('${escHtml(f.family)}')"
+            style="position:absolute;right:5px;top:5px;background:none;border:none;color:#444;cursor:pointer;font-size:11px;" title="Remove font">✕</button>`;
+          const item=makeFontCard(f,delBtn);
+          item.style.position='relative';
+          customList.appendChild(item);
+        });
+      }
     }
   }
 
   // ── Built-in Devanagari fonts ─────────────────────────
   const builtinList=document.getElementById('builtinFontsList');
   if(builtinList){
-    builtinList.innerHTML='';
-    BUILTIN_FONTS.forEach(f=>{
-      const isActive = b && b.fontFamily===f.family;
-      const item=document.createElement('div');
-      item.className='font-preview-item'+(isActive?' active':'');
-      item.innerHTML=`
-        <div class="fp-name" style="display:flex;align-items:center;gap:4px;">
-          <span style="flex:1;">${f.family}</span>
-          <span style="font-size:8px;color:#555;">🌐 web</span>
-        </div>
-        <div style="font-family:'${f.family}',serif;font-size:15px;color:#e8e0d0;line-height:1.45;">${f.sample}</div>
-        <div style="font-family:'${f.family}',serif;font-size:11px;color:#666;margin-top:1px;">Abc 123 — Google Font</div>`;
-      item.onclick=()=>applyFontToSelected(f.family);
-      builtinList.appendChild(item);
-    });
+    builtinList.innerHTML=noticeHtml;
+    const term=_fontSearchTerm.toLowerCase();
+    const filtered=term?BUILTIN_FONTS.filter(f=>f.family.toLowerCase().includes(term)):BUILTIN_FONTS;
+    if(!filtered.length){
+      builtinList.innerHTML+=`<div style="color:#444;font-size:10px;text-align:center;padding:8px;">No match</div>`;
+    }else{
+      filtered.forEach(f=>{
+        const item=makeFontCard({...f,fromBuiltin:true});
+        builtinList.appendChild(item);
+      });
+    }
   }
 }
 
-function applyFontToSelected(family){
+function filterFontsPanel(term){
+  _fontSearchTerm=term;
+  renderFontsTabs();
+}
+
+function applyFontToSelected(family,itemEl){
   const c=ac();if(!c)return;
   const b=c.blocks.find(b=>b.id===selectedId);
   if(!b||(b.type!=='text'&&b.type!=='symbol')){
-    toast('Select a text or symbol block first, then click a font');
+    toast('⚠ Select a text/symbol block first, then click a font');
+    // Switch to props tab to show user where to go
     return;
   }
   b.fontFamily=family;
-  snapshot();
-
-  // Auto-switch input mode based on font type
-  autoDetectLegacyMode(family);
-
-  document.fonts.load(`16px '${family}'`).then(()=>{
-    renderAll();
-    renderFontsTabs();
-    const fp=document.getElementById('fontPreviewEl');
-    if(fp) fp.style.fontFamily=`'${family}',serif`;
-    const sel=document.getElementById('fontFamilySelect');
-    if(sel){const opt=[...sel.options].find(o=>o.value===family);if(opt)opt.selected=true;}
-    // Update textarea font if in legacy mode
-    const ta=document.getElementById('textContentArea');
-    if(ta&&imeMode==='legacy') ta.style.fontFamily=`'${family}',serif`;
-    toast('✓ Font: '+family+(isLegacyFont(family)?' — KrutiDev/Legacy mode auto-enabled':''));
-  }).catch(()=>{
-    renderAll(); renderFontsTabs();
-    toast('Font: '+family);
-  });
+  snapshot();renderAll();renderFontsTabs();
+  // Also update the font dropdown in props panel if visible
+  const sel=document.getElementById('fontFamilySelect');
+  if(sel)sel.value=family;
+  toast('✓ Font applied: '+family);
 }
 
-// ── IME state variables ────────────────────────────────────────────
-let imeMode    = 'normal'; // 'normal' | 'hinglish' | 'legacy'
-let imeBuffer  = '';
-let imeSugIdx  = 0;
-let imeVKBOpen = false;
-
-const LEGACY_FONT_PATTERNS = [
-  /kruti/i, /devlys/i, /dev\s*lys/i, /^raj[\s_]/i, /^raj$/i,
-  /devnagri/i, /devlipi/i, /shivaji/i, /shree/i, /akruti/i,
-  /walkman/i, /chanakya/i, /saraswati/i, /ananda/i,
-];
-function isLegacyFont(family){
-  return LEGACY_FONT_PATTERNS.some(p=>p.test(family));
-}
-
-function setImeMode(mode){
-  imeMode   = mode;
-  imeBuffer = '';
-  hideSuggestions();
-
-  // Immediately update textarea font when switching to/from legacy
-  const ta  = document.getElementById('textContentArea');
-  const c   = ac();
-  const b   = c && c.blocks.find(bl=>bl.id===selectedId);
-  if(ta && b){
-    ta.style.fontFamily = (mode==='legacy')
-      ? `'${b.fontFamily}',serif`
-      : "'Noto Serif Devanagari',serif";
-    // Update the font size too — legacy fonts may need larger size to be readable
-    ta.style.fontSize   = (mode==='legacy') ? `${(b.fontSize||14)*1.1}px` : '';
-  }
-
-  renderPropsPanel(); // re-render so mode buttons + hint text update
-  const msgs = {
-    normal:   'Normal mode — type Unicode or any language directly',
-    hinglish: '✨ Hinglish ON — type "aakash" → get आकाश  |  Space = commit',
-    legacy:   `⌨ KrutiDev/Legacy mode — textarea now shows ${b?.fontFamily||'selected font'}. Type using Hindi keyboard.`,
-  };
-  toast(msgs[mode]||mode);
-}
-
-// Auto-detect legacy mode when font changes
-function autoDetectLegacyMode(fontFamily){
-  if(isLegacyFont(fontFamily) && imeMode !== 'legacy'){
-    imeMode = 'legacy';
-    renderPropsPanel();
-    toast('⌨ Legacy font detected — switched to KrutiDev mode');
-  } else if(!isLegacyFont(fontFamily) && imeMode === 'legacy'){
-    imeMode = 'normal';
-    renderPropsPanel();
-  }
-}
-
-// ── HINGLISH ENGINE — Sanscript ITRANS → Devanagari ──────────────
-// Sanscript ITRANS rules (standard, matches Google/Microsoft phonetic):
-//   a→अ  aa/A→आ  i→इ  ii/I→ई  u→उ  uu/U→ऊ
-//   ka→क  kha→ख  ga→ग  gha→घ
-//   cha→च  Cha/chha→छ  ja→ज  jha→झ
-//   Ta→ट  Tha→ठ  Da→ड  Dha→ढ
-//   ta→त  tha→थ  da→द  dha→ध  na→न
-//   pa→प  pha→फ  ba→ब  bha→भ  ma→म
-//   ya→य  ra→र  la→ल  va/wa→व  sha→श  sha/Sa→ष  sa→स  ha→ह
-//   ksha→क्ष  GYa/j~na→ज्ञ  shra→श्र  tra→त्र
-//   M→ं  H→ः  .a→ा
-
-function itransToDevanagari(roman){
-  if(!roman) return '';
-  try{
-    // Sanscript with syncope=true gives Hindi-style (no trailing 'a' schwa)
-    if(typeof Sanscript !== 'undefined'){
-      return Sanscript.t(roman, 'itrans', 'devanagari', {syncope: true});
-    }
-  } catch(e){}
-  // Fallback if Sanscript didn't load — use our own engine
-  return localItrans(roman);
-}
-
-// Local ITRANS fallback (runs if CDN fails to load)
-const ITRANS_MAP = [
-  // Must be ordered longest-first
-  ['aa','आ'],['ii','ई'],['uu','ऊ'],['AI','ऐ'],['AU','औ'],
-  ['kh','ख'],['gh','घ'],['Ch','छ'],['chh','छ'],['ch','च'],
-  ['jh','झ'],['Th','ठ'],['Dh','ढ'],['th','थ'],['dh','ध'],
-  ['ph','फ'],['bh','भ'],['sh','श'],['Sh','ष'],
-  ['ksh','क्ष'],['kSh','क्ष'],['GY','ज्ञ'],['j~n','ज्ञ'],
-  ['shr','श्र'],['tr','त्र'],['dr','द्र'],['pr','प्र'],
-  ['A','आ'],['I','ई'],['U','ऊ'],['E','ए'],['O','ओ'],
-  ['ai','ऐ'],['au','औ'],['a','अ'],['i','इ'],['u','उ'],
-  ['e','ए'],['o','ओ'],['M','ं'],['H','ः'],['N','ँ'],
-  ['k','क'],['K','ख'],['g','ग'],['G','घ'],
-  ['c','च'],['j','ज'],['J','झ'],
-  ['T','ट'],['t','त'],['D','ड'],['d','द'],
-  ['n','न'],['p','प'],['P','फ'],['b','ब'],['B','भ'],
-  ['m','म'],['y','य'],['r','र'],['l','ल'],['v','व'],
-  ['w','व'],['s','स'],['S','ष'],['h','ह'],
-  ['f','फ'],['z','ज़'],['q','क'],['x','क्ष'],
-  ['|','।'],['||','॥'],['OM','ॐ'],
-];
-const DEV_CONSONANTS = new Set('कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहक्षज्ञश्र'.split(''));
-const HALANT = '्';
-const MATRA = {'अ':'','आ':'ा','इ':'ि','ई':'ी','उ':'ु','ऊ':'ू','ए':'े','ऐ':'ै','ओ':'ो','औ':'ौ','ऋ':'ृ'};
-
-function localItrans(roman){
-  let out='', i=0;
-  while(i<roman.length){
-    let matched=false;
-    for(let len=Math.min(4,roman.length-i);len>=1;len--){
-      const chunk=roman.slice(i,i+len);
-      const entry=ITRANS_MAP.find(([r])=>r===chunk);
-      if(entry){
-        const d=entry[1];
-        const last=[...out].pop()||'';
-        if(MATRA[d]!==undefined && DEV_CONSONANTS.has(last)){
-          out+=MATRA[d]||'';
-        } else if(DEV_CONSONANTS.has(d) && DEV_CONSONANTS.has(last)){
-          out+=HALANT+d;
-        } else {
-          out+=d;
-        }
-        i+=len; matched=true; break;
-      }
-    }
-    if(!matched){ out+=roman[i]; i++; }
-  }
-  return out;
-}
-
-// ── SUGGESTION GENERATION (Hinglish mode) ────────────────────────
-// Common Hindi word dictionary for smarter suggestions
-const HINDI_DICT = {
-  'aakash':['आकाश'],'akaash':['आकाश'],'akash':['आकाश'],
-  'vivah':['विवाह'],'vivaah':['विवाह'],
-  'shubh':['शुभ'],'subh':['शुभ'],
-  'shubham':['शुभम'],'mangal':['मंगल'],
-  'jai':['जय'],'jay':['जय'],
-  'ram':['राम'],'shri':['श्री'],'sri':['श्री'],
-  'ganesh':['गणेश'],'ganesha':['गणेश'],
-  'laxmi':['लक्ष्मी'],'lakshmi':['लक्ष्मी'],
-  'baraat':['बारात'],'barat':['बारात'],
-  'dulha':['दूल्हा'],'dulhan':['दुल्हन'],
-  'shadi':['शादी'],'shaadi':['शादी'],
-  'nimantran':['निमंत्रण'],'amantran':['आमंत्रण'],
-  'swagatam':['स्वागतम'],'swagat':['स्वागत'],
-  'parinay':['परिणय'],'parivar':['परिवार'],
-  'sangeet':['संगीत'],'mehndi':['मेहंदी'],
-  'haldi':['हल्दी'],'tilak':['तिलक'],
-  'ashirvad':['आशीर्वाद'],'aashirvad':['आशीर्वाद'],
-  'anand':['आनंद'],'prasad':['प्रसाद'],
-  'mata':['माता'],'pita':['पिता'],
-  'maa':['माँ'],'papa':['पापा'],
-  'bhai':['भाई'],'behan':['बहन'],
-  'beti':['बेटी'],'beta':['बेटा'],
-  'nana':['नाना'],'nani':['नानी'],
-  'dada':['दादा'],'dadi':['दादी'],
-  'chacha':['चाचा'],'chachi':['चाची'],
-  'mama':['मामा'],'mami':['मामी'],
-  'naam':['नाम'],'ghar':['घर'],
-  'shahar':['शहर'],'gaon':['गाँव'],
-  'bharat':['भारत'],'india':['भारत'],
-  'hindi':['हिंदी'],'hindi':['हिंदी'],
-  'pyar':['प्यार'],'prem':['प्रेम'],
-  'dost':['दोस्त'],'yaar':['यार'],
-  'khush':['खुश'],'sukh':['सुख'],
-  'sunder':['सुंदर'],'sundar':['सुंदर'],
-  'phool':['फूल'],'gulab':['गुलाब'],
-  'aaj':['आज'],'kal':['कल'],
-  'subah':['सुबह'],'shaam':['शाम'],
-  'raat':['रात'],'din':['दिन'],
-  'saal':['साल'],'mahina':['महीना'],
-  'paisa':['पैसा'],'dhan':['धन'],
-  'kaam':['काम'],'seva':['सेवा'],
-  'desh':['देश'],'dharm':['धर्म'],
-};
-
-function generateSuggestions(roman){
-  if(!roman||roman.length<2) return [];
-  const lower=roman.toLowerCase();
-  const sugs=new Map(); // use Map to deduplicate while preserving order
-
-  // 1. Dictionary — exact and prefix match
-  if(HINDI_DICT[lower]) HINDI_DICT[lower].forEach(w=>sugs.set(w,1));
-  for(const key of Object.keys(HINDI_DICT)){
-    if(key.startsWith(lower)&&key!==lower) HINDI_DICT[key].forEach(w=>sugs.set(w,2));
-  }
-
-  // 2. Sanscript ITRANS transliteration (primary engine)
-  const direct = itransToDevanagari(roman);
-  if(direct&&direct!==roman) sugs.set(direct, 3);
-
-  // 3. Common alternate spellings
-  const alts=[
-    roman.replace(/aa/g,'a'), roman.replace(/ee/g,'i'),
-    roman.replace(/oo/g,'u'), roman+'a',
-  ].filter(a=>a!==roman&&a.length>=2);
-  alts.forEach(a=>{
-    const r=itransToDevanagari(a);
-    if(r&&r!==roman&&r!==direct) sugs.set(r,4);
-  });
-
-  return [...sugs.keys()].filter(Boolean).slice(0,8);
-}
-
-// ── TEXTAREA EVENT HANDLERS ───────────────────────────────────────
-function onTextAreaInput(e){
-  const ta=e.target;
-  if(imeMode==='normal'||imeMode==='legacy'){
-    // In legacy mode: textarea already has block font applied via style
-    // The user types using their OS Hindi keyboard (KrutiDev layout)
-    // The characters they type are stored as-is — the font renders them as Devanagari
-    updateProp('text', ta.value);
-  }
-  // hinglish mode: handled by keydown/keyup
-}
-
-function onTextAreaKeydown(e){
-  if(imeMode!=='hinglish') return;
-
-  const sugsEl=document.getElementById('imeSuggestions');
-  const isOpen=sugsEl&&sugsEl.classList.contains('open');
-  const items=getSuggestionItems();
-
-  if(isOpen&&items.length){
-    if(e.key==='ArrowRight'||e.key==='Tab'){
-      e.preventDefault(); imeSugIdx=(imeSugIdx+1)%items.length; highlightSuggestion(imeSugIdx); return;
-    }
-    if(e.key==='ArrowLeft'){
-      e.preventDefault(); imeSugIdx=(imeSugIdx-1+items.length)%items.length; highlightSuggestion(imeSugIdx); return;
-    }
-    if(e.key>='1'&&e.key<='9'){
-      const idx=parseInt(e.key)-1;
-      if(idx<items.length){e.preventDefault();commitSuggestion(items[idx].dataset.val);return;}
-    }
-    if(e.key==='Enter'){
-      e.preventDefault();
-      const chosen=items[imeSugIdx]?.dataset.val;
-      if(chosen){commitSuggestion(chosen);return;}
-    }
-  }
-
-  if(e.key===' '){
-    if(imeBuffer){
-      e.preventDefault();
-      const sugs=generateSuggestions(imeBuffer);
-      commitSuggestion(sugs[imeSugIdx]||sugs[0]||itransToDevanagari(imeBuffer), true);
-      return;
-    }
-    return; // let space through
-  }
-
-  if(e.key==='Backspace'){
-    if(imeBuffer.length>0){
-      e.preventDefault();
-      imeBuffer=imeBuffer.slice(0,-1);
-      if(imeBuffer) showSuggestions(generateSuggestions(imeBuffer));
-      else hideSuggestions();
-      return;
-    }
-    hideSuggestions(); return;
-  }
-
-  if(e.key==='Escape'){ if(imeBuffer){e.preventDefault();imeBuffer='';hideSuggestions();} return; }
-}
-
-function onTextAreaKeyup(e){
-  if(imeMode!=='hinglish') return;
-  const key=e.key;
-  if(key.length!==1||e.ctrlKey||e.altKey||e.metaKey) return;
-  if(key===' ') return;
-  if(key>='1'&&key<='9'&&document.getElementById('imeSuggestions')?.classList.contains('open')) return;
-
-  imeBuffer+=key;
-
-  // Remove the raw character from textarea
-  const ta=document.getElementById('textContentArea'); if(!ta) return;
-  const pos=ta.selectionStart;
-  ta.value=ta.value.slice(0,pos-1)+ta.value.slice(pos);
-  ta.selectionStart=ta.selectionEnd=pos-1;
-
-  const sugs=generateSuggestions(imeBuffer);
-  showSuggestions(sugs);
-  updateProp('text',ta.value);
-}
-
-// ── SUGGESTION DISPLAY ────────────────────────────────────────────
-function showSuggestions(sugs){
-  const container=document.getElementById('imeSuggestions'); if(!container) return;
-  container.innerHTML=''; imeSugIdx=0;
-  if(!sugs.length){container.classList.remove('open');return;}
-
-  // Show buffer preview as first non-clickable label
-  const label=document.createElement('div');
-  label.style.cssText='font-size:9px;color:#555;padding:1px 4px;border-right:1px solid #333;margin-right:3px;white-space:nowrap;';
-  label.textContent=imeBuffer+'→';
-  container.appendChild(label);
-
-  sugs.forEach((sug,idx)=>{
-    const btn=document.createElement('div');
-    btn.className='ime-sug'+(idx===0?' sel':'');
-    btn.dataset.val=sug;
-    btn.innerHTML=`<span style="font-size:9px;color:#555;margin-right:2px;">${idx+1}</span>${sug}`;
-    btn.onclick=()=>commitSuggestion(sug);
-    container.appendChild(btn);
-  });
-  container.classList.add('open');
-}
-function hideSuggestions(){
-  const el=document.getElementById('imeSuggestions'); if(!el) return;
-  el.classList.remove('open'); el.innerHTML='';
-}
-function getSuggestionItems(){
-  return [...(document.getElementById('imeSuggestions')?.querySelectorAll('.ime-sug')||[])];
-}
-function highlightSuggestion(idx){
-  getSuggestionItems().forEach((el,i)=>el.classList.toggle('sel',i===idx));
-}
-
-function commitSuggestion(devanagari, addSpace){
-  const ta=document.getElementById('textContentArea'); if(!ta) return;
-  const pos=ta.selectionStart;
-  const ins=devanagari+(addSpace?' ':'');
-  ta.value=ta.value.slice(0,pos)+ins+ta.value.slice(pos);
-  ta.selectionStart=ta.selectionEnd=pos+ins.length;
-  imeBuffer=''; imeSugIdx=0;
-  hideSuggestions();
-  updateProp('text',ta.value);
-  ta.focus();
-}
-
-// ── VIRTUAL KEYBOARD ─────────────────────────────────────────────
-function toggleVKeyboard(){
-  imeVKBOpen=!imeVKBOpen;
-  const kbd=document.getElementById('imeVKeyboard'); if(!kbd) return;
-  kbd.classList.toggle('open',imeVKBOpen);
-  if(imeVKBOpen) buildVKeyboard();
-}
-
-const VKBD_ROWS=[
-  // Row 1 — Independent vowels
-  [{d:'अ',h:'a'},{d:'आ',h:'aa'},{d:'इ',h:'i'},{d:'ई',h:'ii'},{d:'उ',h:'u'},{d:'ऊ',h:'uu'},
-   {d:'ए',h:'e'},{d:'ऐ',h:'ai'},{d:'ओ',h:'o'},{d:'औ',h:'au'},{d:'ऋ',h:'RRi'},{d:'ॐ',h:'OM'}],
-  // Row 2 — Matras
-  [{d:'ा',h:'aa'},{d:'ि',h:'i'},{d:'ी',h:'ii'},{d:'ु',h:'u'},{d:'ू',h:'uu'},
-   {d:'े',h:'e'},{d:'ै',h:'ai'},{d:'ो',h:'o'},{d:'ौ',h:'au'},{d:'ृ',h:'RRi'},{d:'ं',h:'M'},{d:'ः',h:'H'},{d:'ँ',h:'M'},{d:'्',h:''}],
-  // Row 3 — ka-varga
-  [{d:'क',h:'ka'},{d:'ख',h:'kha'},{d:'ग',h:'ga'},{d:'घ',h:'gha'},{d:'ङ',h:'~Na'},
-   {d:'च',h:'cha'},{d:'छ',h:'Cha'},{d:'ज',h:'ja'},{d:'झ',h:'jha'},{d:'ञ',h:'~na'}],
-  // Row 4 — ta-varga (retroflex + dental)
-  [{d:'ट',h:'Ta'},{d:'ठ',h:'Tha'},{d:'ड',h:'Da'},{d:'ढ',h:'Dha'},{d:'ण',h:'Na'},
-   {d:'त',h:'ta'},{d:'थ',h:'tha'},{d:'द',h:'da'},{d:'ध',h:'dha'},{d:'न',h:'na'}],
-  // Row 5 — pa-varga + ya-ha
-  [{d:'प',h:'pa'},{d:'फ',h:'pha'},{d:'ब',h:'ba'},{d:'भ',h:'bha'},{d:'म',h:'ma'},
-   {d:'य',h:'ya'},{d:'र',h:'ra'},{d:'ल',h:'la'},{d:'व',h:'va'},{d:'ह',h:'ha'}],
-  // Row 6 — sibilants + conjuncts + nukta
-  [{d:'श',h:'sha'},{d:'ष',h:'Sha'},{d:'स',h:'sa'},
-   {d:'क्ष',h:'ksha'},{d:'ज्ञ',h:'j~na'},{d:'त्र',h:'tra'},{d:'श्र',h:'shra'},
-   {d:'ड़',h:'Ra'},{d:'ढ़',h:'RRha'},{d:'ज़',h:'za'},{d:'फ़',h:'fa'}],
-  // Row 7 — Devanagari numerals + punctuation
-  [{d:'०',h:''},{d:'१',h:''},{d:'२',h:''},{d:'३',h:''},{d:'४',h:''},
-   {d:'५',h:''},{d:'६',h:''},{d:'७',h:''},{d:'८',h:''},{d:'९',h:''},
-   {d:'।',h:'|'},{d:'॥',h:'||'}],
-];
-
-function buildVKeyboard(){
-  const kbd=document.getElementById('imeVKeyboard'); if(!kbd) return;
-  kbd.innerHTML=`<div style="font-size:9px;color:#555;margin-bottom:4px;text-align:center;">
-    Click to insert character &nbsp;|&nbsp; ITRANS hint shown on hover
-  </div>`;
-  VKBD_ROWS.forEach(row=>{
-    const rowEl=document.createElement('div');
-    rowEl.className='ime-kbd-row';
-    row.forEach(key=>{
-      const btn=document.createElement('div');
-      btn.className='vkey';
-      btn.textContent=key.d;
-      btn.title=key.h?`ITRANS: ${key.h}`:key.d;
-      btn.onclick=()=>insertAtCursor(key.d);
-      rowEl.appendChild(btn);
-    });
-    kbd.appendChild(rowEl);
-  });
-}
-
-function insertAtCursor(char){
-  const ta=document.getElementById('textContentArea'); if(!ta) return;
-  const s=ta.selectionStart,en=ta.selectionEnd;
-  ta.value=ta.value.slice(0,s)+char+ta.value.slice(en);
-  ta.selectionStart=ta.selectionEnd=s+char.length;
-  updateProp('text',ta.value);
-  ta.focus();
-}
-
+// ══════════════════════════════════════════════════════
+//  SYMBOL INSERT
+// ══════════════════════════════════════════════════════
 function insertSymbol(sym){
   const c=ac();if(!c)return;
   const b=c.blocks.find(b=>b.id===selectedId);
@@ -3652,7 +3422,7 @@ function switchTab(name,el){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
   const tab=document.getElementById('tab-'+name);if(tab)tab.classList.add('active');
-  if(name==='fonts')renderFontsTabs();
+  if(name==='fonts'){renderFontsTabs();}
   if(name==='graphics'){glibBuildCatTabs();renderGraphicsLib();}
   if(name==='palette'){renderPaletteSwatches();buildColorLayerList();}
   if(name==='canvasbg'){const c=ac();if(c&&c.bgSrc){const p=document.getElementById('bgPreviewImg');p.src=c.bgSrc;p.style.display='block';}if(c)updateFoldBtnStates(c);}
@@ -4008,7 +3778,7 @@ function buildShapeDropdown(){
     const imgs=files.filter(f=>f.type.startsWith('image/'));
     if(imgs.length)loadImages({files:imgs});
   });
-  toast('🕉️ Card Layout Studio v4 — Screen Print Pro — ready!');
+  toast('Wedding Card Studio — Ready to create your card! ');
 })();
 </script>
 </body>

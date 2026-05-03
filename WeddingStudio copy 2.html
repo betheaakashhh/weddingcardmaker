@@ -8,9 +8,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<!-- Sanscript.js — proper ITRANS→Devanagari transliteration engine -->
-<script src="https://cdn.jsdelivr.net/npm/@indic-transliteration/sanscript@3.1.1/sanscript.min.js"
-  onerror="console.warn('Sanscript CDN failed — using built-in ITRANS fallback engine')"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
@@ -2009,52 +2006,27 @@ function renderPropsPanel(){
 
       <!-- Text Content -->
       <div class="prop-group"><span class="prop-label">${b.type==='symbol'?'Symbol Character':'Text Content'}</span>
-
-        <!-- ── INPUT MODE BAR ── -->
+        <!-- ── HINDI IME BAR ── -->
         <div class="ime-bar">
-          <div class="ime-mode-btns" style="flex:1;">
-            <div class="ime-mode-btn ${imeMode==='normal'?'active':''}"   onclick="setImeMode('normal')"   title="Type normally — Unicode Devanagari or any language">EN</div>
-            <div class="ime-mode-btn ${imeMode==='hinglish'?'active':''}" onclick="setImeMode('hinglish')" title="Type in English, get Hindi — aakash→आकाश">हिं Hinglish</div>
-            <div class="ime-mode-btn ${imeMode==='legacy'?'active':''}"   onclick="setImeMode('legacy')"   title="KrutiDev/Devlys/RAJ font mode — shows Devanagari in textarea">KD Legacy</div>
+          <label class="ime-toggle">
+            <input type="checkbox" id="imeToggle" ${typeof imeActive!=='undefined'&&imeActive?'checked':''} onchange="toggleIME(this.checked)">
+            <span><b>हि</b> Hindi IME</span>
+          </label>
+          <div class="ime-mode-btns">
+            <div class="ime-mode-btn ${imeMode==='phonetic'?'active':''}" onclick="setImeMode('phonetic')">Phonetic</div>
+            <div class="ime-mode-btn ${imeMode==='inscript'?'active':''}" onclick="setImeMode('inscript')">InScript</div>
           </div>
-          <button onclick="toggleVKeyboard()" style="background:none;border:1px solid #333;border-radius:3px;color:#555;padding:1px 6px;cursor:pointer;font-size:10px;white-space:nowrap;" title="Virtual Devanagari Keyboard">⌨ Keys</button>
+          <span id="imePreview" class="ime-input-preview" style="display:none;"></span>
+          <button onclick="toggleVKeyboard()" style="margin-left:auto;background:none;border:1px solid #333;border-radius:3px;color:#555;padding:1px 5px;cursor:pointer;font-size:9px;" title="Virtual Keyboard">⌨</button>
         </div>
-
-        <!-- Mode description -->
-        <div id="imeModeDesc" style="font-size:9px;color:#555;margin-bottom:4px;padding:0 2px;">
-          ${imeMode==='normal'   ? 'Normal mode — type Unicode Hindi (अ आ इ) or English directly' :
-            imeMode==='hinglish' ? '✨ Hinglish — type <b style="color:#C9A84C">aakash</b> → get <b style="color:#C9A84C">आकाश</b>. Space commits word.' :
-            'KrutiDev/Legacy mode — type using Hindi keyboard layout, textarea shows Devanagari'}
-        </div>
-
-        <!-- Hinglish suggestions popup -->
         <div class="ime-suggestions" id="imeSuggestions"></div>
-
-        <!-- Virtual Keyboard -->
         <div class="ime-kbd" id="imeVKeyboard"></div>
-
-        <!-- THE TEXTAREA — font matches selected block font in legacy mode -->
         <textarea class="prop-textarea" id="textContentArea"
           oninput="onTextAreaInput(event)"
           onkeydown="onTextAreaKeydown(event)"
           onkeyup="onTextAreaKeyup(event)"
-          style="font-family:${imeMode==='legacy'?`'${b.fontFamily}',serif`:"'Noto Serif Devanagari',serif"};min-height:75px;"
+          style="font-family:'Noto Serif Devanagari',serif;"
         >${escHtml(b.text)}</textarea>
-
-        <!-- Legacy mode info / Hinglish hint -->
-        ${imeMode==='legacy' ? `
-        <div style="background:#0e1a0e;border:1px solid #2a4a2a;border-radius:4px;padding:5px 7px;margin-top:4px;font-size:9px;color:#3a8a3a;line-height:1.7;">
-          ⌨ <b>KrutiDev / Legacy font mode</b><br>
-          The textarea shows your text <b>rendered in <span style="font-family:'${b.fontFamily}',serif;font-size:12px;color:#C9A84C;">${b.fontFamily}</span></b> font.<br>
-          Type using the Hindi keyboard layout (Remington/Typewriter).<br>
-          Keys like <code style="color:#C9A84C;">v</code>→<span style="font-family:'${b.fontFamily}',serif;">v</span>=आ, <code style="color:#C9A84C;">d</code>→<span style="font-family:'${b.fontFamily}',serif;">d</span>=क etc.<br>
-          Use the <b>⌨ Keys</b> button above for a visual layout reference.
-        </div>` : imeMode==='hinglish' ? `
-        <div style="background:#1a1a0e;border:1px solid #4a4a2a;border-radius:4px;padding:5px 7px;margin-top:4px;font-size:9px;color:#8a8a3a;line-height:1.7;">
-          Type Roman: <b style="color:#C9A84C;">vivah</b>→विवाह  <b style="color:#C9A84C;">aakash</b>→आकाश  <b style="color:#C9A84C;">shubh</b>→शुभ<br>
-          <b>Space</b> = commit best match &nbsp;|&nbsp; <b>Tab/→</b> = next suggestion &nbsp;|&nbsp; <b>1–9</b> = pick by number<br>
-          <b>Esc</b> = cancel buffer &nbsp;|&nbsp; <b>Backspace</b> = undo last letter
-        </div>` : ''}
       </div>
 
       <!-- ── FONT FAMILY ── -->
@@ -2063,7 +2035,7 @@ function renderPropsPanel(){
         <!-- Quick search filter -->
         <input class="prop-input" style="width:100%;margin-bottom:4px;" placeholder="🔍 Type to filter fonts…" id="fontFamilySearch" oninput="filterPropsFont(this.value,'fontFamilySelect')" value="">
         <select class="prop-input" style="width:100%;font-size:11px;height:28px;" id="fontFamilySelect"
-          onchange="updatePropAndRefresh('fontFamily',this.value);autoDetectLegacyMode(this.value);document.getElementById('fontPreviewEl').style.fontFamily=this.value+',serif'">
+          onchange="updatePropAndRefresh('fontFamily',this.value);document.getElementById('fontPreviewEl').style.fontFamily=this.value+',serif'">
           ${allFonts.map(f=>`<option value="${f}" ${b.fontFamily===f?'selected':''}>${f}</option>`).join('')}
         </select>
         <!-- Live font preview -->
@@ -3184,8 +3156,8 @@ function renderFontsTabs(){
           <div style="font-family:'${f.family}',sans-serif;font-size:11px;color:#777;line-height:1.3;margin-top:1px;">
             Abc 123 — ${escHtml(f.name)}
           </div>
-          <button onclick="event.stopPropagation();removeCustomFont(this.dataset.fam)"
-            data-fam="${f.family}" style="position:absolute;right:4px;top:4px;background:rgba(0,0,0,.5);border:1px solid #333;
+          <button onclick="event.stopPropagation();removeCustomFont('${f.family.replace(/'/g,"\\'")}')"
+            style="position:absolute;right:4px;top:4px;background:rgba(0,0,0,.5);border:1px solid #333;
               color:#666;cursor:pointer;font-size:10px;width:18px;height:18px;border-radius:3px;
               display:flex;align-items:center;justify-content:center;padding:0;"
             title="Remove ${escHtml(f.family)}">✕</button>`;
@@ -3226,417 +3198,552 @@ function applyFontToSelected(family){
   b.fontFamily=family;
   snapshot();
 
-  // Auto-switch input mode based on font type
-  autoDetectLegacyMode(family);
-
+  // Force browser to load and apply the font before re-rendering
+  // (fonts loaded via @font-face with data: URL can have a brief delay)
   document.fonts.load(`16px '${family}'`).then(()=>{
     renderAll();
     renderFontsTabs();
+    // Update live preview box in props panel
     const fp=document.getElementById('fontPreviewEl');
     if(fp) fp.style.fontFamily=`'${family}',serif`;
+    // Update dropdown selection
     const sel=document.getElementById('fontFamilySelect');
     if(sel){const opt=[...sel.options].find(o=>o.value===family);if(opt)opt.selected=true;}
-    // Update textarea font if in legacy mode
-    const ta=document.getElementById('textContentArea');
-    if(ta&&imeMode==='legacy') ta.style.fontFamily=`'${family}',serif`;
-    toast('✓ Font: '+family+(isLegacyFont(family)?' — KrutiDev/Legacy mode auto-enabled':''));
+    toast('✓ Font applied: '+family);
   }).catch(()=>{
+    // Font.load() failed but try rendering anyway
     renderAll(); renderFontsTabs();
-    toast('Font: '+family);
+    toast('Font: '+family+' (may take a moment to render)');
   });
 }
 
-// ── IME state variables ────────────────────────────────────────────
-let imeMode    = 'normal'; // 'normal' | 'hinglish' | 'legacy'
-let imeBuffer  = '';
-let imeSugIdx  = 0;
+// ══════════════════════════════════════════════════════
+//  HINDI IME ENGINE
+//  Based on Microsoft Indic Language Input Tool phonetic scheme
+//  + Google Input Tools rules + common Hindi typing conventions
+//
+//  How it works (exactly like Microsoft Indic Tool):
+//  1. User types Roman letters in the textarea
+//  2. IME intercepts keystrokes, builds a "pending" syllable buffer
+//  3. After each keystroke, generates Devanagari candidates
+//  4. Shows suggestion popup — user picks with Tab/number key or
+//     just keeps typing (auto-commits best match on space/Enter)
+//  5. Space bar commits current word and inserts a space
+// ══════════════════════════════════════════════════════
+
+let imeActive = false;
+let imeMode   = 'phonetic'; // 'phonetic' | 'inscript'
+let imePending = '';         // current un-committed Roman syllable buffer
+let imeSugIdx  = 0;          // highlighted suggestion index
 let imeVKBOpen = false;
 
-const LEGACY_FONT_PATTERNS = [
-  /kruti/i, /devlys/i, /dev\s*lys/i, /^raj[\s_]/i, /^raj$/i,
-  /devnagri/i, /devlipi/i, /shivaji/i, /shree/i, /akruti/i,
-  /walkman/i, /chanakya/i, /saraswati/i, /ananda/i,
-];
-function isLegacyFont(family){
-  return LEGACY_FONT_PATTERNS.some(p=>p.test(family));
-}
-
-function setImeMode(mode){
-  imeMode   = mode;
-  imeBuffer = '';
-  hideSuggestions();
-
-  // Immediately update textarea font when switching to/from legacy
-  const ta  = document.getElementById('textContentArea');
-  const c   = ac();
-  const b   = c && c.blocks.find(bl=>bl.id===selectedId);
-  if(ta && b){
-    ta.style.fontFamily = (mode==='legacy')
-      ? `'${b.fontFamily}',serif`
-      : "'Noto Serif Devanagari',serif";
-    // Update the font size too — legacy fonts may need larger size to be readable
-    ta.style.fontSize   = (mode==='legacy') ? `${(b.fontSize||14)*1.1}px` : '';
-  }
-
-  renderPropsPanel(); // re-render so mode buttons + hint text update
-  const msgs = {
-    normal:   'Normal mode — type Unicode or any language directly',
-    hinglish: '✨ Hinglish ON — type "aakash" → get आकाश  |  Space = commit',
-    legacy:   `⌨ KrutiDev/Legacy mode — textarea now shows ${b?.fontFamily||'selected font'}. Type using Hindi keyboard.`,
-  };
-  toast(msgs[mode]||mode);
-}
-
-// Auto-detect legacy mode when font changes
-function autoDetectLegacyMode(fontFamily){
-  if(isLegacyFont(fontFamily) && imeMode !== 'legacy'){
-    imeMode = 'legacy';
-    renderPropsPanel();
-    toast('⌨ Legacy font detected — switched to KrutiDev mode');
-  } else if(!isLegacyFont(fontFamily) && imeMode === 'legacy'){
-    imeMode = 'normal';
-    renderPropsPanel();
-  }
-}
-
-// ── HINGLISH ENGINE — Sanscript ITRANS → Devanagari ──────────────
-// Sanscript ITRANS rules (standard, matches Google/Microsoft phonetic):
-//   a→अ  aa/A→आ  i→इ  ii/I→ई  u→उ  uu/U→ऊ
-//   ka→क  kha→ख  ga→ग  gha→घ
-//   cha→च  Cha/chha→छ  ja→ज  jha→झ
-//   Ta→ट  Tha→ठ  Da→ड  Dha→ढ
-//   ta→त  tha→थ  da→द  dha→ध  na→न
-//   pa→प  pha→फ  ba→ब  bha→भ  ma→म
-//   ya→य  ra→र  la→ल  va/wa→व  sha→श  sha/Sa→ष  sa→स  ha→ह
-//   ksha→क्ष  GYa/j~na→ज्ञ  shra→श्र  tra→त्र
-//   M→ं  H→ः  .a→ा
-
-function itransToDevanagari(roman){
-  if(!roman) return '';
-  try{
-    // Sanscript with syncope=true gives Hindi-style (no trailing 'a' schwa)
-    if(typeof Sanscript !== 'undefined'){
-      return Sanscript.t(roman, 'itrans', 'devanagari', {syncope: true});
-    }
-  } catch(e){}
-  // Fallback if Sanscript didn't load — use our own engine
-  return localItrans(roman);
-}
-
-// Local ITRANS fallback (runs if CDN fails to load)
-const ITRANS_MAP = [
-  // Must be ordered longest-first
-  ['aa','आ'],['ii','ई'],['uu','ऊ'],['AI','ऐ'],['AU','औ'],
-  ['kh','ख'],['gh','घ'],['Ch','छ'],['chh','छ'],['ch','च'],
-  ['jh','झ'],['Th','ठ'],['Dh','ढ'],['th','थ'],['dh','ध'],
-  ['ph','फ'],['bh','भ'],['sh','श'],['Sh','ष'],
-  ['ksh','क्ष'],['kSh','क्ष'],['GY','ज्ञ'],['j~n','ज्ञ'],
-  ['shr','श्र'],['tr','त्र'],['dr','द्र'],['pr','प्र'],
+// ── PHONETIC MAP — comprehensive, ordered longest-match first ────
+// Format: [roman, devanagari]
+// Priority: longer sequences first (e.g. "ksh" before "ks" before "k")
+const PHONETIC_MAP = [
+  // ── Vowels (independent) ─────────────────────────────
+  ['aa','आ'],['ii','ई'],['uu','ऊ'],['ai','ऐ'],['au','औ'],['ae','ऐ'],['ao','औ'],
   ['A','आ'],['I','ई'],['U','ऊ'],['E','ए'],['O','ओ'],
-  ['ai','ऐ'],['au','औ'],['a','अ'],['i','इ'],['u','उ'],
-  ['e','ए'],['o','ओ'],['M','ं'],['H','ः'],['N','ँ'],
-  ['k','क'],['K','ख'],['g','ग'],['G','घ'],
-  ['c','च'],['j','ज'],['J','झ'],
-  ['T','ट'],['t','त'],['D','ड'],['d','द'],
-  ['n','न'],['p','प'],['P','फ'],['b','ब'],['B','भ'],
-  ['m','म'],['y','य'],['r','र'],['l','ल'],['v','व'],
-  ['w','व'],['s','स'],['S','ष'],['h','ह'],
-  ['f','फ'],['z','ज़'],['q','क'],['x','क्ष'],
-  ['|','।'],['||','॥'],['OM','ॐ'],
-];
-const DEV_CONSONANTS = new Set('कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहक्षज्ञश्र'.split(''));
-const HALANT = '्';
-const MATRA = {'अ':'','आ':'ा','इ':'ि','ई':'ी','उ':'ु','ऊ':'ू','ए':'े','ऐ':'ै','ओ':'ो','औ':'ौ','ऋ':'ृ'};
+  ['a','अ'],['i','इ'],['u','उ'],['e','ए'],['o','ओ'],
 
-function localItrans(roman){
-  let out='', i=0;
-  while(i<roman.length){
-    let matched=false;
-    for(let len=Math.min(4,roman.length-i);len>=1;len--){
-      const chunk=roman.slice(i,i+len);
-      const entry=ITRANS_MAP.find(([r])=>r===chunk);
+  // ── Vowel Matras (after consonant) — handled in combiner ─
+  // ── Anusvara / Visarga / Special ─────────────────────
+  ['M','ं'],['H','ः'],['N','ँ'],['OM','ॐ'],['om','ॐ'],
+
+  // ── Conjunct consonants (must come BEFORE simple ones) ─
+  ['ksh','क्ष'],['Ksh','क्ष'],['KSH','क्ष'],['ksH','क्ष'],
+  ['gny','ज्ञ'],['gNy','ज्ञ'],['jny','ज्ञ'],['jnY','ज्ञ'],['GY','ज्ञ'],
+  ['shr','श्र'],['Shr','श्र'],['SHR','श्र'],
+  ['str','स्त्र'],['shtr','शत्र'],
+  ['tr','त्र'],['Tr','त्र'],
+  ['dr','द्र'],['pr','प्र'],['br','ब्र'],['gr','ग्र'],['kr','क्र'],['fr','फ्र'],
+  ['ny','ञ'],['nY','ञ'],
+
+  // ── Two-char combinations (longer before shorter) ──────
+  ['kh','ख'],['gh','घ'],['ch','च'],['Ch','छ'],['CH','छ'],['chh','छ'],['jh','झ'],
+  ['Th','ठ'],['TH','ठ'],['Dh','ढ'],['DH','ढ'],['th','थ'],['dh','ध'],
+  ['ph','फ'],['bh','भ'],['sh','श'],['Sh','ष'],['SH','ष'],
+  ['RR','ऋ'],['rr','ऋ'],['Rr','ऋ'],
+  ['nk','ङ'],['ng','ङ'],['nc','ञ'],
+  ['La','ळ'],['lL','ळ'],
+
+  // ── Retroflex consonants ──────────────────────────────
+  ['T','ट'],['D','ड'],['N','ण'],['R','र'],['L','ल'],
+  // Nukta (foreign sounds)
+  ['qa','क़'],['Qa','क़'],['za','ज़'],['Za','ज़'],['fa','फ़'],['Fa','फ़'],
+  ['Ra','ड़'],
+
+  // ── Simple consonants ─────────────────────────────────
+  ['k','क'],['g','ग'],['c','क'],['j','ज'],
+  ['t','त'],['d','द'],['n','न'],['p','प'],['b','ब'],
+  ['m','म'],['y','य'],['r','र'],['l','ल'],['v','व'],['w','व'],
+  ['s','स'],['h','ह'],['f','फ'],['q','क'],['z','ज़'],
+  ['x','क्ष'],
+
+  // ── Digits (Devanagari) ───────────────────────────────
+  // Note: we keep English digits by default; use D prefix for Devanagari
+  // ['0','०'],['1','१'],['2','२'],['3','३'],['4','४'],
+  // ['5','५'],['6','६'],['7','७'],['8','८'],['9','९'],
+
+  // ── Punctuation ───────────────────────────────────────
+  ['|','।'],['||','॥'],
+];
+
+// Matra map: vowel → matra (added after consonant)
+const MATRA_MAP = {
+  'अ':'',   'आ':'ा',  'इ':'ि',  'ई':'ी',
+  'उ':'ु',  'ऊ':'ू',  'ऋ':'ृ',  'ए':'े',
+  'ऐ':'ै',  'ओ':'ो',  'औ':'ौ',  'ं':'ं',  'ः':'ः','ँ':'ँ',
+};
+
+// Halant for joining consonants
+const HALANT = '्';
+const DEVANAGARI_CONSONANTS = new Set([
+  'क','ख','ग','घ','ङ','च','छ','ज','झ','ञ',
+  'ट','ठ','ड','ढ','ण','त','थ','द','ध','न',
+  'प','फ','ब','भ','म','य','र','ल','व','ळ',
+  'श','ष','स','ह','क्ष','ज्ञ','श्र','त्र','द्र',
+  'क़','ख़','ग़','ज़','ड़','ढ़','फ़',
+]);
+
+// ── Common Hindi word dictionary for smarter suggestions ─
+// Maps Roman prefix → array of [roman, hindi, weight] candidates
+const HINDI_DICT = {
+  'aap':   ['आप'],  'aur':   ['और'],  'ab':    ['अब'],
+  'agar':  ['अगर'], 'aaj':   ['आज'],  'apna':  ['अपना'],
+  'accha': ['अच्छा'],'abhi': ['अभी'], 'aana':  ['आना'],
+  'baat':  ['बात'],  'bahut': ['बहुत'],'band':  ['बंद'],
+  'baad':  ['बाद'],  'bada':  ['बड़ा'], 'beta':  ['बेटा'],
+  'behan': ['बहन'],  'bhai':  ['भाई'], 'bharat':['भारत'],
+  'char':  ['चार'],  'chahiye':['चाहिए'],'chalo':['चलो'],
+  'devar': ['देवर'], 'din':   ['दिन'],  'dil':   ['दिल'],
+  'dono':  ['दोनों'],'door':  ['दूर'],  'dhyan': ['ध्यान'],
+  'ek':    ['एक'],   'ek bar':['एक बार'],
+  'ghar':  ['घर'],   'gana':  ['गाना'], 'gaon':  ['गाँव'],
+  'har':   ['हर'],   'haan':  ['हाँ'],  'hum':   ['हम'],
+  'hai':   ['है'],   'hain':  ['हैं'],  'ho':    ['हो'],
+  'hoga':  ['होगा'], 'hua':   ['हुआ'],
+  'janm':  ['जन्म'], 'ji':    ['जी'],   'jab':   ['जब'],
+  'jaise': ['जैसे'], 'jaldi': ['जल्दी'],
+  'kab':   ['कब'],   'kaise': ['कैसे'], 'kahan': ['कहाँ'],
+  'karna': ['करना'], 'karo':  ['करो'],  'kar':   ['कर'],
+  'khana': ['खाना'], 'kya':   ['क्या'],
+  'ladka': ['लड़का'],'ladki': ['लड़की'],'log':   ['लोग'],
+  'mera':  ['मेरा'], 'meri':  ['मेरी'], 'main':  ['मैं'],
+  'matlab':['मतलब'],'maa':   ['माँ'],   'mama':  ['मामा'],
+  'mata':  ['माता'], 'man':   ['मन'],
+  'naam':  ['नाम'],  'nahi':  ['नहीं'], 'nahin': ['नहीं'],
+  'nana':  ['नाना'], 'nani':  ['नानी'],
+  'papa':  ['पापा'], 'pita':  ['पिता'], 'pyar':  ['प्यार'],
+  'paisa': ['पैसा'], 'pehle': ['पहले'], 'par':   ['पर'],
+  'raat':  ['रात'],  'rog':   ['रोग'],  'rona':  ['रोना'],
+  'sab':   ['सब'],   'sath':  ['साथ'],  'sara':  ['सारा'],
+  'shadi': ['शादी'], 'shaadi':['शादी'], 'shubh': ['शुभ'],
+  'sundar':['सुंदर'],'swagat':['स्वागत'],
+  'tum':   ['तुम'],  'tumhara':['तुम्हारा'],'theek':['ठीक'],
+  'uska':  ['उसका'], 'unka':  ['उनका'], 'unhe':  ['उन्हें'],
+  'vivah': ['विवाह'],'vivaah':['विवाह'],'varsha':['वर्षा'],
+  'woh':   ['वो'],   'wahi':  ['वही'],
+  'yahan': ['यहाँ'], 'yeh':   ['यह'],
+  // Wedding-specific
+  'dulha': ['दूल्हा'],'dulhan':['दुल्हन'],
+  'baraat':['बारात'], 'tilak': ['तिलक'],
+  'mangalsutra':['मंगलसूत्र'],
+  'ashirvad':['आशीर्वाद'],'vardhan':['वर्धन'],
+  'suhag': ['सुहाग'], 'sangeet':['संगीत'],
+  'mehndi':['मेहंदी'],'haldi': ['हल्दी'],
+  'anand': ['आनंद'],  'anandam':['आनंदम'],
+  'parinay':['परिणय'],'parivar':['परिवार'],
+  'nimantran':['निमंत्रण'],'amantraN':['आमंत्रण'],
+  'amantran':['आमंत्रण'],'swagatam':['स्वागतम'],
+  'mangal': ['मंगल'], 'kalyan':['कल्याण'],
+  'subh':   ['शुभ'],  'subham':['शुभम'],
+  'laxmi':  ['लक्ष्मी'],'lakshmi':['लक्ष्मी'],
+  'ganesh': ['गणेश'], 'ganesha':['गणेश'],
+  'ram':    ['राम'],  'shri':  ['श्री'],
+  'krishan':['कृष्ण'],'krishna':['कृष्ण'],
+  'jai':    ['जय'],   'jai hind':['जय हिंद'],
+  'bhagwan':['भगवान'],'prabhu':['प्रभु'],
+  'mangalchar':['मंगलाचार'],
+  'aashirvad':['आशीर्वाद'],
+};
+
+// ── Core transliterator: roman string → Devanagari ────────────────
+function romanToDevanagari(roman){
+  if(!roman) return '';
+  let out = '';
+  let i = 0;
+  const lower = roman; // keep case for matching
+
+  while(i < lower.length){
+    let matched = false;
+    // Try longest match first (up to 5 chars)
+    for(let len = Math.min(5, lower.length - i); len >= 1; len--){
+      const chunk = lower.slice(i, i + len);
+      const entry = PHONETIC_MAP.find(([r]) => r === chunk);
       if(entry){
-        const d=entry[1];
-        const last=[...out].pop()||'';
-        if(MATRA[d]!==undefined && DEV_CONSONANTS.has(last)){
-          out+=MATRA[d]||'';
-        } else if(DEV_CONSONANTS.has(d) && DEV_CONSONANTS.has(last)){
-          out+=HALANT+d;
+        const devChar = entry[1];
+        // Smart matra logic: if previous output ends with a consonant, add matra
+        if(out.length > 0 && MATRA_MAP.hasOwnProperty(devChar)){
+          const lastChar = [...out].pop();
+          if(DEVANAGARI_CONSONANTS.has(lastChar)){
+            out += MATRA_MAP[devChar]; // add matra instead of independent vowel
+          } else if(lastChar === HALANT){
+            // Remove halant and add the vowel as matra on the consonant before
+            out = out.slice(0, -1) + MATRA_MAP[devChar];
+          } else {
+            out += devChar;
+          }
+        } else if(DEVANAGARI_CONSONANTS.has(devChar) && out.length > 0){
+          const lastChar = [...out].pop();
+          if(DEVANAGARI_CONSONANTS.has(lastChar)){
+            // Consonant follows consonant → add halant (virama) to join
+            out += lastChar; // put last char back
+            out = out + HALANT + devChar;
+          } else {
+            out += devChar;
+          }
         } else {
-          out+=d;
+          out += devChar;
         }
-        i+=len; matched=true; break;
+        i += len;
+        matched = true;
+        break;
       }
     }
-    if(!matched){ out+=roman[i]; i++; }
+    if(!matched){
+      // Pass through unrecognised characters as-is
+      out += lower[i];
+      i++;
+    }
   }
   return out;
 }
 
-// ── SUGGESTION GENERATION (Hinglish mode) ────────────────────────
-// Common Hindi word dictionary for smarter suggestions
-const HINDI_DICT = {
-  'aakash':['आकाश'],'akaash':['आकाश'],'akash':['आकाश'],
-  'vivah':['विवाह'],'vivaah':['विवाह'],
-  'shubh':['शुभ'],'subh':['शुभ'],
-  'shubham':['शुभम'],'mangal':['मंगल'],
-  'jai':['जय'],'jay':['जय'],
-  'ram':['राम'],'shri':['श्री'],'sri':['श्री'],
-  'ganesh':['गणेश'],'ganesha':['गणेश'],
-  'laxmi':['लक्ष्मी'],'lakshmi':['लक्ष्मी'],
-  'baraat':['बारात'],'barat':['बारात'],
-  'dulha':['दूल्हा'],'dulhan':['दुल्हन'],
-  'shadi':['शादी'],'shaadi':['शादी'],
-  'nimantran':['निमंत्रण'],'amantran':['आमंत्रण'],
-  'swagatam':['स्वागतम'],'swagat':['स्वागत'],
-  'parinay':['परिणय'],'parivar':['परिवार'],
-  'sangeet':['संगीत'],'mehndi':['मेहंदी'],
-  'haldi':['हल्दी'],'tilak':['तिलक'],
-  'ashirvad':['आशीर्वाद'],'aashirvad':['आशीर्वाद'],
-  'anand':['आनंद'],'prasad':['प्रसाद'],
-  'mata':['माता'],'pita':['पिता'],
-  'maa':['माँ'],'papa':['पापा'],
-  'bhai':['भाई'],'behan':['बहन'],
-  'beti':['बेटी'],'beta':['बेटा'],
-  'nana':['नाना'],'nani':['नानी'],
-  'dada':['दादा'],'dadi':['दादी'],
-  'chacha':['चाचा'],'chachi':['चाची'],
-  'mama':['मामा'],'mami':['मामी'],
-  'naam':['नाम'],'ghar':['घर'],
-  'shahar':['शहर'],'gaon':['गाँव'],
-  'bharat':['भारत'],'india':['भारत'],
-  'hindi':['हिंदी'],'hindi':['हिंदी'],
-  'pyar':['प्यार'],'prem':['प्रेम'],
-  'dost':['दोस्त'],'yaar':['यार'],
-  'khush':['खुश'],'sukh':['सुख'],
-  'sunder':['सुंदर'],'sundar':['सुंदर'],
-  'phool':['फूल'],'gulab':['गुलाब'],
-  'aaj':['आज'],'kal':['कल'],
-  'subah':['सुबह'],'shaam':['शाम'],
-  'raat':['रात'],'din':['दिन'],
-  'saal':['साल'],'mahina':['महीना'],
-  'paisa':['पैसा'],'dhan':['धन'],
-  'kaam':['काम'],'seva':['सेवा'],
-  'desh':['देश'],'dharm':['धर्म'],
-};
-
+// ── Generate suggestion list for a Roman string ───────────────────
 function generateSuggestions(roman){
-  if(!roman||roman.length<2) return [];
-  const lower=roman.toLowerCase();
-  const sugs=new Map(); // use Map to deduplicate while preserving order
+  if(!roman) return [];
+  const lower = roman.toLowerCase();
+  const sugs = new Set();
 
-  // 1. Dictionary — exact and prefix match
-  if(HINDI_DICT[lower]) HINDI_DICT[lower].forEach(w=>sugs.set(w,1));
-  for(const key of Object.keys(HINDI_DICT)){
-    if(key.startsWith(lower)&&key!==lower) HINDI_DICT[key].forEach(w=>sugs.set(w,2));
-  }
-
-  // 2. Sanscript ITRANS transliteration (primary engine)
-  const direct = itransToDevanagari(roman);
-  if(direct&&direct!==roman) sugs.set(direct, 3);
-
-  // 3. Common alternate spellings
-  const alts=[
-    roman.replace(/aa/g,'a'), roman.replace(/ee/g,'i'),
-    roman.replace(/oo/g,'u'), roman+'a',
-  ].filter(a=>a!==roman&&a.length>=2);
-  alts.forEach(a=>{
-    const r=itransToDevanagari(a);
-    if(r&&r!==roman&&r!==direct) sugs.set(r,4);
+  // 1. Dictionary lookup (highest priority)
+  if(HINDI_DICT[lower]) HINDI_DICT[lower].forEach(w => sugs.add(w));
+  // Prefix match in dictionary
+  Object.keys(HINDI_DICT).forEach(key => {
+    if(key.startsWith(lower) && key !== lower){
+      HINDI_DICT[key].forEach(w => sugs.add(w));
+    }
   });
 
-  return [...sugs.keys()].filter(Boolean).slice(0,8);
+  // 2. Direct phonetic transliteration
+  const direct = romanToDevanagari(roman);
+  if(direct) sugs.add(direct);
+
+  // 3. Common alternate spellings (aa/a, ee/i, oo/u patterns)
+  const alts = [
+    roman.replace(/aa/g,'a'), roman.replace(/a/g,'aa'),
+    roman.replace(/ee/g,'i'), roman.replace(/oo/g,'u'),
+    roman.replace(/sh/g,'s'), roman.replace(/kh/g,'k'),
+  ].filter(a => a !== roman);
+  alts.forEach(a => {
+    const r = romanToDevanagari(a); if(r && r !== direct) sugs.add(r);
+  });
+
+  // 4. With/without anusvara variant
+  if(direct) sugs.add(direct + 'ं');
+
+  return [...sugs].filter(Boolean).slice(0, 9);
 }
 
-// ── TEXTAREA EVENT HANDLERS ───────────────────────────────────────
-function onTextAreaInput(e){
-  const ta=e.target;
-  if(imeMode==='normal'||imeMode==='legacy'){
-    // In legacy mode: textarea already has block font applied via style
-    // The user types using their OS Hindi keyboard (KrutiDev layout)
-    // The characters they type are stored as-is — the font renders them as Devanagari
-    updateProp('text', ta.value);
+// ── IME state machine ──────────────────────────────────────────────
+let imeBuffer = '';       // accumulated Roman input since last commit
+let imeWordBuffer = '';   // full current word for suggestions
+let lastCommittedPos = 0; // textarea cursor position after last commit
+
+function toggleIME(on){
+  imeActive = on;
+  imePending = ''; imeBuffer = '';
+  hideSuggestions();
+  const ta = document.getElementById('textContentArea'); if(!ta) return;
+  if(on){
+    toast('हिंदी IME चालू — Type in English, get Hindi suggestions');
+  } else {
+    toast('Hindi IME off — typing in English/normal mode');
   }
-  // hinglish mode: handled by keydown/keyup
+}
+function setImeMode(mode){
+  imeMode = mode;
+  imeBuffer = ''; imePending = '';
+  hideSuggestions();
+  // Re-render props to update active button state
+  renderPropsPanel();
+}
+function toggleVKeyboard(){
+  imeVKBOpen = !imeVKBOpen;
+  const kbd = document.getElementById('imeVKeyboard'); if(!kbd) return;
+  kbd.classList.toggle('open', imeVKBOpen);
+  if(imeVKBOpen) buildVKeyboard();
+}
+
+// ── Textarea event handlers ────────────────────────────────────────
+function onTextAreaInput(e){
+  const ta = e.target;
+  if(!imeActive){
+    // Normal mode — just sync text to block
+    updateProp('text', ta.value);
+    return;
+  }
+  // IME mode — sync is handled by commitSuggestion/commitBuffer
+  // We update the block text directly from textarea value
+  updateProp('text', ta.value);
 }
 
 function onTextAreaKeydown(e){
-  if(imeMode!=='hinglish') return;
+  if(!imeActive){ return; }
 
-  const sugsEl=document.getElementById('imeSuggestions');
-  const isOpen=sugsEl&&sugsEl.classList.contains('open');
-  const items=getSuggestionItems();
+  const sugsEl = document.getElementById('imeSuggestions');
+  const isOpen = sugsEl && sugsEl.classList.contains('open');
+  const sugs   = getSuggestionItems();
 
-  if(isOpen&&items.length){
-    if(e.key==='ArrowRight'||e.key==='Tab'){
-      e.preventDefault(); imeSugIdx=(imeSugIdx+1)%items.length; highlightSuggestion(imeSugIdx); return;
-    }
-    if(e.key==='ArrowLeft'){
-      e.preventDefault(); imeSugIdx=(imeSugIdx-1+items.length)%items.length; highlightSuggestion(imeSugIdx); return;
-    }
-    if(e.key>='1'&&e.key<='9'){
-      const idx=parseInt(e.key)-1;
-      if(idx<items.length){e.preventDefault();commitSuggestion(items[idx].dataset.val);return;}
-    }
-    if(e.key==='Enter'){
+  // ── Navigation inside suggestion popup ─────────────────
+  if(isOpen && sugs.length){
+    if(e.key === 'ArrowRight' || e.key === 'Tab'){
       e.preventDefault();
-      const chosen=items[imeSugIdx]?.dataset.val;
-      if(chosen){commitSuggestion(chosen);return;}
+      imeSugIdx = (imeSugIdx + 1) % sugs.length;
+      highlightSuggestion(imeSugIdx);
+      return;
+    }
+    if(e.key === 'ArrowLeft'){
+      e.preventDefault();
+      imeSugIdx = (imeSugIdx - 1 + sugs.length) % sugs.length;
+      highlightSuggestion(imeSugIdx);
+      return;
+    }
+    // Number key 1–9 to pick suggestion
+    if(e.key >= '1' && e.key <= '9'){
+      const idx = parseInt(e.key) - 1;
+      if(idx < sugs.length){ e.preventDefault(); commitSuggestion(sugs[idx].dataset.val); return; }
+    }
+    // Enter or Space → commit highlighted suggestion
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      const chosen = sugs[imeSugIdx]?.dataset.val;
+      if(chosen){ commitSuggestion(chosen); return; }
     }
   }
 
-  if(e.key===' '){
+  // ── Space → commit best suggestion + insert space ──────
+  if(e.key === ' '){
     if(imeBuffer){
       e.preventDefault();
-      const sugs=generateSuggestions(imeBuffer);
-      commitSuggestion(sugs[imeSugIdx]||sugs[0]||itransToDevanagari(imeBuffer), true);
+      const sugsNow = generateSuggestions(imeBuffer);
+      const best = sugsNow[0] || romanToDevanagari(imeBuffer);
+      commitSuggestion(best, true); // true = add space after
       return;
     }
-    return; // let space through
+    return; // let normal space through
   }
 
-  if(e.key==='Backspace'){
-    if(imeBuffer.length>0){
+  // ── Backspace → delete from IME buffer first ───────────
+  if(e.key === 'Backspace'){
+    if(imeBuffer.length > 0){
       e.preventDefault();
-      imeBuffer=imeBuffer.slice(0,-1);
-      if(imeBuffer) showSuggestions(generateSuggestions(imeBuffer));
-      else hideSuggestions();
+      imeBuffer = imeBuffer.slice(0, -1);
+      if(imeBuffer){
+        showSuggestions(generateSuggestions(imeBuffer), imeBuffer);
+      } else {
+        hideSuggestions();
+      }
+      updatePreview(imeBuffer);
       return;
     }
-    hideSuggestions(); return;
+    // else let normal backspace through
+    hideSuggestions();
+    return;
   }
 
-  if(e.key==='Escape'){ if(imeBuffer){e.preventDefault();imeBuffer='';hideSuggestions();} return; }
+  // ── Escape → cancel current buffer ────────────────────
+  if(e.key === 'Escape'){
+    if(imeBuffer){ e.preventDefault(); cancelBuffer(); }
+    return;
+  }
 }
 
 function onTextAreaKeyup(e){
-  if(imeMode!=='hinglish') return;
-  const key=e.key;
-  if(key.length!==1||e.ctrlKey||e.altKey||e.metaKey) return;
-  if(key===' ') return;
-  if(key>='1'&&key<='9'&&document.getElementById('imeSuggestions')?.classList.contains('open')) return;
+  if(!imeActive) return;
 
-  imeBuffer+=key;
+  // Only process printable single characters
+  const key = e.key;
+  if(key.length !== 1) return;
+  // Skip if modifier held (except shift for uppercase)
+  if(e.ctrlKey || e.altKey || e.metaKey) return;
+  // Skip space (handled in keydown)
+  if(key === ' ') return;
+  // Skip digits if suggestion popup open (used for picking)
+  if(key >= '1' && key <= '9' && document.getElementById('imeSuggestions')?.classList.contains('open')) return;
 
-  // Remove the raw character from textarea
-  const ta=document.getElementById('textContentArea'); if(!ta) return;
-  const pos=ta.selectionStart;
-  ta.value=ta.value.slice(0,pos-1)+ta.value.slice(pos);
-  ta.selectionStart=ta.selectionEnd=pos-1;
+  // Accumulate into IME buffer
+  imeBuffer += key;
 
-  const sugs=generateSuggestions(imeBuffer);
-  showSuggestions(sugs);
-  updateProp('text',ta.value);
+  // Remove the typed character from textarea and replace with preview
+  // (We'll commit the real Devanagari on suggestion pick or space)
+  const ta = document.getElementById('textContentArea'); if(!ta) return;
+
+  // Delete the raw roman character(s) we just added
+  const start = ta.selectionStart;
+  const val   = ta.value;
+  ta.value = val.slice(0, start - 1) + val.slice(start);
+  ta.selectionStart = ta.selectionEnd = start - 1;
+
+  // Generate suggestions
+  const sugs = generateSuggestions(imeBuffer);
+  showSuggestions(sugs, imeBuffer);
+  updatePreview(imeBuffer);
+
+  // Auto-show first suggestion in preview
+  const preview = document.getElementById('imePreview');
+  if(preview){
+    preview.textContent = romanToDevanagari(imeBuffer);
+    preview.style.display = imeBuffer ? 'inline-block' : 'none';
+  }
+
+  // Sync text (with preview inline)
+  updateProp('text', ta.value);
 }
 
-// ── SUGGESTION DISPLAY ────────────────────────────────────────────
-function showSuggestions(sugs){
-  const container=document.getElementById('imeSuggestions'); if(!container) return;
-  container.innerHTML=''; imeSugIdx=0;
-  if(!sugs.length){container.classList.remove('open');return;}
+// ── Suggestion display ────────────────────────────────────────────
+function showSuggestions(sugs, roman){
+  const container = document.getElementById('imeSuggestions'); if(!container) return;
+  container.innerHTML = '';
+  imeSugIdx = 0;
+  if(!sugs.length){ container.classList.remove('open'); return; }
 
-  // Show buffer preview as first non-clickable label
-  const label=document.createElement('div');
-  label.style.cssText='font-size:9px;color:#555;padding:1px 4px;border-right:1px solid #333;margin-right:3px;white-space:nowrap;';
-  label.textContent=imeBuffer+'→';
-  container.appendChild(label);
-
-  sugs.forEach((sug,idx)=>{
-    const btn=document.createElement('div');
-    btn.className='ime-sug'+(idx===0?' sel':'');
-    btn.dataset.val=sug;
-    btn.innerHTML=`<span style="font-size:9px;color:#555;margin-right:2px;">${idx+1}</span>${sug}`;
-    btn.onclick=()=>commitSuggestion(sug);
+  sugs.forEach((sug, idx) => {
+    const btn = document.createElement('div');
+    btn.className = 'ime-sug' + (idx === 0 ? ' sel' : '');
+    btn.dataset.val = sug;
+    btn.innerHTML = `<span style="font-size:9px;color:#555;margin-right:2px;">${idx+1}</span>${sug}`;
+    btn.onclick = () => commitSuggestion(sug);
     container.appendChild(btn);
   });
   container.classList.add('open');
 }
 function hideSuggestions(){
-  const el=document.getElementById('imeSuggestions'); if(!el) return;
-  el.classList.remove('open'); el.innerHTML='';
+  const el = document.getElementById('imeSuggestions'); if(!el) return;
+  el.classList.remove('open'); el.innerHTML = '';
 }
 function getSuggestionItems(){
-  return [...(document.getElementById('imeSuggestions')?.querySelectorAll('.ime-sug')||[])];
+  return [...(document.getElementById('imeSuggestions')?.querySelectorAll('.ime-sug') || [])];
 }
 function highlightSuggestion(idx){
-  getSuggestionItems().forEach((el,i)=>el.classList.toggle('sel',i===idx));
+  getSuggestionItems().forEach((el, i) => el.classList.toggle('sel', i === idx));
+}
+function updatePreview(roman){
+  const p = document.getElementById('imePreview'); if(!p) return;
+  if(roman){ p.textContent = romanToDevanagari(roman); p.style.display = 'inline-block'; }
+  else { p.textContent = ''; p.style.display = 'none'; }
 }
 
+// ── Commit a chosen suggestion into the textarea ─────────────────
 function commitSuggestion(devanagari, addSpace){
-  const ta=document.getElementById('textContentArea'); if(!ta) return;
-  const pos=ta.selectionStart;
-  const ins=devanagari+(addSpace?' ':'');
-  ta.value=ta.value.slice(0,pos)+ins+ta.value.slice(pos);
-  ta.selectionStart=ta.selectionEnd=pos+ins.length;
-  imeBuffer=''; imeSugIdx=0;
+  const ta = document.getElementById('textContentArea'); if(!ta) return;
+  const pos   = ta.selectionStart;
+  const val   = ta.value;
+  const ins   = devanagari + (addSpace ? ' ' : '');
+  ta.value    = val.slice(0, pos) + ins + val.slice(pos);
+  const newPos = pos + ins.length;
+  ta.selectionStart = ta.selectionEnd = newPos;
+  imeBuffer = '';
   hideSuggestions();
-  updateProp('text',ta.value);
+  updatePreview('');
+  const preview = document.getElementById('imePreview');
+  if(preview){ preview.textContent = ''; preview.style.display = 'none'; }
+  updateProp('text', ta.value);
   ta.focus();
 }
-
-// ── VIRTUAL KEYBOARD ─────────────────────────────────────────────
-function toggleVKeyboard(){
-  imeVKBOpen=!imeVKBOpen;
-  const kbd=document.getElementById('imeVKeyboard'); if(!kbd) return;
-  kbd.classList.toggle('open',imeVKBOpen);
-  if(imeVKBOpen) buildVKeyboard();
+function cancelBuffer(){
+  imeBuffer = '';
+  hideSuggestions();
+  updatePreview('');
+  const preview = document.getElementById('imePreview');
+  if(preview){ preview.style.display = 'none'; }
 }
 
-const VKBD_ROWS=[
-  // Row 1 — Independent vowels
-  [{d:'अ',h:'a'},{d:'आ',h:'aa'},{d:'इ',h:'i'},{d:'ई',h:'ii'},{d:'उ',h:'u'},{d:'ऊ',h:'uu'},
-   {d:'ए',h:'e'},{d:'ऐ',h:'ai'},{d:'ओ',h:'o'},{d:'औ',h:'au'},{d:'ऋ',h:'RRi'},{d:'ॐ',h:'OM'}],
-  // Row 2 — Matras
-  [{d:'ा',h:'aa'},{d:'ि',h:'i'},{d:'ी',h:'ii'},{d:'ु',h:'u'},{d:'ू',h:'uu'},
-   {d:'े',h:'e'},{d:'ै',h:'ai'},{d:'ो',h:'o'},{d:'ौ',h:'au'},{d:'ृ',h:'RRi'},{d:'ं',h:'M'},{d:'ः',h:'H'},{d:'ँ',h:'M'},{d:'्',h:''}],
-  // Row 3 — ka-varga
-  [{d:'क',h:'ka'},{d:'ख',h:'kha'},{d:'ग',h:'ga'},{d:'घ',h:'gha'},{d:'ङ',h:'~Na'},
-   {d:'च',h:'cha'},{d:'छ',h:'Cha'},{d:'ज',h:'ja'},{d:'झ',h:'jha'},{d:'ञ',h:'~na'}],
-  // Row 4 — ta-varga (retroflex + dental)
-  [{d:'ट',h:'Ta'},{d:'ठ',h:'Tha'},{d:'ड',h:'Da'},{d:'ढ',h:'Dha'},{d:'ण',h:'Na'},
-   {d:'त',h:'ta'},{d:'थ',h:'tha'},{d:'द',h:'da'},{d:'ध',h:'dha'},{d:'न',h:'na'}],
-  // Row 5 — pa-varga + ya-ha
-  [{d:'प',h:'pa'},{d:'फ',h:'pha'},{d:'ब',h:'ba'},{d:'भ',h:'bha'},{d:'म',h:'ma'},
-   {d:'य',h:'ya'},{d:'र',h:'ra'},{d:'ल',h:'la'},{d:'व',h:'va'},{d:'ह',h:'ha'}],
-  // Row 6 — sibilants + conjuncts + nukta
-  [{d:'श',h:'sha'},{d:'ष',h:'Sha'},{d:'स',h:'sa'},
-   {d:'क्ष',h:'ksha'},{d:'ज्ञ',h:'j~na'},{d:'त्र',h:'tra'},{d:'श्र',h:'shra'},
-   {d:'ड़',h:'Ra'},{d:'ढ़',h:'RRha'},{d:'ज़',h:'za'},{d:'फ़',h:'fa'}],
-  // Row 7 — Devanagari numerals + punctuation
-  [{d:'०',h:''},{d:'१',h:''},{d:'२',h:''},{d:'३',h:''},{d:'४',h:''},
-   {d:'५',h:''},{d:'६',h:''},{d:'७',h:''},{d:'८',h:''},{d:'९',h:''},
-   {d:'।',h:'|'},{d:'॥',h:'||'}],
+// ── Virtual Keyboard (Devanagari + matra) ────────────────────────
+const VKBD_ROWS = [
+  // Row 1 — numerals + special
+  [
+    {d:'०',r:'0'},{d:'१',r:'1'},{d:'२',r:'2'},{d:'३',r:'3'},{d:'४',r:'4'},
+    {d:'५',r:'5'},{d:'६',r:'6'},{d:'७',r:'7'},{d:'८',r:'8'},{d:'९',r:'9'},
+    {d:'।',r:'|'},{d:'॥',r:'||'},{d:'ॐ',r:'OM'},
+  ],
+  // Row 2 — vowels
+  [
+    {d:'अ',r:'a'},{d:'आ',r:'aa'},{d:'इ',r:'i'},{d:'ई',r:'ii'},
+    {d:'उ',r:'u'},{d:'ऊ',r:'uu'},{d:'ऋ',r:'Rr'},
+    {d:'ए',r:'e'},{d:'ऐ',r:'ai'},{d:'ओ',r:'o'},{d:'औ',r:'au'},
+    {d:'अं',r:'aM'},{d:'अः',r:'aH'},
+  ],
+  // Row 3 — matras
+  [
+    {d:'ा',r:'aa',sub:'aa'},{d:'ि',r:'i',sub:'i'},{d:'ी',r:'ii',sub:'ii'},
+    {d:'ु',r:'u',sub:'u'},{d:'ू',r:'uu',sub:'uu'},{d:'े',r:'e',sub:'e'},
+    {d:'ै',r:'ai',sub:'ai'},{d:'ो',r:'o',sub:'o'},{d:'ौ',r:'au',sub:'au'},
+    {d:'ृ',r:'Rr',sub:'Rr'},{d:'ं',r:'M',sub:'M'},{d:'ः',r:'H',sub:'H'},{d:'ँ',r:'N',sub:'N'},
+    {d:'्',r:'',sub:'hal'},
+  ],
+  // Row 4 — ka varga
+  [
+    {d:'क',r:'k'},{d:'ख',r:'kh'},{d:'ग',r:'g'},{d:'घ',r:'gh'},{d:'ङ',r:'nk'},
+    {d:'च',r:'ch'},{d:'छ',r:'chh'},{d:'ज',r:'j'},{d:'झ',r:'jh'},{d:'ञ',r:'ny'},
+  ],
+  // Row 5 — ta varga
+  [
+    {d:'ट',r:'T'},{d:'ठ',r:'Th'},{d:'ड',r:'D'},{d:'ढ',r:'Dh'},{d:'ण',r:'N'},
+    {d:'त',r:'t'},{d:'थ',r:'th'},{d:'द',r:'d'},{d:'ध',r:'dh'},{d:'न',r:'n'},
+  ],
+  // Row 6 — pa varga + ya ra la va
+  [
+    {d:'प',r:'p'},{d:'फ',r:'ph'},{d:'ब',r:'b'},{d:'भ',r:'bh'},{d:'म',r:'m'},
+    {d:'य',r:'y'},{d:'र',r:'r'},{d:'ल',r:'l'},{d:'व',r:'v'},{d:'ह',r:'h'},
+  ],
+  // Row 7 — sibilants + conjuncts
+  [
+    {d:'श',r:'sh'},{d:'ष',r:'Sh'},{d:'स',r:'s'},
+    {d:'क्ष',r:'ksh'},{d:'ज्ञ',r:'jny'},{d:'त्र',r:'tr'},{d:'श्र',r:'shr'},
+    {d:'ड़',r:'Ra'},{d:'ढ़',r:'Rha'},{d:'ज़',r:'za'},{d:'फ़',r:'fa'},
+  ],
 ];
 
 function buildVKeyboard(){
-  const kbd=document.getElementById('imeVKeyboard'); if(!kbd) return;
-  kbd.innerHTML=`<div style="font-size:9px;color:#555;margin-bottom:4px;text-align:center;">
-    Click to insert character &nbsp;|&nbsp; ITRANS hint shown on hover
+  const kbd = document.getElementById('imeVKeyboard'); if(!kbd) return;
+  kbd.innerHTML = `<div style="font-size:9px;color:#555;margin-bottom:4px;text-align:center;">
+    Click to insert • Works in both IME and normal mode
   </div>`;
-  VKBD_ROWS.forEach(row=>{
-    const rowEl=document.createElement('div');
-    rowEl.className='ime-kbd-row';
-    row.forEach(key=>{
-      const btn=document.createElement('div');
-      btn.className='vkey';
-      btn.textContent=key.d;
-      btn.title=key.h?`ITRANS: ${key.h}`:key.d;
-      btn.onclick=()=>insertAtCursor(key.d);
+  VKBD_ROWS.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'ime-kbd-row';
+    row.forEach(key => {
+      const btn = document.createElement('div');
+      btn.className = 'vkey';
+      btn.innerHTML = key.sub
+        ? `${key.d}<span class="sub">${key.sub}</span>`
+        : key.d;
+      btn.title = key.r ? `Roman: ${key.r}` : key.d;
+      btn.onclick = () => insertAtCursor(key.d);
       rowEl.appendChild(btn);
     });
     kbd.appendChild(rowEl);
   });
 }
-
 function insertAtCursor(char){
-  const ta=document.getElementById('textContentArea'); if(!ta) return;
-  const s=ta.selectionStart,en=ta.selectionEnd;
-  ta.value=ta.value.slice(0,s)+char+ta.value.slice(en);
-  ta.selectionStart=ta.selectionEnd=s+char.length;
-  updateProp('text',ta.value);
+  const ta = document.getElementById('textContentArea'); if(!ta) return;
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  ta.value = ta.value.slice(0, start) + char + ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + char.length;
+  updateProp('text', ta.value);
   ta.focus();
 }
-
 function insertSymbol(sym){
   const c=ac();if(!c)return;
   const b=c.blocks.find(b=>b.id===selectedId);
