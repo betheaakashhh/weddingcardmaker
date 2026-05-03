@@ -49,28 +49,82 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .main{display:flex;flex:1;overflow:hidden;}
 
 /* ── LEFT PANEL ── */
-.left-panel{width:270px;min-width:270px;background:#1a1a1a;border-right:1px solid #2a2a2a;display:flex;flex-direction:column;overflow:hidden;}
-.panel-tabs{display:flex;border-bottom:1px solid #2a2a2a;flex-wrap:wrap;}
-.panel-tab{flex:1;min-width:0;padding:5px 1px;font-size:9px;text-align:center;cursor:pointer;color:#666;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
-.panel-tab.active{color:#C9A84C;border-bottom-color:#C9A84C;}
-.tab-content{flex:1;overflow-y:auto;padding:8px;display:none;}
+.left-panel{width:290px;min-width:290px;background:#181818;border-right:1px solid #252525;display:flex;flex-direction:column;overflow:hidden;}
+
+/* Two-row tab navigation */
+.panel-tabs{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:2px solid #252525;background:#141414;}
+.panel-tab{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:7px 4px 6px;
+  font-size:9px;font-weight:500;letter-spacing:.3px;text-align:center;
+  cursor:pointer;color:#555;
+  border-bottom:2px solid transparent;
+  margin-bottom:-2px;
+  transition:all .18s;white-space:nowrap;
+  user-select:none;
+}
+.panel-tab .tab-icon{font-size:14px;line-height:1;}
+.panel-tab .tab-label{font-size:8px;color:inherit;text-transform:uppercase;letter-spacing:.5px;}
+.panel-tab:hover{color:#aaa;background:rgba(255,255,255,.04);}
+.panel-tab.active{color:#C9A84C;border-bottom-color:#C9A84C;background:rgba(201,168,76,.06);}
+
+.tab-content{flex:1;overflow-y:auto;padding:10px;display:none;}
 .tab-content.active{display:block;}
 
 /* ── BLOCKS LIST ── */
-.block-item{background:#222;border:1px solid #333;border-radius:6px;padding:5px 7px;margin-bottom:3px;cursor:pointer;transition:all .15s;position:relative;}
-.block-item:hover{border-color:#555;}
-.block-item.selected{border-color:#8B1A2E;background:#2a1018;}
-.block-item.in-group{border-left:3px solid #2a5a9a;}
-.block-item-name{font-size:11px;color:#ddd;font-weight:500;}
-.block-item-type{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.5px;}
-.block-item-preview{font-size:10px;color:#555;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:165px;}
-.block-item-del{position:absolute;right:5px;top:5px;background:none;border:none;color:#444;cursor:pointer;font-size:13px;}
+.block-item{
+  background:#1e1e1e;border:1px solid #2a2a2a;border-radius:8px;
+  padding:7px 10px;margin-bottom:5px;cursor:pointer;
+  transition:all .15s;position:relative;
+}
+.block-item:hover{border-color:#3a3a3a;background:#232323;}
+.block-item.selected{border-color:#8B1A2E;background:#200a10;}
+.block-item.in-group{border-left:3px solid #2a5a9a;padding-left:8px;}
+.block-item-name{font-size:11px;color:#ddd;font-weight:600;}
+.block-item-type{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;}
+.block-item-preview{font-size:10px;color:#666;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:175px;}
+.block-item-del{position:absolute;right:6px;top:7px;background:none;border:none;color:#3a3a3a;cursor:pointer;font-size:13px;transition:color .1s;}
 .block-item-del:hover{color:#e05;}
-.block-item-lock{position:absolute;right:22px;top:5px;background:none;border:none;color:#444;cursor:pointer;font-size:12px;}
+.block-item-lock{position:absolute;right:26px;top:7px;background:none;border:none;color:#3a3a3a;cursor:pointer;font-size:12px;transition:color .1s;}
 .block-item-lock.locked{color:#C9A84C;}
 
-.add-block-btn{width:100%;background:#222;border:1.5px dashed #444;border-radius:6px;color:#777;padding:5px;cursor:pointer;font-size:11px;margin-bottom:3px;transition:all .15s;text-align:center;}
-.add-block-btn:hover{border-color:#8B1A2E;color:#C9A84C;}
+.add-block-btn{
+  width:100%;background:#1e1e1e;border:1.5px dashed #333;border-radius:8px;
+  color:#666;padding:7px 10px;cursor:pointer;font-size:11px;margin-bottom:5px;
+  transition:all .15s;text-align:center;display:block;
+}
+.add-block-btn:hover{border-color:#8B1A2E;color:#C9A84C;background:#1a0a10;}
+
+/* Section labels in panels */
+.section-label{
+  font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.8px;
+  margin:12px 0 6px;padding-bottom:4px;
+  border-bottom:1px solid #252525;
+  font-weight:600;
+}
+
+/* Prop groups */
+.prop-group{margin-bottom:14px;}
+.prop-label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:block;font-weight:500;}
+.prop-row{display:flex;gap:5px;align-items:center;margin-bottom:5px;}
+.prop-input{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#eee;padding:5px 8px;font-size:12px;flex:1;min-width:0;transition:border-color .15s;}
+.prop-input:focus{outline:none;border-color:#8B1A2E;background:#1a0a10;}
+.prop-textarea{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#eee;padding:7px 9px;font-size:13px;width:100%;resize:vertical;min-height:65px;font-family:'Noto Sans Devanagari',sans-serif;line-height:1.6;transition:border-color .15s;}
+.prop-textarea:focus{outline:none;border-color:#8B1A2E;}
+.prop-select{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#eee;padding:5px 6px;font-size:11px;flex:1;transition:border-color .15s;}
+.prop-select:focus{outline:none;border-color:#8B1A2E;}
+.color-swatch{width:28px;height:28px;border-radius:5px;border:2px solid #3a3a3a;cursor:pointer;flex-shrink:0;}
+.quick-colors{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.qc{width:22px;height:22px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:border-color .1s;}
+.qc:hover{border-color:#fff;}
+.align-btns{display:flex;gap:4px;}
+.align-btn{flex:1;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#666;padding:5px 3px;cursor:pointer;font-size:12px;text-align:center;transition:all .15s;}
+.align-btn.active,.align-btn:hover{background:#200a10;border-color:#8B1A2E;color:#C9A84C;}
+.prop-checkbox{display:flex;align-items:center;gap:6px;font-size:11px;color:#bbb;cursor:pointer;}
+.prop-checkbox input{accent-color:#8B1A2E;width:14px;height:14px;}
+.prop-range{width:100%;accent-color:#8B1A2E;}
+.prop-slider-row{display:flex;gap:8px;align-items:center;}
+.prop-slider-val{font-size:11px;color:#777;width:40px;text-align:right;flex-shrink:0;}
 
 /* ── SYMBOLS ── */
 .symbols-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;}
@@ -79,28 +133,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .sym-btn-new{background:#1a2a1a;border:1px solid #3a5a3a;border-radius:4px;color:#7ec87e;font-size:13px;padding:5px 3px;cursor:pointer;text-align:center;transition:all .15s;font-family:'Noto Serif Devanagari',serif;}
 .sym-btn-new:hover{background:#1e4a1e;border-color:#3a7a3a;}
 
-/* ── PROPERTIES ── */
-.prop-group{margin-bottom:10px;}
-.prop-label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block;}
-.prop-row{display:flex;gap:4px;align-items:center;margin-bottom:4px;}
-.prop-input{background:#222;border:1px solid #333;border-radius:4px;color:#eee;padding:3px 6px;font-size:12px;flex:1;min-width:0;}
-.prop-input:focus{outline:none;border-color:#8B1A2E;}
-.prop-textarea{background:#222;border:1px solid #333;border-radius:4px;color:#eee;padding:5px 7px;font-size:13px;width:100%;resize:vertical;min-height:65px;font-family:'Noto Sans Devanagari',sans-serif;line-height:1.6;}
-.prop-textarea:focus{outline:none;border-color:#8B1A2E;}
-.prop-select{background:#222;border:1px solid #333;border-radius:4px;color:#eee;padding:3px 4px;font-size:11px;flex:1;}
-.prop-select:focus{outline:none;border-color:#8B1A2E;}
-.color-swatch{width:26px;height:26px;border-radius:4px;border:2px solid #555;cursor:pointer;flex-shrink:0;}
-.quick-colors{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px;}
-.qc{width:20px;height:20px;border-radius:3px;cursor:pointer;border:2px solid transparent;transition:border-color .1s;}
-.qc:hover{border-color:#fff;}
-.align-btns{display:flex;gap:3px;}
-.align-btn{flex:1;background:#222;border:1px solid #333;border-radius:4px;color:#777;padding:4px 3px;cursor:pointer;font-size:12px;text-align:center;transition:all .15s;}
-.align-btn.active,.align-btn:hover{background:#2a1018;border-color:#8B1A2E;color:#C9A84C;}
-.prop-checkbox{display:flex;align-items:center;gap:5px;font-size:11px;color:#bbb;cursor:pointer;}
-.prop-checkbox input{accent-color:#8B1A2E;width:13px;height:13px;}
-.prop-range{width:100%;accent-color:#8B1A2E;}
-.prop-slider-row{display:flex;gap:6px;align-items:center;}
-.prop-slider-val{font-size:11px;color:#888;width:38px;text-align:right;flex-shrink:0;}
+/* Props CSS defined above in redesigned block */
 
 /* Custom palette swatch */
 .palette-swatch{width:22px;height:22px;border-radius:3px;cursor:pointer;border:2px solid #444;position:relative;flex-shrink:0;}
@@ -153,26 +186,38 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .reg-mark{position:absolute;pointer-events:none;z-index:949;display:none;}
 
 /* ── BLOCK ELEMENTS ── */
-.text-block,.image-block,.shape-block,.graphic-block{position:absolute;cursor:move;user-select:none;border:1.5px solid transparent;border-radius:2px;transition:border-color .1s;}
-.text-block{min-width:30px;min-height:16px;padding:0;white-space:pre-wrap;word-break:break-word;}
+/* No border on base — we use outline so it doesn't shift box model */
+.text-block,.image-block,.shape-block,.graphic-block{position:absolute;cursor:move;user-select:none;border-radius:2px;}
+.text-block{min-width:20px;min-height:16px;padding:0;white-space:pre-wrap;word-break:break-word;overflow:visible;}
 .image-block{min-width:20px;min-height:20px;overflow:hidden;}
 .image-block img{width:100%;height:100%;display:block;}
 .graphic-block{min-width:20px;min-height:20px;overflow:hidden;background:transparent;}
-.symbol-block{min-width:30px;min-height:20px;padding:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif Devanagari',serif;}
+.symbol-block{min-width:20px;min-height:20px;padding:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif Devanagari',serif;}
 .qr-block{min-width:30px;min-height:30px;overflow:hidden;background:white;}
-.text-block:hover,.image-block:hover,.shape-block:hover,.symbol-block:hover,.graphic-block:hover,.qr-block:hover{border-color:rgba(201,168,76,.35);}
-.text-block.selected,.image-block.selected,.shape-block.selected,.symbol-block.selected,.graphic-block.selected,.qr-block.selected{border-color:#C9A84C !important;box-shadow:0 0 0 1px rgba(201,168,76,.25);}
+
+/* Hover — dashed outline, doesn't affect layout */
+.text-block:hover,.image-block:hover,.shape-block:hover,.symbol-block:hover,.graphic-block:hover,.qr-block:hover{
+  outline:1.5px dashed rgba(201,168,76,.4);
+  outline-offset:2px;
+}
+/* Selected — solid outline, tighter */
+.text-block.selected,.image-block.selected,.shape-block.selected,.symbol-block.selected,.graphic-block.selected,.qr-block.selected{
+  outline:2px solid #C9A84C !important;
+  outline-offset:2px;
+}
 .text-block.locked,.image-block.locked,.shape-block.locked,.graphic-block.locked,.qr-block.locked{cursor:default;opacity:.8;}
-.block-selected-multi{border-color:#4aa6ff !important;box-shadow:0 0 0 1px rgba(74,166,255,.3) !important;}
+/* Multi-select */
+.block-selected-multi{outline:2px solid #4aa6ff !important;outline-offset:2px;}
 
 /* ── RESIZE + ROTATE HANDLES ── */
-.resize-handle{position:absolute;width:9px;height:9px;background:#C9A84C;border-radius:2px;opacity:0;transition:opacity .15s;z-index:10;}
+.resize-handle{position:absolute;width:9px;height:9px;background:#C9A84C;border-radius:2px;opacity:0;transition:opacity .15s;z-index:11;border:1px solid rgba(0,0,0,.35);}
 .selected .resize-handle{opacity:1;}
-.resize-se{right:-4px;bottom:-4px;cursor:se-resize;}
-.resize-e{right:-4px;top:50%;transform:translateY(-50%);cursor:e-resize;}
-.resize-s{bottom:-4px;left:50%;transform:translateX(-50%);cursor:s-resize;}
-.resize-nw{left:-4px;top:-4px;cursor:nw-resize;}
-.rotate-handle{position:absolute;width:13px;height:13px;top:-20px;left:50%;transform:translateX(-50%);background:#C9A84C;border-radius:50%;cursor:grab;opacity:0;transition:opacity .15s;display:flex;align-items:center;justify-content:center;font-size:9px;color:#000;z-index:10;}
+/* Handles offset by outline-offset(2px) + half handle size so they sit ON the outline */
+.resize-se{right:-7px;bottom:-7px;cursor:se-resize;width:11px;height:11px;}
+.resize-e{right:-7px;top:50%;transform:translateY(-50%);cursor:e-resize;}
+.resize-s{bottom:-7px;left:50%;transform:translateX(-50%);cursor:s-resize;}
+.resize-nw{left:-7px;top:-7px;cursor:nw-resize;}
+.rotate-handle{position:absolute;width:14px;height:14px;top:-24px;left:50%;transform:translateX(-50%);background:#C9A84C;border-radius:50%;cursor:grab;opacity:0;transition:opacity .15s;display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;z-index:11;border:1.5px solid rgba(0,0,0,.3);}
 .selected .rotate-handle{opacity:1;}
 
 /* Multi-select rubber band */
@@ -261,8 +306,8 @@ body.blueprint-mode .image-block img{filter:grayscale(1) contrast(10);}
 body.blueprint-mode .graphic-block img{filter:grayscale(1) contrast(10);}
 body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 
-/* Color layer highlight */
-.layer-highlight{outline:3px solid #ff0 !important;}
+/* Group bounding box overlay */
+.group-bbox{pointer-events:none;}
 
 /* Align toolbar */
 .align-toolbar{display:flex;gap:3px;flex-wrap:wrap;}
@@ -392,16 +437,38 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <!-- ── LEFT PANEL ── -->
   <div class="left-panel">
     <div class="panel-tabs">
-      <div class="panel-tab active" onclick="switchTab('blocks',this)">Layers</div>
-      <div class="panel-tab" onclick="switchTab('props',this)">Props</div>
-      <div class="panel-tab" onclick="switchTab('align',this)">Align</div>
-      <div class="panel-tab" onclick="switchTab('canvasbg',this)">BG</div>
-      <div class="panel-tab" onclick="switchTab('fonts',this)">Aa</div>
-      <div class="panel-tab" onclick="switchTab('graphics',this)">Lib</div>
-      <div class="panel-tab" onclick="switchTab('symbols',this)">Sym</div>
-      <div class="panel-tab" onclick="switchTab('palette',this)">🎨</div>
-      <div class="panel-tab" onclick="switchTab('findreplace',this)">🔍</div>
-      <div class="panel-tab" onclick="switchTab('templates',this)">Tmpl</div>
+      <!-- Row 1 -->
+      <div class="panel-tab active" onclick="switchTab('blocks',this)" title="Layers & Blocks">
+        <span class="tab-icon">⊟</span><span class="tab-label">Layers</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('props',this)" title="Block Properties">
+        <span class="tab-icon">⚙</span><span class="tab-label">Props</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('align',this)" title="Align & Distribute">
+        <span class="tab-icon">⊟</span><span class="tab-label">Align</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('canvasbg',this)" title="Canvas Background">
+        <span class="tab-icon">🖼</span><span class="tab-label">BG</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('fonts',this)" title="Font Manager">
+        <span class="tab-icon">Aa</span><span class="tab-label">Fonts</span>
+      </div>
+      <!-- Row 2 -->
+      <div class="panel-tab" onclick="switchTab('graphics',this)" title="Graphics Library">
+        <span class="tab-icon">🎨</span><span class="tab-label">Library</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('symbols',this)" title="Symbols & Hindi">
+        <span class="tab-icon">ॐ</span><span class="tab-label">Symbols</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('palette',this)" title="Color Palette">
+        <span class="tab-icon">🎭</span><span class="tab-label">Colors</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('findreplace',this)" title="Find & Replace">
+        <span class="tab-icon">🔍</span><span class="tab-label">Find</span>
+      </div>
+      <div class="panel-tab" onclick="switchTab('templates',this)" title="Templates">
+        <span class="tab-icon">📋</span><span class="tab-label">Tmpl</span>
+      </div>
     </div>
 
     <!-- LAYERS TAB -->
@@ -1192,7 +1259,7 @@ function createBlock(opts={}) {
     name:opts.name||(type==='image'?'Image ':type==='shape'?'Shape ':type==='symbol'?'Symbol ':type==='graphic'?'Graphic ':type==='qr'?'QR ':'Block ')+localCounter,
     text:opts.text!==undefined?opts.text:(type==='symbol'?'ॐ':type==='qr'?'https://':type==='text'?'।। नमस्ते ।।':''),
     x:opts.x!==undefined?opts.x:50, y:opts.y!==undefined?opts.y:20,
-    w:opts.w!==undefined?opts.w:(type==='image'||type==='graphic'||type==='qr'?50:type==='symbol'?20:100),
+    w:opts.w!==undefined?opts.w:(type==='image'||type==='graphic'||type==='qr'?50:type==='symbol'?20:80),
     h:opts.h!==undefined?opts.h:(type==='image'||type==='graphic'||type==='qr'?40:type==='symbol'?20:null),
     fontSize:opts.fontSize||(type==='symbol'?24:14),
     fontFamily:opts.fontFamily||'Noto Serif Devanagari',
@@ -1763,119 +1830,228 @@ function renderBlocks(){
   const c=ac();if(!c)return;
   const canvas=document.getElementById('canvas-'+c.id);if(!canvas)return;
   canvas.querySelectorAll('.text-block,.image-block,.shape-block,.symbol-block,.graphic-block,.qr-block').forEach(el=>el.remove());
+
+  // Canvas boundary in px — used to clamp blocks
+  const canvasW=canvas.offsetWidth;
+  const canvasH=canvas.offsetHeight;
+
   c.blocks.forEach(b=>{
     const el=document.createElement('div');
     let cls='';
-    if(b.type==='image')cls='image-block';
-    else if(b.type==='shape')cls='shape-block';
-    else if(b.type==='symbol')cls='symbol-block text-block';
+    if(b.type==='image')     cls='image-block';
+    else if(b.type==='shape')  cls='shape-block';
+    else if(b.type==='symbol') cls='symbol-block text-block';
     else if(b.type==='graphic')cls='graphic-block image-block';
-    else if(b.type==='qr')cls='qr-block';
-    else cls='text-block';
-    const isSel=selectedId===b.id||selectedIds.includes(b.id);
+    else if(b.type==='qr')    cls='qr-block';
+    else                       cls='text-block';
+
+    const isSel = selectedId===b.id||selectedIds.includes(b.id);
     if(isSel) cls+=' selected';
     if(selectedIds.includes(b.id)&&selectedIds.length>1) cls+=' block-selected-multi';
     if(b.locked) cls+=' locked';
     el.className=cls; el.dataset.id=b.id;
-    const bH=b.h?mm2px(b.h):null;
-    const pH=mm2px(b.paddingH||0),pV=mm2px(b.paddingV||0);
-    el.style.cssText=`left:${mm2px(b.x)}px;top:${mm2px(b.y)}px;width:${mm2px(b.w)}px;${bH?`height:${bH}px;`:''}opacity:${b.opacity/100};transform:rotate(${b.rotation}deg);transform-origin:center center;position:absolute;z-index:${c.blocks.indexOf(b)+2};padding:${pV}px ${pH}px;box-sizing:border-box;`;
+
+    const bH  = b.h ? mm2px(b.h) : null;
+    const bW  = mm2px(b.w);
+    const pH  = mm2px(b.paddingH||0);
+    const pV  = mm2px(b.paddingV||0);
+    const bx  = mm2px(b.x);
+    const by  = mm2px(b.y);
+
+    // ── Base positioning (same for all block types) ──
+    el.style.cssText = [
+      `left:${bx}px`,
+      `top:${by}px`,
+      `width:${bW}px`,
+      bH ? `height:${bH}px` : '',
+      `opacity:${b.opacity/100}`,
+      `transform:rotate(${b.rotation}deg)`,
+      `transform-origin:center center`,
+      `position:absolute`,
+      `z-index:${c.blocks.indexOf(b)+2}`,
+      `padding:${pV}px ${pH}px`,
+      `box-sizing:border-box`,
+    ].filter(Boolean).join(';') + ';';
+
     if(b.type==='text'||b.type==='symbol'){
-      el.style.fontSize=(b.fontSize*zoom)+'px';
-      // Always quote font family name — critical for names with spaces
-      el.style.fontFamily=`'${b.fontFamily}',serif`;
-      el.style.fontWeight=b.fontWeight||'400';
-      el.style.color=b.color;
-      el.style.textAlign=b.align;
-      el.style.lineHeight=b.lineHeight;
-      el.style.fontStyle=b.italic?'italic':'normal';
-      el.style.letterSpacing=((b.letterSpacing||0)*zoom)+'em';
-      el.style.wordSpacing=((b.wordSpacing||0)*zoom)+'em';
+      // Text blocks: width = stored mm width (user-resizable)
+      // overflow visible so text flows naturally; selection hugs the box
+      el.style.fontSize     = (b.fontSize*zoom)+'px';
+      el.style.fontFamily   = `'${b.fontFamily}',serif`;
+      el.style.fontWeight   = b.fontWeight||'400';
+      el.style.color        = b.color;
+      el.style.textAlign    = b.align;
+      el.style.lineHeight   = b.lineHeight;
+      el.style.fontStyle    = b.italic?'italic':'normal';
+      el.style.letterSpacing= ((b.letterSpacing||0)*zoom)+'em';
+      el.style.wordSpacing  = ((b.wordSpacing||0)*zoom)+'em';
       el.style.textDecoration=[b.underline?'underline':'',b.strikethrough?'line-through':''].filter(Boolean).join(' ')||'none';
-      if(b.textShadow) el.style.textShadow=b.textShadowVal||'1px 2px 4px rgba(0,0,0,0.5)';
-      // Text stroke (outline effect)
-      if(b.textStroke&&b.textStrokeW>0) el.style.webkitTextStroke=`${b.textStrokeW*zoom}px ${b.textStrokeColor||'#000'}`;
+      el.style.whiteSpace   = 'pre-wrap';
+      el.style.wordBreak    = 'break-word';
+      el.style.overflow     = 'visible';
+      el.style.minHeight    = (b.fontSize*zoom*b.lineHeight)+'px';
+
+      if(b.textShadow) el.style.textShadow = b.textShadowVal||'1px 2px 4px rgba(0,0,0,0.5)';
+      else el.style.textShadow='';
+
+      if(b.textStroke&&b.textStrokeW>0)
+        el.style.webkitTextStroke=`${b.textStrokeW*zoom}px ${b.textStrokeColor||'#000'}`;
       else el.style.webkitTextStroke='';
-      if(b.bgOpacity>0){
+
+      if((b.bgOpacity||0)>0){
         const hex=b.bgColor||'#ffffff';
         const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),bv=parseInt(hex.slice(5,7),16);
-        el.style.background=`rgba(${r},${g},${bv},${b.bgOpacity/100})`;el.style.borderRadius='2px';
-      } else { el.style.background=''; }
-      el.style.whiteSpace='pre-wrap';el.style.wordBreak='break-word';
+        el.style.background=`rgba(${r},${g},${bv},${b.bgOpacity/100})`;
+        el.style.borderRadius='2px';
+      }else{ el.style.background=''; }
+
       el.textContent=b.text;
-      if(b.type==='symbol'){el.style.display='flex';el.style.justifyContent='center';el.style.alignItems='center';}
+      if(b.type==='symbol'){
+        el.style.display='flex';
+        el.style.justifyContent='center';
+        el.style.alignItems='center';
+      }
+
+      // Measure actual rendered height AFTER the element is in DOM
+      // Use requestAnimationFrame so browser has laid out the text
+      requestAnimationFrame(()=>{
+        if(!b.h && el.isConnected){
+          const actualH = el.offsetHeight/(PX_PER_MM*zoom);
+          if(actualH>0) b._renderedH=actualH;
+          // Update the info tooltip if this is the selected block
+          if(b.id===selectedId){
+            const info=el.querySelector('div[style*="bottom:-18px"]');
+            if(info){
+              info.textContent=`${b.w.toFixed(1)}×${actualH.toFixed(1)}mm  x:${b.x.toFixed(1)} y:${b.y.toFixed(1)}`;
+            }
+          }
+        }
+      });
+
     } else if(b.type==='image'){
-      el.style.overflow='hidden';el.style.cursor='move';el.style.padding='0';
-      if(b.imgCornerRadius)el.style.borderRadius=b.imgCornerRadius+'%';
+      el.style.overflow='hidden';
+      el.style.cursor='move';
+      el.style.padding='0';
+      if(b.imgCornerRadius) el.style.borderRadius=b.imgCornerRadius+'%';
       if(b.src){
         const img=document.createElement('img');
-        img.src=b.src;img.style.cssText=`width:100%;height:100%;object-fit:${b.objectFit};display:block;`;
-        img.draggable=false;el.appendChild(img);
+        img.src=b.src;
+        img.style.cssText=`width:100%;height:100%;object-fit:${b.objectFit};display:block;`;
+        img.draggable=false; el.appendChild(img);
       }
     } else if(b.type==='graphic'){
-      el.style.overflow='hidden';el.style.cursor='move';el.style.padding='0';el.style.background='transparent';
-      if(b.imgCornerRadius)el.style.borderRadius=b.imgCornerRadius+'%';
+      el.style.overflow='hidden';
+      el.style.cursor='move';
+      el.style.padding='0';
+      el.style.background='transparent';
+      if(b.imgCornerRadius) el.style.borderRadius=b.imgCornerRadius+'%';
       if(b.src){
         const isSVG=b.src.startsWith('<svg')||b.src.startsWith('<?xml');
         if(isSVG){
           el.innerHTML=b.src;
           const svgEl=el.querySelector('svg');
-          if(svgEl){svgEl.style.cssText=`width:100%;height:100%;display:block;`;}
-        } else {
+          if(svgEl) svgEl.style.cssText=`width:100%;height:100%;display:block;`;
+        }else{
           const img=document.createElement('img');
-          img.src=b.src; img.style.cssText=`width:100%;height:100%;object-fit:contain;display:block;`;
-          if(b.graphicDropShadow)img.style.filter='drop-shadow(2px 3px 4px rgba(0,0,0,0.4))';
-          const scaleX=b.graphicFlipH?-1:1,scaleY=b.graphicFlipV?-1:1;
-          if(scaleX!==1||scaleY!==1)img.style.transform=`scale(${scaleX},${scaleY})`;
-          img.draggable=false;el.appendChild(img);
+          img.src=b.src;
+          img.style.cssText=`width:100%;height:100%;object-fit:contain;display:block;`;
+          if(b.graphicDropShadow) img.style.filter='drop-shadow(2px 3px 4px rgba(0,0,0,0.4))';
+          const scaleX=b.graphicFlipH?-1:1, scaleY=b.graphicFlipV?-1:1;
+          if(scaleX!==1||scaleY!==1) img.style.transform=`scale(${scaleX},${scaleY})`;
+          img.draggable=false; el.appendChild(img);
         }
       }
     } else if(b.type==='qr'){
-      el.style.overflow='hidden';el.style.cursor='move';el.style.padding='2px';el.style.background='white';
+      el.style.overflow='hidden';
+      el.style.cursor='move';
+      el.style.padding='2px';
+      el.style.background='white';
       const inner=document.createElement('div');
-      inner.className='qr-block-inner';inner.id='qr-inner-'+b.id;
+      inner.className='qr-block-inner'; inner.id='qr-inner-'+b.id;
       el.appendChild(inner);
-      // Generate QR after DOM insertion
       setTimeout(()=>{
         const container=document.getElementById('qr-inner-'+b.id);
-        if(!container)return;
+        if(!container) return;
         container.innerHTML='';
         try{
           const sz=Math.min(mm2px(b.w),mm2px(b.h||b.w))-4;
-          new QRCode(container,{text:b.text||'https://',width:sz,height:sz,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+          new QRCode(container,{text:b.text||'https://',width:sz,height:sz,
+            colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
         }catch(e){container.innerHTML='<div style="font-size:8px;color:#999;padding:2px;">QR</div>';}
       },50);
     } else if(b.type==='shape'){
-      el.style.padding='0';el.style.overflow='hidden';el.style.background='transparent';
-      const pxW=mm2px(b.w),pxH=mm2px(b.h||20);
-      const complexShapes=['triangle','diamond','hexagon','octagon','star5','star4','heart','arrow_right','arrow_left','ring','banner','line_h','line_v','half_rect'];
+      el.style.padding='0';
+      el.style.overflow='hidden';
+      el.style.background='transparent';
+      const pxW=mm2px(b.w), pxH=mm2px(b.h||20);
+      const complexShapes=['triangle','diamond','hexagon','octagon','star5','star4','heart',
+        'arrow_right','arrow_left','ring','banner','line_h','line_v','half_rect'];
       if(complexShapes.includes(b.shapeType)){
         el.innerHTML=getShapeSVG(b,pxW,pxH);
-      } else {
+      }else{
         el.style.background=b.shapeFill==='none'?'transparent':b.shapeFill;
         if(b.shapeStrokeW>0){
           const dStr=b.shapeStrokeDash==='dashed'?'dashed':b.shapeStrokeDash==='dotted'?'dotted':'solid';
           el.style.border=`${b.shapeStrokeW*zoom}px ${dStr} ${b.shapeStroke}`;
         }
-        if(b.shapeType==='circle')el.style.borderRadius='50%';
-        else if(b.shapeType==='rounded')el.style.borderRadius='8px';
-        else el.style.borderRadius='0';
+        el.style.borderRadius=b.shapeType==='circle'?'50%':b.shapeType==='rounded'?'8px':'0';
       }
-      if(!b.h)el.style.height=mm2px(20)+'px';
+      if(!b.h) el.style.height=mm2px(20)+'px';
     }
 
-    // Resize handles
-    if(b.id===selectedId&&!b.locked){
-      const rhE=document.createElement('div');rhE.className='resize-handle resize-e';rhE.addEventListener('mousedown',ev=>startResize(ev,b,el,'e'));el.appendChild(rhE);
-      const rhS=document.createElement('div');rhS.className='resize-handle resize-s';rhS.addEventListener('mousedown',ev=>startResize(ev,b,el,'s'));el.appendChild(rhS);
-      const rhSE=document.createElement('div');rhSE.className='resize-handle resize-se';
-      rhSE.style.cssText='width:11px;height:11px;right:-5px;bottom:-5px;background:#C9A84C;border:1.5px solid #fff;border-radius:3px;';
-      rhSE.addEventListener('mousedown',ev=>startResize(ev,b,el,'se'));el.appendChild(rhSE);
-      const rotH=document.createElement('div');rotH.className='rotate-handle';rotH.title='Rotate';rotH.innerHTML='↻';
-      rotH.addEventListener('mousedown',ev=>startRotate(ev,b,el));el.appendChild(rotH);
+    // ── Resize + Rotate handles (only on primary selected block) ──
+    if(b.id===selectedId && !b.locked){
+      // SE corner — scale proportionally
+      const rhSE=document.createElement('div');
+      rhSE.className='resize-handle resize-se';
+      rhSE.style.cssText='width:11px;height:11px;right:-5px;bottom:-5px;background:#C9A84C;border:1.5px solid #fff;border-radius:3px;position:absolute;cursor:se-resize;z-index:10;opacity:1;';
+      rhSE.addEventListener('mousedown',ev=>startResize(ev,b,el,'se'));
+      el.appendChild(rhSE);
+
+      // E edge — width only
+      const rhE=document.createElement('div');
+      rhE.className='resize-handle resize-e';
+      rhE.addEventListener('mousedown',ev=>startResize(ev,b,el,'e'));
+      el.appendChild(rhE);
+
+      // S edge — height only
+      const rhS=document.createElement('div');
+      rhS.className='resize-handle resize-s';
+      rhS.addEventListener('mousedown',ev=>startResize(ev,b,el,'s'));
+      el.appendChild(rhS);
+
+      // Rotate handle
+      const rotH=document.createElement('div');
+      rotH.className='rotate-handle';
+      rotH.title='Rotate (drag)';
+      rotH.innerHTML='↻';
+      rotH.addEventListener('mousedown',ev=>startRotate(ev,b,el));
+      el.appendChild(rotH);
+
+      // ── SELECTION INFO TOOLTIP (shows W×H in mm) ──
+      // Only show when hovered or just selected
+      const info=document.createElement('div');
+      info.style.cssText=[
+        'position:absolute',
+        'bottom:-18px',
+        'left:0',
+        'background:rgba(201,168,76,.9)',
+        'color:#000',
+        'font-size:9px',
+        'padding:1px 5px',
+        'border-radius:3px',
+        'white-space:nowrap',
+        'pointer-events:none',
+        'z-index:20',
+        'font-family:Poppins,sans-serif',
+      ].join(';');
+      const wVal = b.w.toFixed(1);
+      const hVal = b.h ? b.h.toFixed(1) : (b._renderedH ? b._renderedH.toFixed(1) : '—');
+      info.textContent = `${wVal}×${hVal}mm  x:${b.x.toFixed(1)} y:${b.y.toFixed(1)}`;
+      el.appendChild(info);
     }
 
-    if(!b.locked)makeDraggable(el,b,c);
+    if(!b.locked) makeDraggable(el,b,c);
     el.addEventListener('click',e=>{e.stopPropagation();selectBlock(b.id,e.shiftKey);});
     el.draggable=!b.locked;
     el.addEventListener('dragstart',e=>{
@@ -1883,10 +2059,16 @@ function renderBlocks(){
       e.dataTransfer.effectAllowed='move';
     });
     canvas.appendChild(el);
-    requestAnimationFrame(()=>{
-      if(!b.h&&(b.type==='text'||b.type==='symbol'))b._renderedH=el.offsetHeight/(PX_PER_MM*zoom);
-    });
   });
+
+  // Draw group bounding box overlay if a grouped block is selected
+  if(selectedId){
+    const selB=c.blocks.find(b=>b.id===selectedId);
+    if(selB&&selB.groupId) updateGroupBBox(c, selB.groupId, canvas);
+    else canvas.querySelectorAll('.group-bbox').forEach(e=>e.remove());
+  } else {
+    canvas.querySelectorAll('.group-bbox').forEach(e=>e.remove());
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1936,7 +2118,7 @@ function onCanvasMouseUp(e){
   const rw=Math.abs(curX-rbStartX),rh=Math.abs(curY-rbStartY);
   const newSel=[];
   c.blocks.forEach(b=>{
-    const bx=mm2px(b.x),by=mm2px(b.y),bw=mm2px(b.w),bh=mm2px(b.h||20);
+    const bx=mm2px(b.x),by=mm2px(b.y),bw=mm2px(b.w),bh=mm2px(b.h||b._renderedH||20);
     if(bx+bw>rx&&bx<rx+rw&&by+bh>ry&&by<ry+rh)newSel.push(b.id);
   });
   if(newSel.length){
@@ -2318,8 +2500,15 @@ function updateProp(key,val){
 function updatePropAndRefresh(key,val){updateProp(key,val);renderPropsPanel();}
 
 // ══════════════════════════════════════════════════════
-//  DRAG — group-aware: dragging any block in a group
-//  moves ALL members together as a single unit.
+//  DRAG — group-aware
+//  Fixes:
+//  1. No Math.max(0) left-clamp — blocks can move freely
+//     in all directions (left, right, top, bottom)
+//  2. Snap delta computed ONCE for the leading block only,
+//     then applied identically to all group members —
+//     this prevents the "stack on top" bug where each
+//     member got its own independent snap offset
+//  3. Group bounding-box overlay updated during drag
 // ══════════════════════════════════════════════════════
 function makeDraggable(el,b,canvasObj){
   let startX,startY,startPositions={},dragging=false,altDupMode=false,dupGhost=null;
@@ -2331,10 +2520,7 @@ function makeDraggable(el,b,canvasObj){
     dragging=true; altDupMode=e.altKey;
     startX=e.clientX; startY=e.clientY;
 
-    // Record start positions of ALL blocks that will move:
-    // - if block is in a group → all group members
-    // - if multi-select includes this block → all selected
-    // - else → just this block
+    // Collect IDs to move together
     startPositions={};
     const moveIds = b.groupId
       ? canvasObj.blocks.filter(x=>x.groupId===b.groupId).map(x=>x.id)
@@ -2347,7 +2533,7 @@ function makeDraggable(el,b,canvasObj){
     document.body.style.cursor=altDupMode?'copy':'move';
     if(altDupMode){
       dupGhost=document.createElement('div');dupGhost.className='dup-ghost';
-      dupGhost.style.cssText=`left:${mm2px(b.x)}px;top:${mm2px(b.y)}px;width:${mm2px(b.w)}px;${b.h?`height:${mm2px(b.h)}px;`:'min-height:20px;'}`;
+      dupGhost.style.cssText=`position:absolute;left:${mm2px(b.x)}px;top:${mm2px(b.y)}px;width:${mm2px(b.w)}px;${b.h?`height:${mm2px(b.h)}px;`:'min-height:20px;'}z-index:9990;`;
       canvas.appendChild(dupGhost);
     }
     e.preventDefault();
@@ -2355,57 +2541,234 @@ function makeDraggable(el,b,canvasObj){
 
   const onMove=e=>{
     if(!dragging)return;
+    // Raw mm delta from mouse movement
     const rawDX=px2mm(e.clientX-startX);
     const rawDY=px2mm(e.clientY-startY);
 
     if(altDupMode){
-      // Ghost follows primary block only
-      const newX=Math.max(0,startPositions[b.id].x+rawDX);
-      const newY=Math.max(0,startPositions[b.id].y+rawDY);
-      if(dupGhost){dupGhost.style.left=mm2px(newX)+'px';dupGhost.style.top=mm2px(newY)+'px';}
-    } else {
-      // Move ALL tracked blocks by the same delta
-      const snap=computeSnap({...b,x:Math.max(0,startPositions[b.id].x+rawDX),y:Math.max(0,startPositions[b.id].y+rawDY),h:b.h||(b._renderedH||20)},canvasObj.blocks,canvas);
-      const snapDXmm=px2mm(snap.dx); const snapDYmm=px2mm(snap.dy);
-
-      Object.entries(startPositions).forEach(([id,startPos])=>{
-        const mb=canvasObj.blocks.find(x=>x.id===id);if(!mb)return;
-        mb.x=Math.max(0,startPos.x+rawDX+snapDXmm);
-        mb.y=Math.max(0,startPos.y+rawDY+snapDYmm);
-        // Update the DOM element for this block directly (fast path — no full re-render)
-        const mEl=canvas.querySelector(`[data-id="${id}"]`);
-        if(mEl){mEl.style.left=mm2px(mb.x)+'px';mEl.style.top=mm2px(mb.y)+'px';}
-      });
-      document.getElementById('statusPos').textContent=`X:${b.x.toFixed(1)} Y:${b.y.toFixed(1)}mm`;
+      const sp=startPositions[b.id]||{x:b.x,y:b.y};
+      if(dupGhost){
+        dupGhost.style.left=mm2px(sp.x+rawDX)+'px';
+        dupGhost.style.top =mm2px(sp.y+rawDY)+'px';
+      }
+      return;
     }
+
+    // Compute snap based on THIS block's new prospective position
+    // (just once — same offset applied to every member)
+    const sp0=startPositions[b.id]||{x:b.x,y:b.y};
+    const prospX=sp0.x+rawDX;
+    const prospY=sp0.y+rawDY;
+    const snap=computeSnap(
+      {...b, x:prospX, y:prospY, h:b.h||(b._renderedH||20)},
+      canvasObj.blocks, canvas
+    );
+    const snapDX=px2mm(snap.dx);
+    const snapDY=px2mm(snap.dy);
+
+    // Apply SAME (rawDX+snapDX, rawDY+snapDY) to every member
+    Object.entries(startPositions).forEach(([id,sp])=>{
+      const mb=canvasObj.blocks.find(x=>x.id===id);if(!mb)return;
+      // No clamping — allow free movement in all directions
+      mb.x=sp.x+rawDX+snapDX;
+      mb.y=sp.y+rawDY+snapDY;
+      const mEl=canvas.querySelector(`[data-id="${id}"]`);
+      if(mEl){
+        mEl.style.left=mm2px(mb.x)+'px';
+        mEl.style.top =mm2px(mb.y)+'px';
+      }
+    });
+
+    // Update group bounding box overlay if dragging a group
+    if(b.groupId) updateGroupBBox(canvasObj, b.groupId, canvas);
+
+    document.getElementById('statusPos').textContent=
+      `X:${b.x.toFixed(1)} Y:${b.y.toFixed(1)}mm`;
   };
 
   const onUp=e=>{
     if(!dragging)return;
-    dragging=false;document.body.style.cursor='';clearGuideLines();
+    dragging=false; document.body.style.cursor=''; clearGuideLines();
     if(altDupMode&&dupGhost){
       const rawDX=px2mm(e.clientX-startX);
       const rawDY=px2mm(e.clientY-startY);
-      dupGhost.remove();dupGhost=null;
-      const newX=Math.max(0,(startPositions[b.id]?.x||b.x)+rawDX);
-      const newY=Math.max(0,(startPositions[b.id]?.y||b.y)+rawDY);
+      dupGhost.remove(); dupGhost=null;
+      const sp=startPositions[b.id]||{x:b.x,y:b.y};
       const moved=Math.sqrt(rawDX*rawDX+rawDY*rawDY);
       if(moved>2){
         globalBlockCounter++;
         const nb=JSON.parse(JSON.stringify(b));
-        nb.id='b'+Date.now()+'_'+globalBlockCounter;nb.name=b.name+' (copy)';
-        nb.x=newX;nb.y=newY;nb.groupId=null; // duplicate is not in the group
-        canvasObj.blocks.push(nb);selectedId=nb.id;selectedIds=[nb.id];snapshot();renderAll();toast('Alt+Drag: duplicated');
+        nb.id='b'+Date.now()+'_'+globalBlockCounter;
+        nb.name=b.name+' (copy)';
+        nb.x=sp.x+rawDX; nb.y=sp.y+rawDY;
+        nb.groupId=null;
+        canvasObj.blocks.push(nb);
+        selectedId=nb.id; selectedIds=[nb.id];
+        snapshot(); renderAll();
+        toast('Alt+Drag: duplicated');
       }
-    }else{renderPropsPanel();snapshot();}
+    }else{
+      renderPropsPanel(); snapshot();
+    }
     altDupMode=false;
   };
-  document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp);
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
 }
 
 // ══════════════════════════════════════════════════════
-//  RESIZE
+//  GROUP BOUNDING BOX OVERLAY
+//  Draws a single dashed rectangle around all members
+//  of a selected group, so you can see the group as
+//  one unit — just like Illustrator / Canva groups.
 // ══════════════════════════════════════════════════════
+function updateGroupBBox(canvasObj, groupId, canvasEl){
+  // Remove old overlay
+  canvasEl.querySelectorAll('.group-bbox').forEach(e=>e.remove());
+  if(!groupId) return;
+
+  const members=canvasObj.blocks.filter(b=>b.groupId===groupId);
+  if(members.length<2) return;
+
+  // Compute union bounding box in mm
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  members.forEach(b=>{
+    const bH=b.h||(b._renderedH||20);
+    minX=Math.min(minX, b.x);
+    minY=Math.min(minY, b.y);
+    maxX=Math.max(maxX, b.x+b.w);
+    maxY=Math.max(maxY, b.y+bH);
+  });
+
+  const pad=3; // 3px visual padding
+  const overlay=document.createElement('div');
+  overlay.className='group-bbox';
+  overlay.style.cssText=[
+    `position:absolute`,
+    `left:${mm2px(minX)-pad}px`,
+    `top:${mm2px(minY)-pad}px`,
+    `width:${mm2px(maxX-minX)+pad*2}px`,
+    `height:${mm2px(maxY-minY)+pad*2}px`,
+    `border:2px dashed rgba(74,166,255,0.6)`,
+    `border-radius:3px`,
+    `pointer-events:none`,
+    `z-index:9990`,
+    `box-sizing:border-box`,
+  ].join(';');
+
+  // Label showing group member count
+  const lbl=document.createElement('div');
+  lbl.style.cssText=[
+    `position:absolute`,
+    `top:-18px`,
+    `left:0`,
+    `background:rgba(74,166,255,.8)`,
+    `color:#000`,
+    `font-size:9px`,
+    `padding:1px 6px`,
+    `border-radius:3px`,
+    `font-family:Poppins,sans-serif`,
+    `white-space:nowrap`,
+  ].join(';');
+  lbl.textContent=`⊞ Group (${members.length}) — ${(maxX-minX).toFixed(1)}×${(maxY-minY).toFixed(1)}mm`;
+  overlay.appendChild(lbl);
+
+  // Add resize handles to the group bbox so user can drag to resize whole group
+  const handleDirs=[
+    {dir:'se',style:'right:-6px;bottom:-6px;cursor:se-resize;'},
+    {dir:'e', style:'right:-6px;top:50%;transform:translateY(-50%);cursor:e-resize;'},
+    {dir:'s', style:'bottom:-6px;left:50%;transform:translateX(-50%);cursor:s-resize;'},
+  ];
+  handleDirs.forEach(hd=>{
+    const h=document.createElement('div');
+    h.style.cssText=`position:absolute;width:11px;height:11px;background:#4aa6ff;border:1.5px solid #fff;border-radius:3px;z-index:9992;${hd.style}`;
+    h.addEventListener('mousedown',ev=>startGroupResize(ev,groupId,canvasObj,hd.dir));
+    overlay.appendChild(h);
+  });
+
+  canvasEl.appendChild(overlay);
+}
+
+// ── Get group bounding box in mm ─────────────────────
+function getGroupBBoxMM(members){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  members.forEach(b=>{
+    const h=b.h||(b._renderedH||20);
+    minX=Math.min(minX,b.x); minY=Math.min(minY,b.y);
+    maxX=Math.max(maxX,b.x+b.w); maxY=Math.max(maxY,b.y+h);
+  });
+  return {x:minX,y:minY,w:maxX-minX,h:maxY-minY};
+}
+
+// ══════════════════════════════════════════════════════
+//  GROUP RESIZE — Canva-style proportional scaling
+//  Resize group bbox → all members scale proportionally
+//  Position, size, font-size all scale with the same ratio
+// ══════════════════════════════════════════════════════
+function startGroupResize(e,groupId,canvasObj,dir){
+  e.stopPropagation(); e.preventDefault();
+  const members=canvasObj.blocks.filter(b=>b.groupId===groupId);
+  if(!members.length) return;
+
+  const bbox=getGroupBBoxMM(members);
+  const origW=bbox.w, origH=bbox.h, origX=bbox.x, origY=bbox.y;
+
+  // Save relative positions and sizes
+  const origState=members.map(b=>({
+    id:b.id,
+    relX: b.x-origX, relY: b.y-origY,
+    w:b.w, h:b.h||(b._renderedH||20),
+    fontSize:b.fontSize||14,
+  }));
+
+  const startMX=e.clientX, startMY=e.clientY;
+  const canvas=document.getElementById('canvas-'+canvasObj.id);
+  document.body.style.cursor=dir==='se'?'se-resize':dir==='e'?'e-resize':'s-resize';
+
+  const onMove=ev=>{
+    const dX=px2mm(ev.clientX-startMX);
+    const dY=px2mm(ev.clientY-startMY);
+    const newW=Math.max(20, origW+(dir==='s'?0:dX));
+    const newH=Math.max(10, origH+(dir==='e'?0:dY));
+    const scaleX=newW/origW;
+    const scaleY=newH/origH;
+    const uniformScale=Math.min(scaleX,scaleY);
+
+    origState.forEach(os=>{
+      const b=canvasObj.blocks.find(x=>x.id===os.id); if(!b)return;
+      // Scale position relative to group origin
+      b.x=origX+os.relX*scaleX;
+      b.y=origY+os.relY*scaleY;
+      // Scale size
+      b.w=Math.max(5,os.w*scaleX);
+      if(os.h) b.h=Math.max(3,os.h*scaleY);
+      // Scale font proportionally (use uniform scale to avoid distortion)
+      b.fontSize=Math.max(6,Math.round(os.fontSize*uniformScale*10)/10);
+      // Fast DOM update
+      const el=canvas.querySelector(`[data-id="${b.id}"]`);
+      if(el){
+        el.style.left  =mm2px(b.x)+'px';
+        el.style.top   =mm2px(b.y)+'px';
+        el.style.width =mm2px(b.w)+'px';
+        if(b.h) el.style.height=mm2px(b.h)+'px';
+        el.style.fontSize=(b.fontSize*zoom)+'px';
+      }
+    });
+    updateGroupBBox(canvasObj,groupId,canvas);
+    document.getElementById('statusSize').textContent=
+      `Group W:${newW.toFixed(1)} H:${newH.toFixed(1)}mm`;
+  };
+  const onUp=()=>{
+    document.body.style.cursor='';
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    snapshot(); renderAll();
+    toast('Group resized');
+  };
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+}
+
 function startResize(e,b,el,dir){
   e.stopPropagation();e.preventDefault();
   const startX=e.clientX,startY=e.clientY,startW=b.w,startH=b.h||(b._renderedH||20),startFontSize=b.fontSize;
