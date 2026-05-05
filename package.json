@@ -14,6 +14,18 @@
     "electron-builder": "^24.13.3"
   },
   "build": {
+    "build": {
+  "files": [
+    "**/*",
+    "assets/fonts/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "assets/fonts",
+      "to": "fonts"
+    }
+  ]
+},
     "appId": "com.aakash.weddingstudio",
     "productName": "Wedding Card Studio",
     "publish": [

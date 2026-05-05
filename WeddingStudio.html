@@ -1262,6 +1262,7 @@ function createBlock(opts={}) {
     w:opts.w!==undefined?opts.w:(type==='image'||type==='graphic'||type==='qr'?50:type==='symbol'?20:80),
     h:opts.h!==undefined?opts.h:(type==='image'||type==='graphic'||type==='qr'?40:type==='symbol'?20:null),
     fontSize:opts.fontSize||(type==='symbol'?24:14),
+    
     fontFamily:opts.fontFamily||'Noto Serif Devanagari',
     fontWeight:opts.fontWeight||'400',
     color:opts.color||'#C9A84C',
@@ -1291,6 +1292,8 @@ function createBlock(opts={}) {
     groupId:opts.groupId||null,
     note:opts.note||'',
     _renderedH:null,
+
+
   };
 }
 
