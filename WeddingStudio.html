@@ -374,7 +374,8 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <div class="tb-sep"></div>
   <div class="tb-group">
     <span class="tb-label">Zoom</span>
-    <input type="range" min="20" max="250" value="100" id="zoomSlider" oninput="setZoom(this.value)" style="width:60px;accent-color:#8B1A2E;">
+    <!-- Change min="20" max="250" to min="10" max="400" -->
+    <input type="range" min="10" max="400" value="100" id="zoomSlider" oninput="setZoom(this.value)" style="width:60px;accent-color:#8B1A2E;">
     <span class="tb-label" id="zoomLabel">100%</span>
   </div>
   <div class="tb-sep"></div>
@@ -978,8 +979,41 @@ function resizeActiveCanvas() {
 function setZoom(val) {
   zoom = val / 100;
   document.getElementById('zoomLabel').textContent = val + '%';
+  // Update slider if called programmatically (e.g. from wheel)
+  const slider = document.getElementById('zoomSlider');
+  if (parseInt(slider.value) !== Math.round(val)) slider.value = val;
+
   canvases.forEach(c => resizeCanvasDom(c));
   renderBlocks();
+  fixCanvasAreaScroll();
+  if(showRuler) drawRulers();
+}
+
+// ── Fix canvas area layout so it is scrollable at all zoom levels ──
+// At ≤100%: center the canvas (current behavior).
+// At >100%: switch to flex-start so the canvas starts at left edge
+//           and the area becomes scrollable in both directions.
+function fixCanvasAreaScroll(){
+  const area = document.getElementById('canvasArea');
+  const { w, h } = getCardPx();
+  const areaW = area.clientWidth;
+  const areaH = area.clientHeight;
+
+  if (w + 60 > areaW || h + 60 > areaH) {
+    // Canvas is larger than viewport → make it scrollable
+    area.style.justifyContent  = 'flex-start';
+    area.style.alignItems      = 'flex-start';
+    // Add padding so canvas never goes behind left panel
+    area.style.paddingLeft     = '30px';
+    area.style.paddingTop      = '30px';
+    area.style.paddingRight    = '30px';
+    area.style.paddingBottom   = '30px';
+  } else {
+    // Canvas fits → center it
+    area.style.justifyContent  = 'center';
+    area.style.alignItems      = 'flex-start';
+    area.style.padding         = '30px';
+  }
 }
 function swapOrientation() {
   const wEl = document.getElementById('cardWidthMM'), hEl = document.getElementById('cardHeightMM');
@@ -1157,48 +1191,200 @@ function toggleGuides() {
   showGuides=!showGuides;
   document.getElementById('guidesBtn').classList.toggle('active-btn', showGuides);
 }
-function toggleRuler() {
+function toggleRuler(){
   showRuler = !showRuler;
   document.getElementById('rulerBtn').classList.toggle('active-btn', showRuler);
-  // Simply show/hide a ruler canvas drawn over canvas area
-  let rh = document.getElementById('rulerH'), rv = document.getElementById('rulerV'), rc = document.getElementById('rulerCorner');
-  if (!showRuler) { if(rh)rh.style.display='none'; if(rv)rv.style.display='none'; if(rc)rc.style.display='none'; return; }
-  // Create rulers once
-  const area = document.getElementById('canvasArea');
-  if (!rh) {
-    rh = document.createElement('canvas'); rh.id='rulerH'; rh.style.cssText='position:absolute;top:0;left:30px;height:18px;pointer-events:none;z-index:5000;'; area.appendChild(rh);
-    rv = document.createElement('canvas'); rv.id='rulerV'; rv.style.cssText='position:absolute;top:18px;left:0;width:18px;pointer-events:none;z-index:5000;'; area.appendChild(rv);
-    rc = document.createElement('div'); rc.id='rulerCorner'; rc.style.cssText='position:absolute;top:0;left:0;width:30px;height:18px;background:#1a1a1a;border-right:1px solid #333;border-bottom:1px solid #333;z-index:5001;font-size:8px;color:#555;display:flex;align-items:center;justify-content:center;'; rc.textContent='mm'; area.appendChild(rc);
+
+  // Use a fixed overlay DIV that sits over the canvasArea — never inside it.
+  // This avoids disturbing the flex layout that positions the card canvas.
+  let wrap = document.getElementById('rulerWrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'rulerWrap';
+    wrap.style.cssText = [
+      'position:fixed',
+      'pointer-events:none',
+      'z-index:5000',
+      'top:0', 'left:0',
+      'width:0', 'height:0',   // zero size — children positioned via JS
+      'overflow:visible',
+    ].join(';');
+
+    // Horizontal ruler canvas
+    const rh = document.createElement('canvas');
+    rh.id = 'rulerH';
+    rh.style.cssText = 'position:absolute;top:0;left:0;display:block;';
+    wrap.appendChild(rh);
+
+    // Vertical ruler canvas
+    const rv = document.createElement('canvas');
+    rv.id = 'rulerV';
+    rv.style.cssText = 'position:absolute;top:0;left:0;display:block;';
+    wrap.appendChild(rv);
+
+    // Corner square
+    const rc = document.createElement('div');
+    rc.id = 'rulerCorner';
+    rc.style.cssText = [
+      'position:absolute',
+      'top:0', 'left:0',
+      'width:20px', 'height:20px',
+      'background:#1a1a1a',
+      'border-right:1px solid #333',
+      'border-bottom:1px solid #333',
+      'font-size:7px', 'color:#555',
+      'display:flex', 'align-items:center', 'justify-content:center',
+    ].join(';');
+    rc.textContent = 'mm';
+    wrap.appendChild(rc);
+
+    document.body.appendChild(wrap);
+
+    // Redraw on canvas area scroll
+    const area = document.getElementById('canvasArea');
+    area.addEventListener('scroll', () => { if (showRuler) drawRulers(); }, { passive: true });
   }
+
+  if (!showRuler) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
   drawRulers();
-  rh.style.display='block'; rv.style.display='block'; rc.style.display='flex';
 }
+
 function drawRulers() {
-  const canvasEl = document.getElementById('canvas-' + (activeCanvasId||'')); if (!canvasEl) return;
-  const area = document.getElementById('canvasArea');
-  const aRect = area.getBoundingClientRect();
+  const rh = document.getElementById('rulerH');
+  const rv = document.getElementById('rulerV');
+  const rc = document.getElementById('rulerCorner');
+  if (!rh || !rv) return;
+
+  const canvasEl = document.getElementById('canvas-' + (activeCanvasId || ''));
+  if (!canvasEl) return;
+
+  const area     = document.getElementById('canvasArea');
+  const areaRect = area.getBoundingClientRect();   // viewport-relative
+
+  // Ruler dimensions — fill the canvas area viewport
+  const rulerH_height = 20;
+  const rulerV_width  = 20;
+  const areaW = areaRect.width;
+  const areaH = areaRect.height;
+
+  // Position the wrap over canvasArea
+  const wrap = document.getElementById('rulerWrap');
+  if (wrap) {
+    wrap.style.left = areaRect.left + 'px';
+    wrap.style.top  = areaRect.top  + 'px';
+  }
+
+  // Position horizontal ruler at top of canvasArea
+  rh.style.left = rulerV_width + 'px';
+  rh.style.top  = '0px';
+  rh.width  = Math.max(1, areaW - rulerV_width);
+  rh.height = rulerH_height;
+
+  // Position vertical ruler at left of canvasArea
+  rv.style.left = '0px';
+  rv.style.top  = rulerH_height + 'px';
+  rv.width  = rulerV_width;
+  rv.height = Math.max(1, areaH - rulerH_height);
+
+  // Corner
+  if (rc) {
+    rc.style.left   = '0px';
+    rc.style.top    = '0px';
+    rc.style.width  = rulerV_width  + 'px';
+    rc.style.height = rulerH_height + 'px';
+  }
+
+  const ctxH = rh.getContext('2d');
+  const ctxV = rv.getContext('2d');
+
+  // Background
+  ctxH.fillStyle = '#1a1a1a'; ctxH.fillRect(0, 0, rh.width, rh.height);
+  ctxV.fillStyle = '#1a1a1a'; ctxV.fillRect(0, 0, rv.width, rv.height);
+
+  // Canvas element position in viewport space
   const cRect = canvasEl.getBoundingClientRect();
-  const offsetX = cRect.left - aRect.left + area.scrollLeft;
-  const rh = document.getElementById('rulerH'), rv = document.getElementById('rulerV'); if(!rh||!rv) return;
-  const wMM = parseFloat(document.getElementById('cardWidthMM').value)||210;
-  const hMM = parseFloat(document.getElementById('cardHeightMM').value)||148;
-  rh.width = area.clientWidth; rh.height = 18;
-  rv.width = 18; rv.height = area.clientHeight;
-  const ctxH = rh.getContext('2d'), ctxV = rv.getContext('2d');
-  ctxH.fillStyle='#1a1a1a'; ctxH.fillRect(0,0,rh.width,18);
-  ctxV.fillStyle='#1a1a1a'; ctxV.fillRect(0,0,18,rv.height);
-  ctxH.fillStyle='#555'; ctxH.font='8px Poppins';
-  ctxV.fillStyle='#555'; ctxV.font='8px Poppins';
-  for(let mm=0;mm<=wMM;mm+=5) {
-    const px=offsetX+mm2px(mm); const big=mm%10===0;
-    ctxH.fillRect(px,big?0:8,0.5,big?18:10);
-    if(big&&mm>0){ctxH.save();ctxH.fillText(mm,px+1,9);ctxH.restore();}
+
+  // Offset of canvas top-left relative to the ruler origin (areaRect top-left + ruler offset)
+  // In viewport coords: cRect.left - (areaRect.left + rulerV_width)
+  const canvasOriginX = cRect.left - (areaRect.left + rulerV_width);
+  const canvasOriginY = cRect.top  - (areaRect.top  + rulerH_height);
+
+  const wMM = parseFloat(document.getElementById('cardWidthMM').value)  || 210;
+  const hMM = parseFloat(document.getElementById('cardHeightMM').value) || 148;
+
+  const pxPerMM = PX_PER_MM * zoom;
+
+  // ── Adaptive tick + label intervals based on actual px-per-mm ──
+  // minTickPx  = minimum pixels between any two tick marks
+  // minLabelPx = minimum pixels between two labeled ticks
+  const minTickPx  = 6;
+  const minLabelPx = 36;
+
+  // Candidate tick spacings in mm — we pick the first one that gives
+  // at least minTickPx between ticks
+  const tickCandidates  = [1, 2, 5, 10, 20, 25, 50];
+  // Candidate label spacings in mm — always a multiple of the tick spacing
+  const labelCandidates = [5, 10, 20, 25, 50, 100];
+
+  let tickMM  = tickCandidates.find(t => pxPerMM * t >= minTickPx)  || 50;
+  let labelEveryMM = labelCandidates.find(l => l >= tickMM && pxPerMM * l >= minLabelPx) || tickMM * 10;
+  // ── Horizontal ruler ──
+  ctxH.font = '7px Poppins,sans-serif';
+  for (let mm = 0; mm <= wMM; mm += tickMM) {
+    const px = canvasOriginX + mm * pxPerMM;
+    if (px < 0 || px > rh.width) continue;
+    const isMajor = mm % labelEveryMM === 0;
+    const isMid   = mm % 5 === 0;
+    const tickH   = isMajor ? 14 : isMid ? 8 : 4;
+    ctxH.fillStyle = isMajor ? '#999' : '#444';
+    ctxH.fillRect(Math.round(px), rulerH_height - tickH, 0.5, tickH);
+    if (isMajor && mm > 0) {
+      ctxH.fillStyle = '#888';
+      ctxH.fillText(mm + '', Math.round(px) + 2, 9);
+    }
   }
-  for(let mm=0;mm<=hMM;mm+=5) {
-    const py=area.scrollTop+18+mm2px(mm); const big=mm%10===0;
-    ctxV.fillRect(big?0:8,py,big?18:10,0.5);
-    if(big&&mm>0){ctxV.save();ctxV.translate(9,py-1);ctxV.rotate(-Math.PI/2);ctxV.fillText(mm,0,0);ctxV.restore();}
+
+  // Gold bar showing canvas span on horizontal ruler
+  ctxH.fillStyle = 'rgba(201,168,76,0.5)';
+  ctxH.fillRect(
+    Math.max(0, canvasOriginX),
+    rulerH_height - 2,
+    Math.min(wMM * pxPerMM, rh.width - Math.max(0, canvasOriginX)),
+    2
+  );
+
+  // ── Vertical ruler ──
+  ctxV.font = '7px Poppins,sans-serif';
+  for (let mm = 0; mm <= hMM; mm += tickMM) {
+    const py = canvasOriginY + mm * pxPerMM;
+    if (py < 0 || py > rv.height) continue;
+    const isMajor = mm % labelEveryMM === 0;
+    const isMid   = mm % 5 === 0;
+    const tickW   = isMajor ? 14 : isMid ? 8 : 4;
+    ctxV.fillStyle = isMajor ? '#999' : '#444';
+    ctxV.fillRect(rulerV_width - tickW, Math.round(py), tickW, 0.5);
+    if (isMajor && mm > 0) {
+      ctxV.save();
+      ctxV.fillStyle = '#888';
+      ctxV.translate(rulerV_width - 2, Math.round(py) - 1);
+      ctxV.rotate(-Math.PI / 2);
+      ctxV.fillText(mm + '', 0, 0);
+      ctxV.restore();
+    }
   }
+
+  // Gold bar showing canvas span on vertical ruler
+  ctxV.fillStyle = 'rgba(201,168,76,0.5)';
+  ctxV.fillRect(
+    rulerV_width - 2,
+    Math.max(0, canvasOriginY),
+    2,
+    Math.min(hMM * pxPerMM, rv.height - Math.max(0, canvasOriginY))
+  );
 }
 
 // ══════════════════════════════════════════════════════
@@ -2858,7 +3044,7 @@ function toggleBlueprintMode(){
   const c=ac();if(!c)return;
   const canvasEl=document.getElementById('canvas-'+c.id);if(!canvasEl)return;
   if(blueprintMode){
-    canvasEl.style.background='#ffffff';
+    canvasEl.style.background='#074985'; 
     toast('Blueprint Mode ON — all colors shown as black on white');
   } else {
     canvasEl.style.background='';applyCanvasBg(c);
@@ -3456,24 +3642,58 @@ function clearAllCustomFonts(){
 //   a simple array of filenames: ["Baloo2.ttf","MyFont.otf"]
 // Generate it with:  ls assets/fonts/*.{ttf,otf,woff,woff2} | xargs -I{} basename {} | python3 -c "import sys,json;print(json.dumps([l.strip() for l in sys.stdin]))" > assets/fonts/index.json
 // If no index.json exists, this silently does nothing.
+// ══════════════════════════════════════════════════════
+//  ELECTRON NATIVE FONT LOADER
+//  Scans assets/fonts/ using Node fs — no index.json needed.
+//  Falls back to fetch-based loader for web/server mode.
+// ══════════════════════════════════════════════════════
 async function loadAssetFonts(){
+  // ── Electron path: use Node.js fs to scan folder ──────
+  if(typeof window.electronAPI !== 'undefined' && window.electronAPI.scanFontsFolder){
+    // Preferred: use a preload-exposed IPC bridge (see below)
+    try{
+      const fontFiles = await window.electronAPI.scanFontsFolder();
+      if(!fontFiles || !fontFiles.length) return;
+      toast('Loading '+fontFiles.length+' fonts from assets/fonts/…');
+      let done=0;
+      for(const {name, dataUrl, ext} of fontFiles){
+        try{
+          // Decode base64 dataUrl back to ArrayBuffer for name table reading
+          const base64 = dataUrl.split(',')[1];
+          const binary  = atob(base64);
+          const bytes   = new Uint8Array(binary.length);
+          for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+          const arrayBuf = bytes.buffer;
+
+          const nameTable = readFontNameTable(arrayBuf);
+          const {family, subfamily} = bestFamilyName(nameTable, name);
+          const fontObj = {name, family, subfamily, ext, url: dataUrl,
+            sample:'विवाह पत्रिका — '+family, fromFolder:true};
+          registerFontFace(fontObj);
+          if(!customFonts.find(cf=>cf.family===family)) customFonts.push(fontObj);
+          done++;
+        }catch(e){ console.warn('Font load failed:',name,e); }
+      }
+      if(done>0){ persistFonts(); renderFontsTabs(); toast('✓ '+done+' fonts loaded from assets/fonts/'); }
+      return; // done — skip fetch fallback
+    }catch(e){ console.warn('Electron font scan failed, trying fetch fallback',e); }
+  }
+
+  // ── Fallback: fetch-based for web/dev server ───────────
   try{
     const res=await fetch('./assets/fonts/index.json');
-    if(!res.ok)throw new Error('no index');
+    if(!res.ok) return;
     const filenames=await res.json();
-    if(!Array.isArray(filenames)||!filenames.length)throw new Error('empty');
+    if(!Array.isArray(filenames)||!filenames.length) return;
     const valid=filenames.filter(f=>/\.(ttf|otf|woff|woff2)$/i.test(f));
-    if(!valid.length)throw new Error('no font files');
     let done=0;
     for(const filename of valid){
       try{
         const fr=await fetch('./assets/fonts/'+filename);
-        if(!fr.ok)continue;
+        if(!fr.ok) continue;
         const arrayBuf=await fr.arrayBuffer();
-        // Read real internal name from binary
         const nameTable=readFontNameTable(arrayBuf);
         const {family,subfamily}=bestFamilyName(nameTable,filename);
-        // Convert to dataURL for @font-face src
         const blob=new Blob([arrayBuf]);
         const url=await new Promise(res=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.readAsDataURL(blob);});
         const ext=filename.split('.').pop().toLowerCase();
@@ -3481,10 +3701,10 @@ async function loadAssetFonts(){
         registerFontFace(fontObj);
         if(!customFonts.find(cf=>cf.family===family))customFonts.push(fontObj);
         done++;
-      }catch(err){/* skip individual failures */}
+      }catch(err){}
     }
-    if(done>0){persistFonts();renderFontsTabs();toast('Auto-loaded '+done+' fonts from assets/fonts/');}
-  }catch(e){/* no index.json or not on server — normal */}
+    if(done>0){persistFonts();renderFontsTabs();toast('✓ '+done+' fonts loaded from assets/fonts/');}
+  }catch(e){}
 }
 
 // ── All available families (props dropdown) ───────────
@@ -4096,7 +4316,41 @@ document.addEventListener('keydown',e=>{
   if(e.key===']'&&selectedId)moveBlockUp(selectedId);
   if(e.key==='['&&selectedId)moveBlockDown(selectedId);
   if(!e.ctrlKey&&!e.altKey&&e.key>='1'&&e.key<='9'){const idx=parseInt(e.key)-1;if(idx<canvases.length)switchToCanvas(canvases[idx].id);}
+  if(e.ctrlKey&&(e.key==='0'||e.key==='='||e.key==='+')){e.preventDefault();
+  const v=e.key==='0'?100:Math.min(400,parseInt(document.getElementById('zoomSlider').value)+(e.key==='-'?-10:10));
+  document.getElementById('zoomSlider').value=v;setZoom(v);return;}
+if(e.ctrlKey&&e.key==='-'){e.preventDefault();
+  const v=Math.max(10,parseInt(document.getElementById('zoomSlider').value)-10);
+  document.getElementById('zoomSlider').value=v;setZoom(v);return;}
+if(e.ctrlKey&&e.key==='f'){e.preventDefault();toggleFoldLine();return;}
+if(e.ctrlKey&&e.key==='w'){e.preventDefault();addTextBlock();return;}
+if(e.ctrlKey&&e.key==='q'){e.preventDefault();toggleGuides();return;}
+if(e.ctrlKey&&e.key==='e'){e.preventDefault();toggleGrid();return;}
+
+
 });
+
+// ══════════════════════════════════════════════════════
+//  MOUSE WHEEL ZOOM  (Ctrl+Wheel on canvas area)
+//  Also fixes scroll-clamp: at >100% zoom the canvas
+//  is larger than the viewport, so we switch from
+//  justify-content:center → flex-start and scroll to center.
+// ══════════════════════════════════════════════════════
+(function initWheelZoom(){
+  const area = document.getElementById('canvasArea');
+
+  area.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return; // only zoom when Ctrl held
+    e.preventDefault();
+    e.stopPropagation();
+
+    const delta = e.deltaY > 0 ? -5 : 5;
+    const slider = document.getElementById('zoomSlider');
+    let newVal = Math.min(400, Math.max(10, parseInt(slider.value) + delta));
+    slider.value = newVal;
+    setZoom(newVal);
+  }, { passive: false });
+})();
 
 // ══════════════════════════════════════════════════════
 //  GRAPHICS LIBRARY
@@ -4374,6 +4628,7 @@ function buildShapeDropdown(){
     const imgs=files.filter(f=>f.type.startsWith('image/'));
     if(imgs.length)loadImages({files:imgs});
   });
+    window.addEventListener('resize', () => { if (showRuler) drawRulers(); });
   toast('🕉️ Card Layout Studio v4 — Screen Print Pro — ready!');
 })();
 </script>
