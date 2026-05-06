@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Layout Studio v4 — Screen Print Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@400;500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Wedding Studio v2.5.0 — Screen Print Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@40 6 7 8&wght@4 5 6 7 8&family=Poppins:wght@4 5 6&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.₀.₀/qrcode.min.js"></script>
 <!-- Sanscript.js — proper ITRANS→Devanagari transliteration engine -->
 <script src="https://cdn.jsdelivr.net/npm/@indic-transliteration/sanscript@3.1.1/sanscript.min.js"
   onerror="console.warn('Sanscript CDN failed — using built-in ITRANS fallback engine')"></script>
@@ -436,7 +436,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 
 <!-- ── TOP BAR ── -->
 <div class="topbar">
-  <div class="topbar-title">🕉️ Card Studio v4</div>
+  <div class="topbar-title">Wedding Studio v2.5.0</div>
   <div class="tb-sep"></div>
   <div class="tb-group">
     <span class="tb-label">Size</span>
@@ -470,13 +470,13 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   </div>
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="addTextBlock()">＋ Text</button>
-  <button class="tb-btn green" onclick="triggerImageUpload()">🖼 Img</button>
+  <button class="tb-btn green" onclick="triggerImageUpload()">Image</button>
   <div style="position:relative;display:inline-block;">
-    <button class="tb-btn" onclick="toggleShapeDropdown()">◻ Shape ▾</button>
+    <button class="tb-btn" onclick="toggleShapeDropdown()">Shape ▾</button>
     <div id="shapeDropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:170px;z-index:9999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.7);max-height:250px;overflow-y:auto;"></div>
   </div>
-  <button class="tb-btn green" onclick="triggerGraphicUpload()">🎨 Gfx</button>
-  <button class="tb-btn" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">ॐ Sym</button>
+  <button class="tb-btn green" onclick="triggerGraphicUpload()">Graphics</button>
+  <button class="tb-btn" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">Sym</button>
   <button class="tb-btn" onclick="addQRBlock()" style="color:#6aaae0;border-color:#2a5a9a;">QR</button>
   <button class="tb-btn" onclick="duplicateSelected()" title="Ctrl+D">⧉ Dup</button>
   <button class="tb-btn" onclick="deleteSelected()" style="color:#e05565;">✕ Del</button>
@@ -487,25 +487,25 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="toggleGuides()" id="guidesBtn">📐 Guides</button>
   <button class="tb-btn" onclick="toggleGrid()" id="gridBtn">⊞ Grid</button>
-  <button class="tb-btn" onclick="toggleSnapGrid()" id="snapGridBtn">🔲 Snap</button>
+  <button class="tb-btn" onclick="toggleSnapGrid()" id="snapGridBtn">Snap</button>
   <button class="tb-btn" onclick="toggleRuler()" id="rulerBtn">📏 Ruler</button>
   <button class="tb-btn" onclick="toggleBleed()" id="bleedBtn">📦 Bleed</button>
-  <button class="tb-btn" onclick="toggleFoldLine()" id="foldBtn">✂ Fold</button>
+  <button class="tb-btn" onclick="toggleFoldLine()" id="foldBtn">Fold</button>
   <button class="tb-btn" onclick="cycleBg()" id="bgToggleBtn">🌓 BG</button>
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="toggleBlueprintMode()" id="blueprintBtn" style="color:#aaddff;border-color:#2a5a8a;">🖨 Blueprint</button>
   <div style="position:relative;display:inline-block;">
     <button class="tb-btn gold" onclick="toggleExportMenu()">⬇ Export ▾</button>
     <div id="exportMenu" style="display:none;position:absolute;top:100%;right:0;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:180px;z-index:9999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.7);">
-      <div class="exp-item" onclick="exportPNG();toggleExportMenu()">📄 PNG (300 DPI)</div>
-      <div class="exp-item" onclick="exportAllPagesPNG();toggleExportMenu()">📋 All Pages PNG</div>
-      <div class="exp-item" onclick="exportPDF();toggleExportMenu()">📑 PDF (single page)</div>
-      <div class="exp-item" onclick="exportAllPagesPDF();toggleExportMenu()">📚 PDF (all pages)</div>
+      <div class="exp-item" onclick="exportPNG();toggleExportMenu()">PNG (300 DPI)</div>
+      <div class="exp-item" onclick="exportAllPagesPNG();toggleExportMenu()">All Pages PNG</div>
+      <div class="exp-item" onclick="exportPDF();toggleExportMenu()">PDF (single page)</div>
+      <div class="exp-item" onclick="exportAllPagesPDF();toggleExportMenu()">PDF (all pages)</div>
       <div class="exp-item" onclick="exportBlueprintPNG();toggleExportMenu()">🖨 Blueprint PNG (B&W)</div>
-      <div class="exp-item" onclick="exportColorLayers();toggleExportMenu()">🎨 Separate Color Layers</div>
+      <div class="exp-item" onclick="exportColorLayers();toggleExportMenu()">Separate Color Layers</div>
     </div>
   </div>
-  <button class="tb-btn primary" onclick="saveLayout()">💾 Save</button>
+  <button class="tb-btn primary" onclick="saveLayout()">Save</button>
   <button class="tb-btn" onclick="loadLayout()">📂 Load</button>
 </div>
 
@@ -525,35 +525,35 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
     <div class="panel-tabs">
       <!-- Row 1 -->
       <div class="panel-tab active" onclick="switchTab('blocks',this)" title="Layers & Blocks">
-        <span class="tab-icon">⊟</span><span class="tab-label">Layers</span>
+        <span class="tab-icon"></span><span class="tab-label">Layers</span>
       </div>
       <div class="panel-tab" onclick="switchTab('props',this)" title="Block Properties">
-        <span class="tab-icon">⚙</span><span class="tab-label">Props</span>
+        <span class="tab-icon"></span><span class="tab-label">Props</span>
       </div>
       <div class="panel-tab" onclick="switchTab('align',this)" title="Align & Distribute">
-        <span class="tab-icon">⊟</span><span class="tab-label">Align</span>
+        <span class="tab-icon"></span><span class="tab-label">Align</span>
       </div>
       <div class="panel-tab" onclick="switchTab('canvasbg',this)" title="Canvas Background">
-        <span class="tab-icon">🖼</span><span class="tab-label">BG</span>
+        <span class="tab-icon"></span><span class="tab-label">BG</span>
       </div>
       <div class="panel-tab" onclick="switchTab('fonts',this)" title="Font Manager">
-        <span class="tab-icon">Aa</span><span class="tab-label">Fonts</span>
+        <span class="tab-icon"></span><span class="tab-label">Fonts</span>
       </div>
       <!-- Row 2 -->
       <div class="panel-tab" onclick="switchTab('graphics',this)" title="Graphics Library">
-        <span class="tab-icon">🎨</span><span class="tab-label">Library</span>
+        <span class="tab-icon"></span><span class="tab-label">Library</span>
       </div>
       <div class="panel-tab" onclick="switchTab('symbols',this)" title="Symbols & Hindi">
         <span class="tab-icon">ॐ</span><span class="tab-label">Symbols</span>
       </div>
       <div class="panel-tab" onclick="switchTab('palette',this)" title="Color Palette">
-        <span class="tab-icon">🎭</span><span class="tab-label">Colors</span>
+        <span class="tab-icon"></span><span class="tab-label">Colors</span>
       </div>
       <div class="panel-tab" onclick="switchTab('findreplace',this)" title="Find & Replace">
-        <span class="tab-icon">🔍</span><span class="tab-label">Find</span>
+        <span class="tab-icon"></span><span class="tab-label">Find</span>
       </div>
       <div class="panel-tab" onclick="switchTab('templates',this)" title="Templates">
-        <span class="tab-icon">📋</span><span class="tab-label">Tmpl</span>
+        <span class="tab-icon"></span><span class="tab-label">Tmpl</span>
       </div>
     </div>
 
@@ -566,11 +566,11 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
         <button class="tb-btn" style="flex:1;font-size:10px;color:#e05;" onclick="deleteSelected()">🗑</button>
       </div>
       <button class="add-block-btn" onclick="addTextBlock()">＋ Add Text Block</button>
-      <button class="add-block-btn" onclick="triggerImageUpload()">🖼 Add Image</button>
+      <button class="add-block-btn" onclick="triggerImageUpload()">Add Image</button>
       <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;">🎨 Add Graphic/Icon</button>
       <button class="add-block-btn" onclick="addSymbolBlock()" style="border-color:#7a5c10;color:#C9A84C;">ॐ Add Symbol</button>
       <button class="add-block-btn" onclick="addQRBlock()" style="border-color:#2a5a9a;color:#6aaae0;">QR Code Block</button>
-      <div style="font-size:9px;color:#444;margin-bottom:4px;">💡 Shift+Click = multi-select</div>
+      <div style="font-size:9px;color:#444;margin-bottom:4px;"> Shift+Click = multi-select</div>
       <div id="blocksList"></div>
     </div>
 
@@ -4793,7 +4793,7 @@ function buildShapeDropdown(){
     if(imgs.length)loadImages({files:imgs});
   });
     window.addEventListener('resize', () => { if (showRuler) drawRulers(); });
-  toast('🕉️ Card Layout Studio v4 — Screen Print Pro — ready!');
+  toast('🕉️ Card Layout Studio v2 — Screen Print Pro — ready!');
 })();
 </script>
 </body>
