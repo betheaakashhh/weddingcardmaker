@@ -1,6 +1,6 @@
 {
   "name": "wedding-card-studio",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Professional Hindu Wedding Card Designer",
   "main": "main.js",
   "author": "Aakash",
@@ -14,38 +14,38 @@
     "electron-builder": "^24.13.3"
   },
   "build": {
-    
-  "files": [
-    "**/*",
-    "assets/fonts/**/*"
-  ],
-  "extraResources": [
-    {
-      "from": "assets/fonts",
-      "to": "fonts"
-    }
-  ]
-},
-    "appId": "com.aakash.weddingstudio",
-    "productName": "Wedding Card Studio",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "betheaakashhh",
-        "repo": "weddingcardmaker"
-      }
+    "files": [
+      "**/*",
+      "assets/fonts/**/*"
     ],
-    "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    },
+    "extraResources": [
+      {
+        "from": "assets/fonts",
+        "to": "fonts"
+      }
+    ]
+  },
+  "appId": "com.aakash.weddingstudio",
+  "productName": "Wedding Card Studio",
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "betheaakashhh",
+      "repo": "weddingcardmaker"
+    }
+  ],
+  "win": {
+    "target": "nsis",
+    "icon": "icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  },
   "dependencies": {
-    "electron-updater": "^6.8.3"
+    "electron-updater": "^6.8.3",
+    "fs": "^0.0.1-security"
   }
 }
