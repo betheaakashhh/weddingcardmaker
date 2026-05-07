@@ -4,31 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Card Layout Studio v4 — Screen Print Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@400;50０;6００;7００;8００&family=Poppins:wght@4００;5００;6００&display=swap" rel="stylesheet">
-<script src="assets/html2canvas.min.js"></script>
-<script src="assets/jspdf.umd.min.js"></script>
-<script src="assets/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@400;500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <!-- Sanscript.js — proper ITRANS→Devanagari transliteration engine -->
-<script src="assets/sanscript.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@indic-transliteration/sanscript@3.1.1/sanscript.min.js"
+  onerror="console.warn('Sanscript CDN failed — using built-in ITRANS fallback engine')"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
-
-/* ── UPDATE NOTIFICATION BANNER ── */
-#update-banner{display:none;position:fixed;bottom:16px;right:16px;z-index:99999;background:#1a1a1a;border:1px solid #C9A84C;border-radius:10px;padding:14px 18px;max-width:340px;box-shadow:0 4px 24px rgba(0,0,0,.6);font-family:'Poppins',sans-serif;animation:slideUp .3s ease;}
-@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-#update-banner .ub-title{font-size:13px;font-weight:600;color:#C9A84C;margin-bottom:4px;}
-#update-banner .ub-body{font-size:11px;color:#aaa;margin-bottom:12px;line-height:1.5;}
-#update-banner .ub-progress{font-size:10px;color:#888;margin-bottom:10px;display:none;}
-#update-banner .ub-progress-bar{height:4px;background:#333;border-radius:2px;margin-top:4px;overflow:hidden;}
-#update-banner .ub-progress-fill{height:100%;background:#C9A84C;border-radius:2px;width:0%;transition:width .3s;}
-#update-banner .ub-actions{display:flex;gap:8px;justify-content:flex-end;}
-#update-banner .ub-btn{border:none;border-radius:5px;padding:5px 14px;font-size:11px;cursor:pointer;font-family:inherit;transition:background .15s;}
-#update-banner .ub-btn.install{background:#8B1A2E;color:#fff;}
-#update-banner .ub-btn.install:hover{background:#a02535;}
-#update-banner .ub-btn.install:disabled{background:#444;color:#777;cursor:not-allowed;}
-#update-banner .ub-btn.later{background:#2a2a2a;color:#aaa;border:1px solid #444;}
-#update-banner .ub-btn.later:hover{background:#333;}
 
 /* ── TOPBAR ── */
 .topbar{background:#1a1a1a;border-bottom:2px solid #8B1A2E;padding:4px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;}
@@ -250,6 +235,50 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 /* ── STATUS BAR ── */
 .statusbar{background:#141414;border-top:1px solid #222;padding:3px 12px;font-size:10px;color:#555;display:flex;gap:14px;flex-shrink:0;align-items:center;}
 .status-val{color:#888;}
+/* ── UPDATE SYSTEM ── */
+#upd-topbtn{background:#1a2a1a;border:1px solid #3a7a3a;border-radius:5px;color:#7ec87e;padding:3px 8px;font-size:10px;cursor:pointer;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:4px;}
+#upd-topbtn:hover{background:#1e4a1e;border-color:#5aaa5a;}
+#upd-topbtn.has-update{background:#1a2a10;border-color:#C9A84C;color:#C9A84C;animation:updPulse 2s infinite;}
+#upd-topbtn.downloading{background:#0a1a2a;border-color:#2a5a9a;color:#6aaae0;}
+#upd-topbtn.ready{background:#2a1018;border-color:#C9A84C;color:#C9A84C;}
+@keyframes updPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.4);}50%{box-shadow:0 0 0 4px rgba(201,168,76,0);}}
+
+/* Status bar pill */
+#upd-statuspill{display:none;margin-left:8px;font-size:10px;cursor:pointer;color:#3a7a3a;border-left:1px solid #2a2a2a;padding-left:10px;white-space:nowrap;transition:color .15s;}
+#upd-statuspill:hover{color:#7ec87e;}
+#upd-statuspill.has-update{color:#C9A84C;}
+#upd-statuspill.has-update:hover{color:#e0c060;}
+#upd-statuspill.downloading{color:#6aaae0;}
+#upd-statuspill.ready{color:#7ec87e;}
+
+/* Release notes modal */
+#upd-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99998;align-items:center;justify-content:center;}
+#upd-modal-overlay.show{display:flex;}
+#upd-modal{background:#1a1a1a;border:1px solid #333;border-radius:10px;width:520px;max-width:94vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.8);overflow:hidden;}
+#upd-modal-header{background:#141414;border-bottom:1px solid #2a2a2a;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+#upd-modal-header h3{font-size:13px;color:#C9A84C;font-weight:600;margin:0;}
+#upd-modal-close{background:none;border:none;color:#555;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;}
+#upd-modal-close:hover{color:#eee;}
+#upd-modal-body{padding:14px 16px;overflow-y:auto;flex:1;}
+#upd-version-badge{display:inline-block;background:#2a1018;border:1px solid #8B1A2E;border-radius:4px;padding:2px 8px;font-size:11px;color:#C9A84C;margin-bottom:10px;}
+#upd-release-notes{font-size:11px;color:#aaa;line-height:1.7;white-space:pre-wrap;background:#111;border:1px solid #222;border-radius:6px;padding:10px;min-height:80px;max-height:200px;overflow-y:auto;}
+#upd-progress-wrap{margin-top:12px;display:none;}
+#upd-progress-label{font-size:10px;color:#888;margin-bottom:5px;display:flex;justify-content:space-between;}
+#upd-progress-track{height:5px;background:#2a2a2a;border-radius:3px;overflow:hidden;}
+#upd-progress-bar{height:100%;background:linear-gradient(90deg,#8B1A2E,#C9A84C);border-radius:3px;width:0%;transition:width .4s;}
+#upd-speed{font-size:9px;color:#666;margin-top:4px;}
+#upd-modal-footer{border-top:1px solid #222;padding:10px 16px;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;background:#141414;}
+.upd-btn{border:none;border-radius:5px;padding:6px 16px;font-size:11px;cursor:pointer;font-family:'Poppins',sans-serif;transition:all .15s;}
+.upd-btn.later{background:#2a2a2a;color:#aaa;border:1px solid #333;}
+.upd-btn.later:hover{background:#333;color:#eee;}
+.upd-btn.download{background:#1a3a1a;color:#7ec87e;border:1px solid #3a7a3a;}
+.upd-btn.download:hover{background:#1e4a1e;}
+.upd-btn.download:disabled{background:#1a1a1a;color:#444;border-color:#2a2a2a;cursor:not-allowed;}
+.upd-btn.install{background:#8B1A2E;color:#fff;border:1px solid #a02535;}
+.upd-btn.install:hover{background:#a02535;}
+.upd-btn.install:disabled{background:#333;color:#666;border-color:#333;cursor:not-allowed;}
+#upd-status-msg{font-size:10px;color:#666;margin-top:8px;min-height:14px;}
+
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px;}
@@ -400,12 +429,12 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   </div>
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="addTextBlock()">＋ Text</button>
-  <button class="tb-btn green" onclick="triggerImageUpload()">Img</button>
+  <button class="tb-btn green" onclick="triggerImageUpload()">🖼 Img</button>
   <div style="position:relative;display:inline-block;">
-    <button class="tb-btn" onclick="toggleShapeDropdown()">Shape ▾</button>
+    <button class="tb-btn" onclick="toggleShapeDropdown()">◻ Shape ▾</button>
     <div id="shapeDropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:170px;z-index:9999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.7);max-height:250px;overflow-y:auto;"></div>
   </div>
-  <button class="tb-btn green" onclick="triggerGraphicUpload()">Gfx</button>
+  <button class="tb-btn green" onclick="triggerGraphicUpload()">🎨 Gfx</button>
   <button class="tb-btn" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">ॐ Sym</button>
   <button class="tb-btn" onclick="addQRBlock()" style="color:#6aaae0;border-color:#2a5a9a;">QR</button>
   <button class="tb-btn" onclick="duplicateSelected()" title="Ctrl+D">⧉ Dup</button>
@@ -417,7 +446,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="toggleGuides()" id="guidesBtn">📐 Guides</button>
   <button class="tb-btn" onclick="toggleGrid()" id="gridBtn">⊞ Grid</button>
-  <button class="tb-btn" onclick="toggleSnapGrid()" id="snapGridBtn">Snap</button>
+  <button class="tb-btn" onclick="toggleSnapGrid()" id="snapGridBtn">🔲 Snap</button>
   <button class="tb-btn" onclick="toggleRuler()" id="rulerBtn">📏 Ruler</button>
   <button class="tb-btn" onclick="toggleBleed()" id="bleedBtn">📦 Bleed</button>
   <button class="tb-btn" onclick="toggleFoldLine()" id="foldBtn">✂ Fold</button>
@@ -430,13 +459,15 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
       <div class="exp-item" onclick="exportPNG();toggleExportMenu()">📄 PNG (300 DPI)</div>
       <div class="exp-item" onclick="exportAllPagesPNG();toggleExportMenu()">📋 All Pages PNG</div>
       <div class="exp-item" onclick="exportPDF();toggleExportMenu()">📑 PDF (single page)</div>
-      <div class="exp-item" onclick="exportAllPagesPDF();toggleExportMenu()">PDF (all pages)</div>
-      <div class="exp-item" onclick="exportBlueprintPNG();toggleExportMenu()">Blueprint PNG (B&W)</div>
-      <div class="exp-item" onclick="exportColorLayers();toggleExportMenu()">Separate Color Layers</div>
+      <div class="exp-item" onclick="exportAllPagesPDF();toggleExportMenu()">📚 PDF (all pages)</div>
+      <div class="exp-item" onclick="exportBlueprintPNG();toggleExportMenu()">🖨 Blueprint PNG (B&W)</div>
+      <div class="exp-item" onclick="exportColorLayers();toggleExportMenu()">🎨 Separate Color Layers</div>
     </div>
   </div>
-  <button class="tb-btn primary" onclick="saveLayout()">Save</button>
+  <button class="tb-btn primary" onclick="saveLayout()">💾 Save</button>
   <button class="tb-btn" onclick="loadLayout()">📂 Load</button>
+  <div class="tb-sep"></div>
+  <button id="upd-topbtn" onclick="updOpenModal()" title="Check for updates">🔔 Updates</button>
 </div>
 
 <style>
@@ -455,35 +486,35 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
     <div class="panel-tabs">
       <!-- Row 1 -->
       <div class="panel-tab active" onclick="switchTab('blocks',this)" title="Layers & Blocks">
-        <span class="tab-icon"></span><span class="tab-label">Layers</span>
+        <span class="tab-icon">⊟</span><span class="tab-label">Layers</span>
       </div>
       <div class="panel-tab" onclick="switchTab('props',this)" title="Block Properties">
-        <span class="tab-icon"></span><span class="tab-label">Props</span>
+        <span class="tab-icon">⚙</span><span class="tab-label">Props</span>
       </div>
       <div class="panel-tab" onclick="switchTab('align',this)" title="Align & Distribute">
-        <span class="tab-icon"></span><span class="tab-label">Align</span>
+        <span class="tab-icon">⊟</span><span class="tab-label">Align</span>
       </div>
       <div class="panel-tab" onclick="switchTab('canvasbg',this)" title="Canvas Background">
-        <span class="tab-icon"></span><span class="tab-label">BG</span>
+        <span class="tab-icon">🖼</span><span class="tab-label">BG</span>
       </div>
       <div class="panel-tab" onclick="switchTab('fonts',this)" title="Font Manager">
         <span class="tab-icon">Aa</span><span class="tab-label">Fonts</span>
       </div>
       <!-- Row 2 -->
       <div class="panel-tab" onclick="switchTab('graphics',this)" title="Graphics Library">
-        <span class="tab-icon"></span><span class="tab-label">Library</span>
+        <span class="tab-icon">🎨</span><span class="tab-label">Library</span>
       </div>
       <div class="panel-tab" onclick="switchTab('symbols',this)" title="Symbols & Hindi">
         <span class="tab-icon">ॐ</span><span class="tab-label">Symbols</span>
       </div>
       <div class="panel-tab" onclick="switchTab('palette',this)" title="Color Palette">
-        <span class="tab-icon"></span><span class="tab-label">Colors</span>
+        <span class="tab-icon">🎭</span><span class="tab-label">Colors</span>
       </div>
       <div class="panel-tab" onclick="switchTab('findreplace',this)" title="Find & Replace">
-        <span class="tab-icon"></span><span class="tab-label">Find</span>
+        <span class="tab-icon">🔍</span><span class="tab-label">Find</span>
       </div>
       <div class="panel-tab" onclick="switchTab('templates',this)" title="Templates">
-        <span class="tab-icon"></span><span class="tab-label">Tmpl</span>
+        <span class="tab-icon">📋</span><span class="tab-label">Tmpl</span>
       </div>
     </div>
 
@@ -776,6 +807,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <span>Blocks: <span class="status-val" id="statusCount">0</span></span>
   <span>Canvas: <span class="status-val" id="statusCanvas">210×148 mm</span></span>
   <span>Page: <span class="status-val" id="statusPage">1/1</span></span>
+  <span id="upd-statuspill" onclick="updOpenModal()"></span>
   <span style="margin-left:auto;color:#444;font-size:9px;">Drag=move • SE◢=scale • ↻=rotate • Alt+Drag=duplicate • Shift+Click=multiselect • Ctrl+G=group • Ctrl+Z=undo</span>
 </div>
 
@@ -4800,71 +4832,244 @@ function buildShapeDropdown(){
 })();
 </script>
 
-<!-- ── UPDATE NOTIFICATION BANNER ── -->
-<div id="update-banner">
-  <div class="ub-title">🆕 Update Available — <span id="ub-version"></span></div>
-  <div class="ub-body" id="ub-body">A new version of Wedding Card Studio is ready to download.</div>
-  <div class="ub-progress" id="ub-progress">
-    Downloading… <span id="ub-pct">0</span>%
-    <div class="ub-progress-bar"><div class="ub-progress-fill" id="ub-fill"></div></div>
-  </div>
-  <div class="ub-actions">
-    <button class="ub-btn later" onclick="ubDismiss()">Later</button>
-    <button class="ub-btn install" id="ub-install" onclick="ubInstall()">Update &amp; Restart</button>
+<!-- ══════════════════════════════════════════════════════
+     UPDATE SYSTEM — modal + status pill + topbar btn
+     ══════════════════════════════════════════════════════ -->
+<div id="upd-modal-overlay">
+  <div id="upd-modal">
+    <div id="upd-modal-header">
+      <h3 id="upd-modal-title">🔔 Check for Updates</h3>
+      <button id="upd-modal-close" onclick="updCloseModal()">✕</button>
+    </div>
+    <div id="upd-modal-body">
+      <div id="upd-version-badge">Current: <span id="upd-current-ver">—</span></div>
+      <div id="upd-release-notes">Checking for updates…</div>
+      <div id="upd-progress-wrap">
+        <div id="upd-progress-label">
+          <span>Downloading update…</span>
+          <span id="upd-pct-label">0%</span>
+        </div>
+        <div id="upd-progress-track"><div id="upd-progress-bar"></div></div>
+        <div id="upd-speed"></div>
+      </div>
+      <div id="upd-status-msg"></div>
+    </div>
+    <div id="upd-modal-footer">
+      <button class="upd-btn later"    id="upd-btn-later"    onclick="updCloseModal()">Later</button>
+      <button class="upd-btn download" id="upd-btn-download" onclick="updStartDownload()" style="display:none">⬇ Download Update</button>
+      <button class="upd-btn install"  id="upd-btn-install"  onclick="updInstall()"       style="display:none" disabled>✓ Restart &amp; Install</button>
+    </div>
   </div>
 </div>
 
 <script>
-(function initUpdater(){
+// ══════════════════════════════════════════════════════════
+//  UPDATE MANAGER
+// ══════════════════════════════════════════════════════════
+(function(){
   if(!window.electronAPI) return;
 
-  const banner     = document.getElementById('update-banner');
-  const verSpan    = document.getElementById('ub-version');
-  const bodyEl     = document.getElementById('ub-body');
-  const progressEl = document.getElementById('ub-progress');
-  const pctEl      = document.getElementById('ub-pct');
-  const fillEl     = document.getElementById('ub-fill');
-  const installBtn = document.getElementById('ub-install');
-  let updateReady  = false;
+  // ── state ───────────────────────────────────────────────
+  const UPD = {
+    state: 'idle',      // idle | checking | available | downloading | ready | uptodate | error
+    version: null,
+    notes: '',
+    percent: 0,
+    speed: 0,
+    modalOpen: false
+  };
+
+  // ── DOM refs ─────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+
+  // ── helpers ──────────────────────────────────────────────
+  function fmtSpeed(bps){
+    if(!bps) return '';
+    if(bps > 1048576) return (bps/1048576).toFixed(1)+' MB/s';
+    return (bps/1024).toFixed(0)+' KB/s';
+  }
+
+  function setTopBtn(icon, label, cls){
+    const b = $('upd-topbtn');
+    b.textContent = icon+' '+label;
+    b.className = '';
+    if(cls) b.classList.add(cls);
+  }
+
+  function setPill(text, cls){
+    const p = $('upd-statuspill');
+    if(!text){ p.style.display='none'; return; }
+    p.style.display='inline';
+    p.textContent = text;
+    p.className = cls||'';
+  }
+
+  function syncModal(){
+    if(!UPD.modalOpen) return;
+    const notes  = $('upd-release-notes');
+    const status = $('upd-status-msg');
+    const progW  = $('upd-progress-wrap');
+    const dlBtn  = $('upd-btn-download');
+    const insBtn = $('upd-btn-install');
+    const title  = $('upd-modal-title');
+
+    // Reset buttons
+    dlBtn.style.display  = 'none';
+    insBtn.style.display = 'none';
+
+    if(UPD.state === 'checking'){
+      title.textContent   = '🔔 Check for Updates';
+      notes.textContent   = 'Checking GitHub for a new release…';
+      status.textContent  = '';
+      progW.style.display = 'none';
+    }
+    else if(UPD.state === 'available'){
+      title.textContent   = '🆕 Update Available';
+      notes.textContent   = UPD.notes || 'A new version is available on GitHub.';
+      status.textContent  = '';
+      progW.style.display = 'none';
+      dlBtn.style.display = 'inline-block';
+      dlBtn.disabled      = false;
+      dlBtn.textContent   = '⬇ Download v'+UPD.version;
+    }
+    else if(UPD.state === 'downloading'){
+      title.textContent         = '⬇ Downloading Update…';
+      notes.textContent         = UPD.notes || '';
+      progW.style.display       = 'block';
+      $('upd-progress-bar').style.width = UPD.percent+'%';
+      $('upd-pct-label').textContent    = UPD.percent+'%';
+      $('upd-speed').textContent        = fmtSpeed(UPD.speed);
+      status.textContent  = 'Please wait — do not close the app.';
+      dlBtn.style.display = 'inline-block';
+      dlBtn.disabled      = true;
+      dlBtn.textContent   = 'Downloading… '+UPD.percent+'%';
+    }
+    else if(UPD.state === 'ready'){
+      title.textContent         = '✅ Ready to Install';
+      notes.textContent         = UPD.notes || '';
+      progW.style.display       = 'none';
+      status.textContent        = 'Download complete. Restart the app to apply v'+UPD.version+'.';
+      insBtn.style.display      = 'inline-block';
+      insBtn.disabled           = false;
+    }
+    else if(UPD.state === 'uptodate'){
+      title.textContent   = '✅ You\'re Up to Date';
+      notes.textContent   = 'Wedding Card Studio is up to date.';
+      status.textContent  = '';
+      progW.style.display = 'none';
+    }
+    else if(UPD.state === 'error'){
+      title.textContent   = '⚠ Update Error';
+      notes.textContent   = UPD.notes || 'Could not check for updates. Check your internet connection.';
+      status.textContent  = '';
+      progW.style.display = 'none';
+    }
+    else {
+      title.textContent   = '🔔 Updates';
+      notes.textContent   = 'Click "Check Now" to look for updates.';
+      progW.style.display = 'none';
+    }
+  }
+
+  // ── IPC listeners ────────────────────────────────────────
+  window.electronAPI.receive('update-checking', () => {
+    UPD.state = 'checking';
+    setTopBtn('🔔','Checking…','');
+    setPill('🔍 Checking…','');
+    syncModal();
+  });
 
   window.electronAPI.receive('update-available', (info) => {
-    verSpan.textContent    = 'v' + info.version;
-    bodyEl.textContent     = 'Downloading the new version in the background...';
-    installBtn.disabled    = true;
-    installBtn.textContent = 'Downloading...';
-    banner.style.display   = 'block';
+    UPD.state   = 'available';
+    UPD.version = info.version;
+    UPD.notes   = info.releaseNotes
+                    ? (typeof info.releaseNotes === 'string'
+                        ? info.releaseNotes.replace(/<[^>]*>/g,'').trim()
+                        : JSON.stringify(info.releaseNotes))
+                    : ('New version v'+info.version+' is available on GitHub.\nOpen the app to download.');
+    setTopBtn('🆕','Update v'+info.version,'has-update');
+    setPill('⬆ Update v'+info.version+' available','has-update');
+    syncModal();
+  });
+
+  window.electronAPI.receive('update-not-available', () => {
+    UPD.state = 'uptodate';
+    setTopBtn('🔔','Up to date','');
+    setPill('','');
+    syncModal();
   });
 
   window.electronAPI.receive('update-progress', (info) => {
-    progressEl.style.display = 'block';
-    pctEl.textContent        = info.percent;
-    fillEl.style.width       = info.percent + '%';
+    UPD.state   = 'downloading';
+    UPD.percent = info.percent;
+    UPD.speed   = info.bytesPerSecond || 0;
+    setTopBtn('⬇','Downloading '+info.percent+'%','downloading');
+    setPill('⬇ '+info.percent+'% — '+fmtSpeed(UPD.speed),'downloading');
+    syncModal();
   });
 
   window.electronAPI.receive('update-downloaded', (info) => {
-    updateReady              = true;
-    verSpan.textContent      = 'v' + info.version;
-    bodyEl.textContent       = 'Update downloaded! Restart the app to apply it.';
-    progressEl.style.display = 'none';
-    installBtn.disabled      = false;
-    installBtn.textContent   = 'Update & Restart';
-    banner.style.display     = 'block';
+    UPD.state   = 'ready';
+    UPD.version = info.version;
+    setTopBtn('✅','Restart to Update','ready');
+    setPill('✅ Update ready — click to install','ready');
+    syncModal();
+    // If modal is closed, auto-show it so user knows
+    if(!UPD.modalOpen) updOpenModal();
   });
 
   window.electronAPI.receive('update-error', (info) => {
-    console.warn('Update error:', info.message);
+    UPD.state = 'error';
+    UPD.notes = info.message || 'Unknown error';
+    setTopBtn('⚠','Update Error','');
+    setPill('','');
+    syncModal();
   });
 
-  window.ubInstall = function(){
-    if(!updateReady) return;
-    installBtn.disabled    = true;
-    installBtn.textContent = 'Restarting...';
+  // ── public API (called from HTML onclick) ─────────────────
+  window.updOpenModal = function(){
+    UPD.modalOpen = true;
+    $('upd-modal-overlay').classList.add('show');
+    // Show current installed version
+    try{
+      $('upd-current-ver').textContent = window.electronAPI.versions?.electron
+        ? 'v' + document.title.match(/v([\d.]+)/)?.[1] || '—'
+        : '—';
+    }catch(e){}
+    // If idle, trigger a fresh check
+    if(UPD.state === 'idle'){
+      UPD.state = 'checking';
+      $('upd-release-notes').textContent = 'Checking for updates…';
+      window.electronAPI.send('check-for-update');
+    }
+    syncModal();
+  };
+
+  window.updCloseModal = function(){
+    UPD.modalOpen = false;
+    $('upd-modal-overlay').classList.remove('show');
+  };
+
+  window.updStartDownload = function(){
+    if(UPD.state !== 'available') return;
+    UPD.state = 'downloading';
+    UPD.percent = 0;
+    syncModal();
+    window.electronAPI.send('start-download');
+  };
+
+  window.updInstall = function(){
+    if(UPD.state !== 'ready') return;
+    $('upd-btn-install').disabled = true;
+    $('upd-btn-install').textContent = 'Restarting…';
     window.electronAPI.send('install-update');
   };
 
-  window.ubDismiss = function(){
-    banner.style.display = 'none';
-  };
+  // Close on overlay click
+  $('upd-modal-overlay').addEventListener('click', function(e){
+    if(e.target === this) updCloseModal();
+  });
+
 })();
 </script>
 </body>

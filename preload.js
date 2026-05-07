@@ -4,20 +4,24 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
 
-  // ── IPC send (renderer → main) ──────────────────────────
   send: (channel, data) => {
-    const valid = ["app-ready", "message", "update-check", "install-update"];
+    const valid = [
+      "app-ready", "message",
+      "check-for-update",   // user opened modal
+      "start-download",     // user clicked Download
+      "install-update"      // user clicked Restart & Install
+    ];
     if (valid.includes(channel)) ipcRenderer.send(channel, data);
   },
 
-  // ── IPC receive (main → renderer) ───────────────────────
   receive: (channel, callback) => {
     const valid = [
-      "update-available",
-      "update-not-available",
-      "update-downloaded",
-      "update-progress",
-      "update-error",
+      "update-checking",       // started checking
+      "update-available",      // new version found
+      "update-not-available",  // already up to date
+      "update-progress",       // download progress %
+      "update-downloaded",     // download complete
+      "update-error",          // something went wrong
       "message-reply"
     ];
     if (valid.includes(channel)) {
@@ -27,7 +31,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
 
-  // ── Font scanning — now goes to main process via IPC ────
   scanFontsFolder: () => ipcRenderer.invoke("scan-fonts"),
 
   platform: process.platform,
@@ -35,5 +38,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ Preload loaded successfully");
+  console.log("✅ Preload loaded");
 });
