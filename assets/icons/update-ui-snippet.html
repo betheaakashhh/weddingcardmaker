@@ -1,0 +1,169 @@
+<!-- ════════════════════════════════════════════════════════
+     UPDATE NOTIFICATION BANNER
+     Paste this block anywhere inside <body> before </body>
+     ════════════════════════════════════════════════════════ -->
+
+<!-- 1. CSS — paste inside your existing <style> block -->
+<style>
+#update-banner {
+  display: none;               /* hidden until an update arrives */
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 99999;
+  background: #1a1a1a;
+  border: 1px solid #C9A84C;
+  border-radius: 10px;
+  padding: 14px 18px;
+  max-width: 340px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.6);
+  font-family: 'Poppins', sans-serif;
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+#update-banner .ub-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #C9A84C;
+  margin-bottom: 4px;
+}
+#update-banner .ub-body {
+  font-size: 11px;
+  color: #aaa;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+#update-banner .ub-progress {
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 10px;
+  display: none;
+}
+#update-banner .ub-progress-bar {
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+#update-banner .ub-progress-fill {
+  height: 100%;
+  background: #C9A84C;
+  border-radius: 2px;
+  width: 0%;
+  transition: width .3s;
+}
+#update-banner .ub-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+#update-banner .ub-btn {
+  border: none;
+  border-radius: 5px;
+  padding: 5px 14px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s;
+}
+#update-banner .ub-btn.install {
+  background: #8B1A2E;
+  color: #fff;
+}
+#update-banner .ub-btn.install:hover { background: #a02535; }
+#update-banner .ub-btn.install:disabled {
+  background: #444;
+  color: #777;
+  cursor: not-allowed;
+}
+#update-banner .ub-btn.later {
+  background: #2a2a2a;
+  color: #aaa;
+  border: 1px solid #444;
+}
+#update-banner .ub-btn.later:hover { background: #333; }
+</style>
+
+<!-- 2. HTML — paste just before </body> -->
+<div id="update-banner">
+  <div class="ub-title">🆕 Update Available — <span id="ub-version"></span></div>
+  <div class="ub-body" id="ub-body">
+    A new version of Wedding Card Studio is ready to download.
+  </div>
+  <div class="ub-progress" id="ub-progress">
+    Downloading… <span id="ub-pct">0</span>%
+    <div class="ub-progress-bar">
+      <div class="ub-progress-fill" id="ub-fill"></div>
+    </div>
+  </div>
+  <div class="ub-actions">
+    <button class="ub-btn later"   id="ub-later"   onclick="ubDismiss()">Later</button>
+    <button class="ub-btn install" id="ub-install" onclick="ubInstall()">Update &amp; Restart</button>
+  </div>
+</div>
+
+<!-- 3. Script — paste just before </body> (after the banner HTML above) -->
+<script>
+(function initUpdater() {
+  // Only runs inside Electron
+  if (!window.electronAPI) return;
+
+  const banner   = document.getElementById('update-banner');
+  const verSpan  = document.getElementById('ub-version');
+  const bodyEl   = document.getElementById('ub-body');
+  const progressEl = document.getElementById('ub-progress');
+  const pctEl    = document.getElementById('ub-pct');
+  const fillEl   = document.getElementById('ub-fill');
+  const installBtn = document.getElementById('ub-install');
+
+  let updateReady = false; // true once download is complete
+
+  // ── New version found (download starting automatically) ─
+  window.electronAPI.receive('update-available', (info) => {
+    verSpan.textContent = 'v' + info.version;
+    bodyEl.textContent  = 'Downloading the new version in the background…';
+    installBtn.disabled = true;
+    installBtn.textContent = 'Downloading…';
+    banner.style.display = 'block';
+  });
+
+  // ── Download progress ────────────────────────────────────
+  window.electronAPI.receive('update-progress', (info) => {
+    progressEl.style.display = 'block';
+    pctEl.textContent        = info.percent;
+    fillEl.style.width       = info.percent + '%';
+  });
+
+  // ── Download complete — ready to install ─────────────────
+  window.electronAPI.receive('update-downloaded', (info) => {
+    updateReady = true;
+    verSpan.textContent      = 'v' + info.version;
+    bodyEl.textContent       = 'Update downloaded! Restart the app to apply it.';
+    progressEl.style.display = 'none';
+    installBtn.disabled      = false;
+    installBtn.textContent   = 'Update & Restart';
+    banner.style.display     = 'block';
+  });
+
+  // ── Error ────────────────────────────────────────────────
+  window.electronAPI.receive('update-error', (info) => {
+    console.warn('Update error:', info.message);
+    // Silently fail — don't annoy the user with error banners
+  });
+
+  window.ubInstall = function () {
+    if (!updateReady) return;
+    installBtn.disabled    = true;
+    installBtn.textContent = 'Restarting…';
+    window.electronAPI.send('install-update');
+  };
+
+  window.ubDismiss = function () {
+    banner.style.display = 'none';
+  };
+})();
+</script>

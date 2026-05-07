@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Layout Studio v4 — Screen Print Pro</title>
+<title>Wedding Studio v2 — Screen Print Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@400;500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -389,13 +389,40 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 .vkey.wide{min-width:40px;}
 .vkey.wider{min-width:55px;}
 .vkey .sub{font-size:8px;color:#555;display:block;line-height:1;}
+
+/* wedding text */
+.wd-text{
+  font-size: 1.2rem;
+  color: #ffdb3d,
+  font-family: sans-serif
+  font-weight: 900;
+}
+
+
+/* Default grey icon (#ccc) */
+filter: invert(1) opacity(.75);
+
+/* Green icon (#7ec87e) — used by .tb-btn.green */
+filter: invert(1) sepia(1) saturate(2) hue-rotate(70deg) opacity(.85);
+
+/* Gold icon (#C9A84C) — used by .tb-btn.gold and .topbar-title */
+filter: invert(1) sepia(1) saturate(3) hue-rotate(5deg) opacity(.9);
+
+/* Blue icon (#6aaae0) — used by .tb-btn.blue */
+filter: invert(1) sepia(1) hue-rotate(180deg) saturate(2) opacity(.8);
+
+/* Red icon (#e05565) — used by delete buttons */
+filter: invert(1) sepia(1) saturate(5) hue-rotate(310deg) opacity(.9);
+
+/* White icon — used inside .tb-btn.primary (red bg) */
+filter: invert(1);
 </style>
 </head>
 <body>
 
 <!-- ── TOP BAR ── -->
 <div class="topbar">
-  <div class="topbar-title">🕉️ Card Studio v4</div>
+  <div class="topbar-title"><img src="assets/icons/om.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">  <span id="wd-text">Wedding</span> Studio v2</div>
   <div class="tb-sep"></div>
   <div class="tb-group">
     <span class="tb-label">Size</span>
@@ -428,45 +455,98 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
     <button class="tb-btn" onclick="redo()" title="Ctrl+Y">↪</button>
   </div>
   <div class="tb-sep"></div>
-  <button class="tb-btn" onclick="addTextBlock()">＋ Text</button>
-  <button class="tb-btn green" onclick="triggerImageUpload()">🖼 Img</button>
-  <div style="position:relative;display:inline-block;">
-    <button class="tb-btn" onclick="toggleShapeDropdown()">◻ Shape ▾</button>
-    <div id="shapeDropdown" style="display:none;position:absolute;top:100%;left:0;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:170px;z-index:9999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.7);max-height:250px;overflow-y:auto;"></div>
-  </div>
-  <button class="tb-btn green" onclick="triggerGraphicUpload()">🎨 Gfx</button>
-  <button class="tb-btn" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">ॐ Sym</button>
-  <button class="tb-btn" onclick="addQRBlock()" style="color:#6aaae0;border-color:#2a5a9a;">QR</button>
-  <button class="tb-btn" onclick="duplicateSelected()" title="Ctrl+D">⧉ Dup</button>
-  <button class="tb-btn" onclick="deleteSelected()" style="color:#e05565;">✕ Del</button>
+  <!---Text add button -->
+  <button class="tb-btn" onclick="addTextBlock()">
+    <img src="assets/icons/text.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75"> 
+
+  </button>
+  <!-- image insertion -->
+  <button class="tb-btn green" onclick="triggerImageUpload()">
+    <img src="assets/icons/image-add-24-regular.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);opacity:.85"> 
+  </button>
+  <button class="tb-btn" id="shapeDropdownBtn" onclick="toggleShapeDropdown()">
+    <img src="assets/icons/shape-plus.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+
+  <!-- graphics insertion -->
+  <button class="tb-btn green" onclick="triggerGraphicUpload()">
+  <img src="assets/icons/graphic-stitching-three.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);opacity:.85">
+  </button>
+  <!-- symbols -->
+  <button class="tb-btn" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">
+    <img src="assets/icons/om.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
+  </button>
+  <!-- Qr -->
+  <button class="tb-btn" onclick="addQRBlock()" style="color:#6aaae0;border-color:#2a5a9a;">
+    <img src="assets/icons/qr.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
+  </button>
+  <!-- duplicate -->
+  <button class="tb-btn" onclick="duplicateSelected()" title="Ctrl+D">
+    <img src="assets/icons/duplicate.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- delete button -->
+  <button class="tb-btn" onclick="deleteSelected()" style="color:#e05565;">
+    <img src="assets/icons/delete.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(5) hue-rotate(310deg);opacity:.9">
+  </button>
+
   <div class="tb-sep"></div>
-  <button class="tb-btn" onclick="groupSelected()" title="Group selected (Ctrl+G)" style="color:#6aaae0;">⊞ Grp</button>
-  <button class="tb-btn" onclick="ungroupSelected()" title="Ungroup">⊡ Ungrp</button>
-  <button class="tb-btn" onclick="mirrorSelected()" title="Mirror & place symmetric copy" style="color:#7ec87e;">⟺ Mirror</button>
+  <!-- grouping -->
+  <button class="tb-btn" onclick="groupSelected()" title="Group selected (Ctrl+G)" style="color:#6aaae0;">
+    <img src="assets/icons/group.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) hue-rotate(180deg);opacity:.8">
+  </button>
+  <!-- ungrouping -->
+  <button class="tb-btn" onclick="ungroupSelected()" title="Ungroup">
+    <img src="assets/icons/ungroup.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) hue-rotate(180deg);opacity:.8">
+  </button>
+  <!-- mirroring -->
+  <button class="tb-btn" onclick="mirrorSelected()" title="Mirror & place symmetric copy" style="color:#7ec87e;">
+    <img src="assets/icons/mirror-right-broken.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) hue-rotate(180deg);opacity:.8">
+  </button>
   <div class="tb-sep"></div>
-  <button class="tb-btn" onclick="toggleGuides()" id="guidesBtn">📐 Guides</button>
-  <button class="tb-btn" onclick="toggleGrid()" id="gridBtn">⊞ Grid</button>
-  <button class="tb-btn" onclick="toggleSnapGrid()" id="snapGridBtn">🔲 Snap</button>
-  <button class="tb-btn" onclick="toggleRuler()" id="rulerBtn">📏 Ruler</button>
-  <button class="tb-btn" onclick="toggleBleed()" id="bleedBtn">📦 Bleed</button>
-  <button class="tb-btn" onclick="toggleFoldLine()" id="foldBtn">✂ Fold</button>
-  <button class="tb-btn" onclick="cycleBg()" id="bgToggleBtn">🌓 BG</button>
+  <!-- guides -->
+  <button class="tb-btn" onclick="toggleGuides()" id="guidesBtn">
+    <img src="assets/icons/editor-guides.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- grid -->
+  <button class="tb-btn" onclick="toggleGrid()" id="gridBtn">
+    <img src="assets/icons/grid.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- snap -->
+  <button class="tb-btn" onclick="toggleSnapGrid()" id="snapGridBtn">
+    <img src="assets/icons/snap-to-grid.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- ruler -->
+  <button class="tb-btn" onclick="toggleRuler()" id="rulerBtn">
+    <img src="assets/icons/ruler-square.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- bleed -->
+  <button class="tb-btn" onclick="toggleBleed()" id="bleedBtn">
+    <img src="assets/icons/blender-line.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- fold -->
+  <button class="tb-btn" onclick="toggleFoldLine()" id="foldBtn">
+    <img src="assets/icons/shape-plus.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+  <!-- background -->
+  <button class="tb-btn" onclick="cycleBg()" id="bgToggleBtn">
+    <img src="assets/icons/background-fill.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
   <div class="tb-sep"></div>
-  <button class="tb-btn" onclick="toggleBlueprintMode()" id="blueprintBtn" style="color:#aaddff;border-color:#2a5a8a;">🖨 Blueprint</button>
-  <div style="position:relative;display:inline-block;">
-    <button class="tb-btn gold" onclick="toggleExportMenu()">⬇ Export ▾</button>
-    <div id="exportMenu" style="display:none;position:absolute;top:100%;right:0;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:180px;z-index:9999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.7);">
-      <div class="exp-item" onclick="exportPNG();toggleExportMenu()">📄 PNG (300 DPI)</div>
-      <div class="exp-item" onclick="exportAllPagesPNG();toggleExportMenu()">📋 All Pages PNG</div>
-      <div class="exp-item" onclick="exportPDF();toggleExportMenu()">📑 PDF (single page)</div>
-      <div class="exp-item" onclick="exportAllPagesPDF();toggleExportMenu()">📚 PDF (all pages)</div>
-      <div class="exp-item" onclick="exportBlueprintPNG();toggleExportMenu()">🖨 Blueprint PNG (B&W)</div>
-      <div class="exp-item" onclick="exportColorLayers();toggleExportMenu()">🎨 Separate Color Layers</div>
-    </div>
-  </div>
-  <button class="tb-btn primary" onclick="saveLayout()">💾 Save</button>
-  <button class="tb-btn" onclick="loadLayout()">📂 Load</button>
-  
+  <!-- export -->
+  <button class="tb-btn gold" id="exportMenuBtn" onclick="toggleExportMenu()">
+   <img src="assets/icons/exportfile.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  <!-- blueprint -->
+  <button class="tb-btn" onclick="toggleBlueprintMode()" id="blueprintBtn" style="color:#aaddff;border-color:#2a5a8a;">
+    
+<img src="assets/icons/blueprint-fill.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
+  </button>
+  <!-- save layout -->
+  <button class="tb-btn primary" onclick="saveLayout()">
+    <img src="assets/icons/save-arrow-right-24-regular.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"></button>
+    <!-- load layout -->
+  <button class="tb-btn" onclick="loadLayout()">
+    <img src="assets/icons/folder-download.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75"></button>
+    
 </div>
 
 <style>
@@ -485,52 +565,64 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
     <div class="panel-tabs">
       <!-- Row 1 -->
       <div class="panel-tab active" onclick="switchTab('blocks',this)" title="Layers & Blocks">
-        <span class="tab-icon">⊟</span><span class="tab-label">Layers</span>
+        <span class="tab-icon"><img src="assets/icons/layers.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('props',this)" title="Block Properties">
-        <span class="tab-icon">⚙</span><span class="tab-label">Props</span>
+        <span class="tab-icon"><img src="assets/icons/propc.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('align',this)" title="Align & Distribute">
-        <span class="tab-icon">⊟</span><span class="tab-label">Align</span>
+       <span class="tab-icon"><img src="assets/icons/align.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('canvasbg',this)" title="Canvas Background">
-        <span class="tab-icon">🖼</span><span class="tab-label">BG</span>
+        <span class="tab-icon"><img src="assets/icons/background-color.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('fonts',this)" title="Font Manager">
-        <span class="tab-icon">Aa</span><span class="tab-label">Fonts</span>
+        <span class="tab-icon"><img src="assets/icons/font.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <!-- Row 2 -->
       <div class="panel-tab" onclick="switchTab('graphics',this)" title="Graphics Library">
-        <span class="tab-icon">🎨</span><span class="tab-label">Library</span>
+       <span class="tab-icon"><img src="assets/icons/library.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('symbols',this)" title="Symbols & Hindi">
-        <span class="tab-icon">ॐ</span><span class="tab-label">Symbols</span>
+        <span class="tab-icon"><img src="assets/icons/om.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('palette',this)" title="Color Palette">
-        <span class="tab-icon">🎭</span><span class="tab-label">Colors</span>
+        <span class="tab-icon"><img src="assets/icons/colors.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('findreplace',this)" title="Find & Replace">
-        <span class="tab-icon">🔍</span><span class="tab-label">Find</span>
+        <span class="tab-icon"><img src="assets/icons/find.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
       <div class="panel-tab" onclick="switchTab('templates',this)" title="Templates">
-        <span class="tab-icon">📋</span><span class="tab-label">Tmpl</span>
+        <span class="tab-icon"><img src="assets/icons/template.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
       </div>
     </div>
 
     <!-- LAYERS TAB -->
     <div class="tab-content active" id="tab-blocks">
       <div style="display:flex;gap:3px;margin-bottom:5px;flex-wrap:wrap;">
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="selectAll()">⬜ All</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="deselectAll()">✕ None</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="groupSelected()">⊞ Grp</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;color:#e05;" onclick="deleteSelected()">🗑</button>
+        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="selectAll()">
+          <span class="tab-icon"><img src="assets/icons/all-application.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7">All</span>
+        </button>
+        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="deselectAll()">
+          <span class="tab-icon"><img src="assets/icons/value-none.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>None</button>
+        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="groupSelected()">
+          <span class="tab-icon"><img src="assets/icons/group.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Grp</button>
+        <button class="tb-btn" style="flex:1;font-size:10px;color:#e05;" onclick="deleteSelected()">
+          <span class="tab-icon"><img src="assets/icons/delete.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </button>
       </div>
-      <button class="add-block-btn" onclick="addTextBlock()">＋ Add Text Block</button>
-      <button class="add-block-btn" onclick="triggerImageUpload()">🖼 Add Image</button>
-      <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;">🎨 Add Graphic/Icon</button>
-      <button class="add-block-btn" onclick="addSymbolBlock()" style="border-color:#7a5c10;color:#C9A84C;">ॐ Add Symbol</button>
-      <button class="add-block-btn" onclick="addQRBlock()" style="border-color:#2a5a9a;color:#6aaae0;">QR Code Block</button>
-      <div style="font-size:9px;color:#444;margin-bottom:4px;">💡 Shift+Click = multi-select</div>
+      <button class="add-block-btn" onclick="addTextBlock()">
+        <span class="tab-icon"><img src="assets/icons/text-add-20-filled.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Add Text Block</button>
+      <button class="add-block-btn" onclick="triggerImageUpload()">
+        <span class="tab-icon"><img src="assets/icons/image-add-24-regular.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> Add Image</button>
+      <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;">
+        <span class="tab-icon"><img src="assets/icons/graphic-stitching-three.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> Add Graphic/Icon</button>
+      <button class="add-block-btn" onclick="addSymbolBlock()" style="border-color:#7a5c10;color:#C9A84C;">
+        <span class="tab-icon"><img src="assets/icons/om.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Add Symbol</button>
+      <button class="add-block-btn" onclick="addQRBlock()" style="border-color:#2a5a9a;color:#6aaae0;">
+        <span class="tab-icon"><img src="assets/icons/qr.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>QR Code Block</button>
+      <div style="font-size:9px;color:#444;margin-bottom:4px;">
+        <span class="tab-icon"><img src="assets/icons/multi-select-16.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Shift+Click = multi-select</div>
       <div id="blocksList"></div>
     </div>
 
@@ -544,17 +636,28 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
       <div class="section-label">Align Selected Blocks</div>
       <div style="font-size:10px;color:#555;margin-bottom:7px;">Select 2+ blocks or 1 block (aligns to canvas)</div>
       <div class="align-toolbar">
-        <button onclick="alignBlocks('left')" title="Align Left Edges">⬛L</button>
-        <button onclick="alignBlocks('centerH')" title="Center Horizontally">⬛C</button>
-        <button onclick="alignBlocks('right')" title="Align Right Edges">L⬛</button>
-        <button onclick="alignBlocks('top')" title="Align Top Edges">⬛T</button>
-        <button onclick="alignBlocks('centerV')" title="Center Vertically">⬛M</button>
-        <button onclick="alignBlocks('bottom')" title="Align Bottom Edges">T⬛</button>
+        <button onclick="alignBlocks('left')" title="Align Left Edges">
+          <span class="tab-icon"><img src="assets/icons/align-left.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </button>
+        <button onclick="alignBlocks('centerH')" title="Center Horizontally">
+          <span class="tab-icon"><img src="assets/icons/align-horizontal.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </button>
+        <button onclick="alignBlocks('right')" title="Align Right Edges">
+          <span class="tab-icon"><img src="assets/icons/align-right.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span></button>
+        <button onclick="alignBlocks('top')" title="Align Top Edges">
+          <span class="tab-icon"><img src="assets/icons/align-top.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </button>
+        <button onclick="alignBlocks('centerV')" title="Center Vertically">
+          <span class="tab-icon"><img src="assets/icons/align-vertical.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </button>
+        <button onclick="alignBlocks('bottom')" title="Align Bottom Edges">
+          <span class="tab-icon"><img src="assets/icons/align-bottom-1.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </button>
       </div>
       <div class="section-label" style="margin-top:10px;">Distribute (3+ blocks)</div>
       <div class="align-toolbar">
         <button onclick="distributeBlocks('h')" title="Distribute Horizontally">⟺ H</button>
-        <button onclick="distributeBlocks('v')" title="Distribute Vertically">⟷ V</button>
+        <button onclick="distributeBlocks('v')" title="Distribute Vertically"> V</button>
       </div>
       <div class="section-label" style="margin-top:10px;">Text Case Transform</div>
       <div class="align-toolbar">
@@ -586,7 +689,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
         <input type="file" id="bgFileInput" accept="image/*" style="display:none" onchange="loadCanvasBg(this)">
       </div>
       <div class="bg-section">
-        <h5>🌓 Canvas Theme</h5>
+        <h5>Canvas Theme</h5>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
           <button class="tb-btn" onclick="setBgTheme('dark')" id="bgDark" style="flex:1">⬛ Dark</button>
           <button class="tb-btn" onclick="setBgTheme('light')" id="bgLight" style="flex:1">🟤 Parch</button>
@@ -594,11 +697,11 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
         </div>
       </div>
       <div class="bg-section">
-        <h5>📏 Fold & Bleed</h5>
+        <h5>Fold & Bleed</h5>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
           <button class="tb-btn" onclick="toggleFoldV()" id="foldVBtn" style="flex:1">↕ V-Fold</button>
           <button class="tb-btn" onclick="toggleFoldH()" id="foldHBtn" style="flex:1">↔ H-Fold</button>
-          <button class="tb-btn" onclick="toggleBleed()" id="bleedBtn2" style="flex:1">📦 Bleed</button>
+          <button class="tb-btn" onclick="toggleBleed()" id="bleedBtn2" style="flex:1">Bleed</button>
         </div>
         <div style="font-size:10px;color:#555;margin-top:6px;">Bleed = 3mm outside card edge (for screen printing)</div>
       </div>
@@ -608,12 +711,14 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
     <div class="tab-content" id="tab-fonts">
 
       <!-- System Fonts (Local Font Access API) -->
-      <div class="section-label">💻 System Fonts</div>
+      <div class="section-label">System Fonts</div>
       <div style="font-size:10px;color:#666;margin-bottom:5px;">Use fonts already installed on your computer — just like Photoshop / Word.</div>
       <button class="add-block-btn" style="border-color:#C9A84C;color:#C9A84C;" onclick="loadSystemFonts()">🖥 Load System Fonts (Chrome only)</button>
       <div id="systemFontSearch" style="display:none;position:relative;margin-top:5px;margin-bottom:4px;">
         <input id="systemFontSearchInput" class="prop-input" style="width:100%;padding-left:22px;" placeholder="Search system fonts…" oninput="filterSystemFonts(this.value)">
-        <span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#555;">🔍</span>
+        <span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#555;">
+          <span class="tab-icon"><img src="assets/icons/search.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </span>
       </div>
       <div id="systemFontsList" style="max-height:150px;overflow-y:auto;"></div>
 
@@ -626,7 +731,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
       </label>
 
       <!-- Individual upload -->
-      <div class="section-label" style="margin-top:7px;">⬆ Upload Font Files</div>
+      <div class="section-label" style="margin-top:7px;"><span class="tab-icon"><img src="assets/icons/export.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Upload Font Files</div>
       <label style="width:100%;display:block;">
         <div class="add-block-btn" style="cursor:pointer;">＋ Upload .ttf / .otf / .woff / .woff2</div>
         <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" style="display:none" multiple onchange="loadCustomFonts(this)">
@@ -647,7 +752,9 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
     <div class="tab-content" id="tab-graphics">
       <div style="position:relative;margin-bottom:6px;">
         <input id="graphicSearch" class="prop-input" style="width:100%;padding-left:24px;" placeholder="Search graphics..." oninput="filterGraphicsLib(this.value)">
-        <span style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#555;">🔍</span>
+        <span style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#555;">
+          <span class="tab-icon"><img src="assets/icons/search.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+        </span>
       </div>
       <div id="graphicCatTabs" style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px;"></div>
       <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
@@ -658,14 +765,14 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
         <div style="grid-column:1/-1;color:#444;font-size:10px;text-align:center;padding:10px;">Loading assets…</div>
       </div>
       <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;margin-top:3px;">
-        <span>💾 My Saved Graphics</span>
+        <span><span class="tab-icon"><img src="assets/icons/save-arrow-right-24-regular.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> My Saved Graphics</span>
         <span id="savedCount" style="color:#555;font-size:9px;">0 items</span>
       </div>
       <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;margin-bottom:5px;">＋ Upload PNG/SVG</button>
       <div style="display:flex;gap:3px;margin-bottom:5px;">
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="exportGraphicsLib()">⬇ Export</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="importGraphicsLib()">⬆ Import</button>
-        <button class="tb-btn" style="flex:1;font-size:10px;color:#e05;" onclick="clearSavedGraphics()">🗑</button>
+        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="exportGraphicsLib()"><span class="tab-icon"><img src="assets/icons/export.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Export</button>
+        <button class="tb-btn" style="flex:1;font-size:10px;" onclick="importGraphicsLib()"><span class="tab-icon"><img src="assets/icons/import.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Import</button>
+        <button class="tb-btn" style="flex:1;font-size:10px;color:#e05;" onclick="clearSavedGraphics()"><span class="tab-icon"><img src="assets/icons/delete.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span></button>
       </div>
       <!-- Folder scan for graphics -->
       <label style="width:100%;display:block;margin-bottom:5px;">
@@ -1608,7 +1715,19 @@ function addTextBlock(opts) {
   c.blocks.push(b); snapshot(); selectBlock(b.id); renderAll();
 }
 let shapeDropdownOpen=false;
-function toggleShapeDropdown(){shapeDropdownOpen=!shapeDropdownOpen;document.getElementById('shapeDropdown').style.display=shapeDropdownOpen?'block':'none';}
+function toggleShapeDropdown(){
+  shapeDropdownOpen=!shapeDropdownOpen;
+  const dd=document.getElementById('shapeDropdown');
+  const btn=document.getElementById('shapeDropdownBtn');
+  if(shapeDropdownOpen&&btn&&dd){
+    const r=btn.getBoundingClientRect();
+    dd.style.top=(r.bottom+4)+'px';
+    dd.style.left=r.left+'px';
+    dd.style.right='auto';
+    buildShapeDropdown();
+  }
+  if(dd) dd.style.display=shapeDropdownOpen?'block':'none';
+}
 function closeShapeDropdown(){shapeDropdownOpen=false;const dd=document.getElementById('shapeDropdown');if(dd)dd.style.display='none';}
 const PRESET_SHAPES=[
   {label:'▬ Rectangle',type:'rect',w:60,h:20},{label:'⬛ Square',type:'rect',w:30,h:30},
@@ -3250,11 +3369,20 @@ function toggleBlueprintMode(){
 let exportMenuOpen=false;
 function toggleExportMenu(){
   exportMenuOpen=!exportMenuOpen;
-  document.getElementById('exportMenu').style.display=exportMenuOpen?'block':'none';
+  const menu=document.getElementById('exportMenu');
+  const btn=document.getElementById('exportMenuBtn');
+  if(exportMenuOpen&&btn&&menu){
+    const r=btn.getBoundingClientRect();
+    menu.style.top=(r.bottom+4)+'px';
+    menu.style.left='auto';
+    menu.style.right=(window.innerWidth-r.right)+'px';
+  }
+  if(menu) menu.style.display=exportMenuOpen?'block':'none';
 }
+function closeExportMenu(){exportMenuOpen=false;const m=document.getElementById('exportMenu');if(m)m.style.display='none';}
 document.addEventListener('click',e=>{
-  if(!e.target.closest('#exportMenu')&&!e.target.textContent.includes('Export ▾')){exportMenuOpen=false;const m=document.getElementById('exportMenu');if(m)m.style.display='none';}
-  if(!e.target.closest('#shapeDropdown')&&!e.target.textContent.includes('Shape ▾'))closeShapeDropdown();
+  if(!e.target.closest('#exportMenu')&&!e.target.closest('#exportMenuBtn')) closeExportMenu();
+  if(!e.target.closest('#shapeDropdown')&&!e.target.closest('#shapeDropdownBtn')) closeShapeDropdown();
 });
 
 async function buildExportContainer(c, scale, transparent, blueprintOverride){
@@ -4829,7 +4957,7 @@ function buildShapeDropdown(){
     if(imgs.length)loadImages({files:imgs});
   });
     window.addEventListener('resize', () => { if (showRuler) drawRulers(); });
-  toast('🕉️ Card Layout Studio v4 — Screen Print Pro — ready!');
+  toast(`<img src="assets/icons/om.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75"> Wedding Studio v2 — Screen Print Pro — ready!`);
 })();
 </script>
 
@@ -4919,7 +5047,7 @@ function buildShapeDropdown(){
     insBtn.style.display = 'none';
 
     if(UPD.state === 'checking'){
-      title.textContent   = '🔔 Check for Updates';
+      title.textContent   = `<span class="tab-icon"><img src="assets/icons/update-rtl.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> Check for Updates`;
       notes.textContent   = 'Checking GitHub for a new release…';
       status.textContent  = '';
       progW.style.display = 'none';
@@ -4966,7 +5094,7 @@ function buildShapeDropdown(){
       progW.style.display = 'none';
     }
     else {
-      title.textContent   = '🔔 Updates';
+      title.textContent   = `<span class="tab-icon"><img src="assets/icons/update-rtl.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>`;
       notes.textContent   = 'Click "Check Now" to look for updates.';
       progW.style.display = 'none';
     }
@@ -4975,8 +5103,8 @@ function buildShapeDropdown(){
   // ── IPC listeners ────────────────────────────────────────
   window.electronAPI.receive('update-checking', () => {
     UPD.state = 'checking';
-    setTopBtn('🔔','Checking…','');
-    setPill('🔍 Checking…','');
+    setTopBtn(`<span class="tab-icon"><img src="assets/icons/update-rtl.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>`,'Checking…','');
+    setPill(`<span class="tab-icon"><img src="assets/icons/search.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> checking...`,'');
     syncModal();
   });
 
@@ -5073,5 +5201,22 @@ function buildShapeDropdown(){
 
 })();
 </script>
+<!-- ── FLOATING DROPDOWNS (body-level to escape overflow:hidden) ── -->
+<div id="exportMenu" style="display:none;position:fixed;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:180px;z-index:999999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.8);">
+  <div class="exp-item" onclick="exportPNG();closeExportMenu()">
+    <img src="assets/icons/png-01.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"> PNG (300 DPI)</div>
+  <div class="exp-item" onclick="exportAllPagesPNG();closeExportMenu()">
+    <img src="assets/icons/png-01.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"> All Pages PNG</div>
+  <div class="exp-item" onclick="exportPDF();closeExportMenu()">
+    <img src="assets/icons/pdf-document.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"> PDF (single page)</div>
+  <div class="exp-item" onclick="exportAllPagesPDF();closeExportMenu()">
+    <img src="assets/icons/pdf-document.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"> PDF (all pages)</div>
+  <div class="exp-item" onclick="exportBlueprintPNG();closeExportMenu()">
+    <img src="assets/icons/blueprint-fill.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9"> Blueprint PNG (B&W)</div>
+  <div class="exp-item" onclick="exportColorLayers();closeExportMenu()">
+    <img src="assets/icons/colors.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9"> Separate Color Layers</div>
+</div>
+<div id="shapeDropdown" style="display:none;position:fixed;background:#1a1a1a;border:1px solid #444;border-radius:6px;min-width:170px;z-index:999999;padding:4px;box-shadow:0 4px 20px rgba(0,0,0,.8);max-height:260px;overflow-y:auto;"></div>
+
 </body>
 </html>
