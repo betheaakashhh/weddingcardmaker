@@ -4,20 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wedding Studio v2 — Screen Print Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Hind:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Devanagari:wght@100;200;300;400;500;600;700;800;900&family=Baloo+2:wght@400;500;600;700;800&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="assets/css2.css" rel="stylesheet">
+<script src="assets/html2canvas.min.js"></script>
+<script src="assets/qrcode.min.js"></script>
+<script src="assets/jspdf.umd.min.js"></script>
 <!-- Sanscript.js — proper ITRANS→Devanagari transliteration engine -->
-<script src="https://cdn.jsdelivr.net/npm/@indic-transliteration/sanscript@3.1.1/sanscript.min.js"
-  onerror="console.warn('Sanscript CDN failed — using built-in ITRANS fallback engine')"></script>
+<script src="assets/sanscript.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
 /* ── TOPBAR ── */
 .topbar{background:#1a1a1a;border-bottom:2px solid #8B1A2E;padding:4px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;}
-.topbar-title{color:#C9A84C;font-weight:700;font-size:12px;margin-right:2px;white-space:nowrap;}
+.topbar-title{
+  color:#C9A84C;
+  font-weight:700;
+  font-size:12px;
+  margin-right:2px;
+  white-space:nowrap;}
 .tb-group{display:flex;align-items:center;gap:3px;}
 .tb-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
 .tb-input{background:#2a2a2a;border:1px solid #444;border-radius:4px;color:#eee;padding:3px 5px;font-size:11px;width:56px;}
