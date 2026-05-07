@@ -466,8 +466,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   </div>
   <button class="tb-btn primary" onclick="saveLayout()">💾 Save</button>
   <button class="tb-btn" onclick="loadLayout()">📂 Load</button>
-  <div class="tb-sep"></div>
-  <button id="upd-topbtn" onclick="updOpenModal()" title="Check for updates">🔔 Updates</button>
+  
 </div>
 
 <style>
@@ -809,6 +808,8 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <span>Page: <span class="status-val" id="statusPage">1/1</span></span>
   <span id="upd-statuspill" onclick="updOpenModal()"></span>
   <span style="margin-left:auto;color:#444;font-size:9px;">Drag=move • SE◢=scale • ↻=rotate • Alt+Drag=duplicate • Shift+Click=multiselect • Ctrl+G=group • Ctrl+Z=undo</span>
+  <div class="tb-sep"></div>
+  <button id="upd-topbtn" onclick="updOpenModal()" title="Check for updates">Updates</button>
 </div>
 
 <!-- TOAST -->
@@ -4838,7 +4839,7 @@ function buildShapeDropdown(){
 <div id="upd-modal-overlay">
   <div id="upd-modal">
     <div id="upd-modal-header">
-      <h3 id="upd-modal-title">🔔 Check for Updates</h3>
+      <h3 id="upd-modal-title">Check for Updates</h3>
       <button id="upd-modal-close" onclick="updCloseModal()">✕</button>
     </div>
     <div id="upd-modal-body">

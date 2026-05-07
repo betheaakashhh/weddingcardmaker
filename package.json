@@ -1,6 +1,6 @@
 {
   "name": "wedding-card-studio",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "description": "Professional Hindu Wedding Card Designer",
   "main": "main.js",
   "author": "Aakash",
@@ -27,6 +27,7 @@
   },
   "appId": "com.aakash.weddingstudio",
   "productName": "Wedding Card Studio",
+   "artifactName": "Wedding-Card-Studio-Setup-${version}.${ext}",
   "publish": [
     {
       "provider": "github",
@@ -36,7 +37,8 @@
   ],
   "win": {
     "target": "nsis",
-    "icon": "icon.ico"
+    "icon": "icon.ico",
+     "artifactName": "Wedding-Card-Studio-Setup-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,
