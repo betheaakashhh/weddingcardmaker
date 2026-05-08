@@ -11,17 +11,22 @@
 <!-- Sanscript.js — proper ITRANS→Devanagari transliteration engine -->
 <script src="assets/sanscript.min.js"></script>
 <style>
+@import url('assets/topbar.css');
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
 /* ── TOPBAR ── */
 .topbar{background:#1a1a1a;border-bottom:2px solid #8B1A2E;padding:4px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;}
-.topbar-title{
-  color:#C9A84C;
-  font-weight:700;
-  font-size:12px;
-  margin-right:2px;
-  white-space:nowrap;}
+.topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  user-select: none;
+}
+
+
+
+
 .tb-group{display:flex;align-items:center;gap:3px;}
 .tb-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
 .tb-input{background:#2a2a2a;border:1px solid #444;border-radius:4px;color:#eee;padding:3px 5px;font-size:11px;width:56px;}
@@ -395,39 +400,32 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 .vkey .sub{font-size:8px;color:#555;display:block;line-height:1;}
 
 /* wedding text */
-.wd-text{
+#wd-text{
   font-size: 1.2rem;
-  color: #ffdb3d,
-  font-family: sans-serif
+  color: #7e12f0;
+  font-family: sans-serif;
   font-weight: 900;
+  
+
+}
+.add-block-btn #prop-txt {
+  font-size: 13px;
+  color: #555252;
+  font-family: 'Your Font', sans-serif;
+  font-weight: 500;
+  opacity: 1;            /* button may set opacity on children */
+  pointer-events: none;  /* prevent span from blocking button click */
+  margin-left: 4px;
 }
 
-
-/* Default grey icon (#ccc) */
-filter: invert(1) opacity(.75);
-
-/* Green icon (#7ec87e) — used by .tb-btn.green */
-filter: invert(1) sepia(1) saturate(2) hue-rotate(70deg) opacity(.85);
-
-/* Gold icon (#C9A84C) — used by .tb-btn.gold and .topbar-title */
-filter: invert(1) sepia(1) saturate(3) hue-rotate(5deg) opacity(.9);
-
-/* Blue icon (#6aaae0) — used by .tb-btn.blue */
-filter: invert(1) sepia(1) hue-rotate(180deg) saturate(2) opacity(.8);
-
-/* Red icon (#e05565) — used by delete buttons */
-filter: invert(1) sepia(1) saturate(5) hue-rotate(310deg) opacity(.9);
-
-/* White icon — used inside .tb-btn.primary (red bg) */
-filter: invert(1);
 </style>
 </head>
 <body>
 
 <!-- ── TOP BAR ── -->
 <div class="topbar">
-  <div class="topbar-title"><img src="assets/icons/om.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">  <span id="wd-text">Wedding</span> Studio v2</div>
-  <div class="tb-sep"></div>
+  <div class="topbar-title">
+  </div>
   <div class="tb-group">
     <span class="tb-label">Size</span>
     <select class="tb-input" id="cardPreset" onchange="applyPreset(this.value)" style="width:auto;font-size:10px;">
@@ -465,46 +463,46 @@ filter: invert(1);
 
   </button>
   <!-- image insertion -->
-  <button class="tb-btn green" onclick="triggerImageUpload()">
-    <img src="assets/icons/image-add-24-regular.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);opacity:.85"> 
+  <button class="tb-btn" onclick="triggerImageUpload()">
+    <img src="assets/icons/image-add-24-regular.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.85"> 
   </button>
   <button class="tb-btn" id="shapeDropdownBtn" onclick="toggleShapeDropdown()">
     <img src="assets/icons/shape-plus.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
   </button>
 
   <!-- graphics insertion -->
-  <button class="tb-btn green" onclick="triggerGraphicUpload()">
-  <img src="assets/icons/graphic-stitching-three.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);opacity:.85">
+  <button class="tb-btn" onclick="triggerGraphicUpload()">
+  <img src="assets/icons/graphic-stitching-three.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.85">
   </button>
   <!-- symbols -->
-  <button class="tb-btn" onclick="addSymbolBlock()" style="color:#C9A84C;border-color:#7a5c10;">
-    <img src="assets/icons/om.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
+  <button class="tb-btn" onclick="addSymbolBlock()">
+    <img src="assets/icons/om.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.9">
   </button>
   <!-- Qr -->
-  <button class="tb-btn" onclick="addQRBlock()" style="color:#6aaae0;border-color:#2a5a9a;">
-    <img src="assets/icons/qr.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
+  <button class="tb-btn" onclick="addQRBlock()">
+    <img src="assets/icons/qr.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.9">
   </button>
   <!-- duplicate -->
   <button class="tb-btn" onclick="duplicateSelected()" title="Ctrl+D">
     <img src="assets/icons/duplicate.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
   </button>
   <!-- delete button -->
-  <button class="tb-btn" onclick="deleteSelected()" style="color:#e05565;">
-    <img src="assets/icons/delete.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(5) hue-rotate(310deg);opacity:.9">
+  <button class="tb-btn" onclick="deleteSelected()" title="Delete">
+    <img src="assets/icons/delete.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.9">
   </button>
 
   <div class="tb-sep"></div>
   <!-- grouping -->
-  <button class="tb-btn" onclick="groupSelected()" title="Group selected (Ctrl+G)" style="color:#6aaae0;">
-    <img src="assets/icons/group.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) hue-rotate(180deg);opacity:.8">
+  <button class="tb-btn" onclick="groupSelected()" title="Group selected (Ctrl+G)">
+    <img src="assets/icons/group.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.8">
   </button>
   <!-- ungrouping -->
   <button class="tb-btn" onclick="ungroupSelected()" title="Ungroup">
-    <img src="assets/icons/ungroup.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) hue-rotate(180deg);opacity:.8">
+    <img src="assets/icons/ungroup.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.8">
   </button>
   <!-- mirroring -->
-  <button class="tb-btn" onclick="mirrorSelected()" title="Mirror & place symmetric copy" style="color:#7ec87e;">
-    <img src="assets/icons/mirror-right-broken.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) hue-rotate(180deg);opacity:.8">
+  <button class="tb-btn" onclick="mirrorSelected()" title="Mirror & place symmetric copy">
+    <img src="assets/icons/mirror-right-broken.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.8">
   </button>
   <div class="tb-sep"></div>
   <!-- guides -->
@@ -536,21 +534,23 @@ filter: invert(1);
     <img src="assets/icons/background-fill.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
   </button>
   <div class="tb-sep"></div>
-  <!-- export -->
-  <button class="tb-btn gold" id="exportMenuBtn" onclick="toggleExportMenu()">
-   <img src="assets/icons/exportfile.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+ 
   <!-- blueprint -->
-  <button class="tb-btn" onclick="toggleBlueprintMode()" id="blueprintBtn" style="color:#aaddff;border-color:#2a5a8a;">
+  <button class="tb-btn" onclick="toggleBlueprintMode()" id="blueprintBtn">
     
 <img src="assets/icons/blueprint-fill.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
   </button>
   <!-- save layout -->
-  <button class="tb-btn primary" onclick="saveLayout()">
+  <button class="tb-btn" onclick="saveLayout()">
     <img src="assets/icons/save-arrow-right-24-regular.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"></button>
     <!-- load layout -->
   <button class="tb-btn" onclick="loadLayout()">
-    <img src="assets/icons/folder-download.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75"></button>
-    
+    <img src="assets/icons/folder-download.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
+   <!-- export -->
+  <button class="tb-btn" id="exportMenuBtn" onclick="toggleExportMenu()">
+   <img src="assets/icons/exportfile.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.75">
+  </button>
 </div>
 
 <style>
@@ -616,15 +616,15 @@ filter: invert(1);
         </button>
       </div>
       <button class="add-block-btn" onclick="addTextBlock()">
-        <span class="tab-icon"><img src="assets/icons/text-add-20-filled.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Add Text Block</button>
+        <span class="tab-icon"><img src="assets/icons/text.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span><span id="prop-txt">Add Text Block</span></button>
       <button class="add-block-btn" onclick="triggerImageUpload()">
-        <span class="tab-icon"><img src="assets/icons/image-add-24-regular.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> Add Image</button>
+        <span class="tab-icon"><img src="assets/icons/image-add-24-regular.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span><span id="prop-txt">Add Image</span></button>
       <button class="add-block-btn" onclick="triggerGraphicUpload()" style="border-color:#3a5a3a;color:#7ec87e;">
-        <span class="tab-icon"><img src="assets/icons/graphic-stitching-three.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> Add Graphic/Icon</button>
+        <span class="tab-icon"><img src="assets/icons/scalervector.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.5"></span><span id="prop-txt">Add Graphic/Icon</span></button>
       <button class="add-block-btn" onclick="addSymbolBlock()" style="border-color:#7a5c10;color:#C9A84C;">
-        <span class="tab-icon"><img src="assets/icons/om.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Add Symbol</button>
+        <span class="tab-icon"><img src="assets/icons/om.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span><span id="prop-txt">Add Symbol</span></button>
       <button class="add-block-btn" onclick="addQRBlock()" style="border-color:#2a5a9a;color:#6aaae0;">
-        <span class="tab-icon"><img src="assets/icons/qr.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>QR Code Block</button>
+        <span class="tab-icon"><img src="assets/icons/qr.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span><span id="prop-txt">QR Code Block</span></button>
       <div style="font-size:9px;color:#444;margin-bottom:4px;">
         <span class="tab-icon"><img src="assets/icons/multi-select-16.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>Shift+Click = multi-select</div>
       <div id="blocksList"></div>
@@ -641,7 +641,7 @@ filter: invert(1);
       <div style="font-size:10px;color:#555;margin-bottom:7px;">Select 2+ blocks or 1 block (aligns to canvas)</div>
       <div class="align-toolbar">
         <button onclick="alignBlocks('left')" title="Align Left Edges">
-          <span class="tab-icon"><img src="assets/icons/align-left.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+          <span class="tab-icon"><img src="assets/icons/alignleft1.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
         </button>
         <button onclick="alignBlocks('centerH')" title="Center Horizontally">
           <span class="tab-icon"><img src="assets/icons/align-horizontal.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
@@ -721,7 +721,7 @@ filter: invert(1);
       <div id="systemFontSearch" style="display:none;position:relative;margin-top:5px;margin-bottom:4px;">
         <input id="systemFontSearchInput" class="prop-input" style="width:100%;padding-left:22px;" placeholder="Search system fonts…" oninput="filterSystemFonts(this.value)">
         <span style="position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#555;">
-          <span class="tab-icon"><img src="assets/icons/search.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+          <span class="tab-icon"><img src="assets/icons/search1.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
         </span>
       </div>
       <div id="systemFontsList" style="max-height:150px;overflow-y:auto;"></div>
@@ -757,7 +757,7 @@ filter: invert(1);
       <div style="position:relative;margin-bottom:6px;">
         <input id="graphicSearch" class="prop-input" style="width:100%;padding-left:24px;" placeholder="Search graphics..." oninput="filterGraphicsLib(this.value)">
         <span style="position:absolute;left:7px;top:50%;transform:translateY(-50%);font-size:11px;color:#555;">
-          <span class="tab-icon"><img src="assets/icons/search.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
+          <span class="tab-icon"><img src="assets/icons/search1.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>
         </span>
       </div>
       <div id="graphicCatTabs" style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:7px;"></div>
@@ -2656,7 +2656,7 @@ function renderPropsPanel(){
       <div class="prop-group">
         <span class="prop-label">Font Family</span>
         <!-- Quick search filter -->
-        <input class="prop-input" style="width:100%;margin-bottom:4px;" placeholder="🔍 Type to filter fonts…" id="fontFamilySearch" oninput="filterPropsFont(this.value,'fontFamilySelect')" value="">
+        <input class="prop-input" style="width:100%;margin-bottom:4px;" placeholder="Type to filter fonts…" id="fontFamilySearch" oninput="filterPropsFont(this.value,'fontFamilySelect')" value="">
         <select class="prop-input" style="width:100%;font-size:11px;height:28px;" id="fontFamilySelect"
           onchange="updatePropAndRefresh('fontFamily',this.value);autoDetectLegacyMode(this.value);document.getElementById('fontPreviewEl').style.fontFamily=this.value+',serif'">
           ${allFonts.map(f=>`<option value="${f}" ${b.fontFamily===f?'selected':''}>${f}</option>`).join('')}
@@ -5002,9 +5002,20 @@ function buildShapeDropdown(){
 (function(){
   if(!window.electronAPI) return;
 
-  // ── state ───────────────────────────────────────────────
+  // ── Icon helper ──────────────────────────────────────────
+  // Returns an <img> tag string for use inside textContent-safe places
+  // NOTE: Since we use .innerHTML for icon+text combos, a small
+  // helper keeps things consistent.
+  function icon(name, size){
+    size = size || 14;
+    return `<img src="assets/icons/${name}.svg" width="${size}" height="${size}"
+                 style="vertical-align:middle;margin-right:4px;filter:invert(1);opacity:.75"
+                 alt="">`;
+  }
+
+  // ── state ────────────────────────────────────────────────
   const UPD = {
-    state: 'idle',      // idle | checking | available | downloading | ready | uptodate | error
+    state: 'idle',
     version: null,
     notes: '',
     percent: 0,
@@ -5022,19 +5033,20 @@ function buildShapeDropdown(){
     return (bps/1024).toFixed(0)+' KB/s';
   }
 
-  function setTopBtn(icon, label, cls){
+  // ⚠️ Use .innerHTML instead of .textContent wherever icons appear
+  function setTopBtn(iconName, label, cls){
     const b = $('upd-topbtn');
-    b.textContent = icon+' '+label;
+    b.innerHTML = icon(iconName) + label;   // ← innerHTML for img tag
     b.className = '';
     if(cls) b.classList.add(cls);
   }
 
-  function setPill(text, cls){
+  function setPill(iconName, text, cls){
     const p = $('upd-statuspill');
     if(!text){ p.style.display='none'; return; }
-    p.style.display='inline';
-    p.textContent = text;
-    p.className = cls||'';
+    p.style.display  = 'inline';
+    p.innerHTML      = icon(iconName) + text;  // ← innerHTML for img tag
+    p.className      = cls || '';
   }
 
   function syncModal(){
@@ -5046,59 +5058,59 @@ function buildShapeDropdown(){
     const insBtn = $('upd-btn-install');
     const title  = $('upd-modal-title');
 
-    // Reset buttons
     dlBtn.style.display  = 'none';
     insBtn.style.display = 'none';
 
     if(UPD.state === 'checking'){
-      title.textContent   = `<span class="tab-icon"><img src="assets/icons/update-rtl.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> Check for Updates`;
-      notes.textContent   = 'Checking GitHub for a new release…';
+      title.innerHTML   = icon('update-rtl') + ' Check for Updates';
+      notes.textContent = 'Checking GitHub for a new release…';
       status.textContent  = '';
       progW.style.display = 'none';
     }
     else if(UPD.state === 'available'){
-      title.textContent   = '🆕 Update Available';
+      title.innerHTML     = icon('update-new') + ' Update Available';
       notes.textContent   = UPD.notes || 'A new version is available on GitHub.';
       status.textContent  = '';
       progW.style.display = 'none';
       dlBtn.style.display = 'inline-block';
       dlBtn.disabled      = false;
-      dlBtn.textContent   = '⬇ Download v'+UPD.version;
+      dlBtn.innerHTML     = icon('download') + ' Download v' + UPD.version;
     }
     else if(UPD.state === 'downloading'){
-      title.textContent         = '⬇ Downloading Update…';
+      title.innerHTML           = icon('downloadupdate') + ' Downloading Update…';
       notes.textContent         = UPD.notes || '';
       progW.style.display       = 'block';
-      $('upd-progress-bar').style.width = UPD.percent+'%';
-      $('upd-pct-label').textContent    = UPD.percent+'%';
-      $('upd-speed').textContent        = fmtSpeed(UPD.speed);
+      $('upd-progress-bar').style.width     = UPD.percent + '%';
+      $('upd-pct-label').textContent        = UPD.percent + '%';
+      $('upd-speed').textContent            = fmtSpeed(UPD.speed);
       status.textContent  = 'Please wait — do not close the app.';
       dlBtn.style.display = 'inline-block';
       dlBtn.disabled      = true;
-      dlBtn.textContent   = 'Downloading… '+UPD.percent+'%';
+      dlBtn.textContent   = 'Downloading… ' + UPD.percent + '%';
     }
     else if(UPD.state === 'ready'){
-      title.textContent         = '✅ Ready to Install';
-      notes.textContent         = UPD.notes || '';
-      progW.style.display       = 'none';
-      status.textContent        = 'Download complete. Restart the app to apply v'+UPD.version+'.';
-      insBtn.style.display      = 'inline-block';
-      insBtn.disabled           = false;
+      title.innerHTML      = icon('install') + ' Ready to Install';
+      notes.textContent    = UPD.notes || '';
+      progW.style.display  = 'none';
+      status.textContent   = 'Download complete. Restart to apply v' + UPD.version + '.';
+      insBtn.style.display = 'inline-block';
+      insBtn.disabled      = false;
+      insBtn.innerHTML     = icon('restart') + ' Restart & Install';
     }
     else if(UPD.state === 'uptodate'){
-      title.textContent   = '✅ You\'re Up to Date';
+      title.innerHTML     = icon('update-check') + ' You\'re Up to Date';
       notes.textContent   = 'Wedding Card Studio is up to date.';
       status.textContent  = '';
       progW.style.display = 'none';
     }
     else if(UPD.state === 'error'){
-      title.textContent   = '⚠ Update Error';
-      notes.textContent   = UPD.notes || 'Could not check for updates. Check your internet connection.';
+      title.innerHTML     = icon('warning',24) + ' Update Error';
+      notes.textContent   = UPD.notes || 'Could not check for updates.';
       status.textContent  = '';
       progW.style.display = 'none';
     }
     else {
-      title.textContent   = `<span class="tab-icon"><img src="assets/icons/update-rtl.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>`;
+      title.innerHTML     = icon('update-rtl') + ' Check for Updates';
       notes.textContent   = 'Click "Check Now" to look for updates.';
       progW.style.display = 'none';
     }
@@ -5107,8 +5119,8 @@ function buildShapeDropdown(){
   // ── IPC listeners ────────────────────────────────────────
   window.electronAPI.receive('update-checking', () => {
     UPD.state = 'checking';
-    setTopBtn(`<span class="tab-icon"><img src="assets/icons/update-rtl.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span>`,'Checking…','');
-    setPill(`<span class="tab-icon"><img src="assets/icons/search.svg" width="16" height="16" style="vertical-align:middle;filter:invert(1);opacity:.7"></span> checking...`,'');
+    setTopBtn('update-rtl', 'Checking…', '');
+    setPill('update-rtl', 'checking...', '');
     syncModal();
   });
 
@@ -5119,16 +5131,16 @@ function buildShapeDropdown(){
                     ? (typeof info.releaseNotes === 'string'
                         ? info.releaseNotes.replace(/<[^>]*>/g,'').trim()
                         : JSON.stringify(info.releaseNotes))
-                    : ('New version v'+info.version+' is available on GitHub.\nOpen the app to download.');
-    setTopBtn('🆕','Update v'+info.version,'has-update');
-    setPill('⬆ Update v'+info.version+' available','has-update');
+                    : ('New version v'+info.version+' is available on GitHub.');
+    setTopBtn('update-new', 'Update v' + info.version, 'has-update');
+    setPill('update-new', 'Update v' + info.version + ' available', 'has-update');
     syncModal();
   });
 
   window.electronAPI.receive('update-not-available', () => {
     UPD.state = 'uptodate';
-    setTopBtn('🔔','Up to date','');
-    setPill('','');
+    setTopBtn('check', 'Up to date', '');
+    setPill(null, '', '');
     syncModal();
   });
 
@@ -5136,40 +5148,37 @@ function buildShapeDropdown(){
     UPD.state   = 'downloading';
     UPD.percent = info.percent;
     UPD.speed   = info.bytesPerSecond || 0;
-    setTopBtn('⬇','Downloading '+info.percent+'%','downloading');
-    setPill('⬇ '+info.percent+'% — '+fmtSpeed(UPD.speed),'downloading');
+    setTopBtn('download', 'Downloading ' + info.percent + '%', 'downloading');
+    setPill('download', info.percent + '% — ' + fmtSpeed(UPD.speed), 'downloading');
     syncModal();
   });
 
   window.electronAPI.receive('update-downloaded', (info) => {
     UPD.state   = 'ready';
     UPD.version = info.version;
-    setTopBtn('✅','Restart to Update','ready');
-    setPill('✅ Update ready — click to install','ready');
+    setTopBtn('check', 'Restart to Update', 'ready');
+    setPill('check', 'Update ready — click to install', 'ready');
     syncModal();
-    // If modal is closed, auto-show it so user knows
     if(!UPD.modalOpen) updOpenModal();
   });
 
   window.electronAPI.receive('update-error', (info) => {
     UPD.state = 'error';
     UPD.notes = info.message || 'Unknown error';
-    setTopBtn('⚠','Update Error','');
-    setPill('','');
+    setTopBtn('warning', 'Update Error', '');
+    setPill(null, '', '');
     syncModal();
   });
 
-  // ── public API (called from HTML onclick) ─────────────────
+  // ── public API ────────────────────────────────────────────
   window.updOpenModal = function(){
     UPD.modalOpen = true;
     $('upd-modal-overlay').classList.add('show');
-    // Show current installed version
     try{
       $('upd-current-ver').textContent = window.electronAPI.versions?.electron
         ? 'v' + document.title.match(/v([\d.]+)/)?.[1] || '—'
         : '—';
     }catch(e){}
-    // If idle, trigger a fresh check
     if(UPD.state === 'idle'){
       UPD.state = 'checking';
       $('upd-release-notes').textContent = 'Checking for updates…';
@@ -5194,11 +5203,10 @@ function buildShapeDropdown(){
   window.updInstall = function(){
     if(UPD.state !== 'ready') return;
     $('upd-btn-install').disabled = true;
-    $('upd-btn-install').textContent = 'Restarting…';
+    $('upd-btn-install').innerHTML = icon('restart') + ' Restarting…';
     window.electronAPI.send('install-update');
   };
 
-  // Close on overlay click
   $('upd-modal-overlay').addEventListener('click', function(e){
     if(e.target === this) updCloseModal();
   });
