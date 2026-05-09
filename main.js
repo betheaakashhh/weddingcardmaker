@@ -16,6 +16,63 @@ let win;
 autoUpdater.autoDownload         = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
+// ── Graphics folder scanning (recursive) ────────────────
+ipcMain.handle("scan-graphics", () => {
+  const graphicsDir = path.join(__dirname, "assets", "graphics");
+  if (!fs.existsSync(graphicsDir)) return [];
+  const results = [];
+  // Walk all subdirectories one level deep
+  const entries = fs.readdirSync(graphicsDir, { withFileTypes: true });
+  entries.forEach(entry => {
+    if (entry.isDirectory()) {
+      const category = entry.name; // folder name = category
+      const subDir   = path.join(graphicsDir, category);
+      try {
+        fs.readdirSync(subDir).forEach(fname => {
+          if (!/\.(svg|png|jpg|jpeg|webp)$/i.test(fname)) return;
+          const fpath = path.join(subDir, fname);
+          try {
+            const buf  = fs.readFileSync(fpath);
+            const ext  = fname.split(".").pop().toLowerCase();
+            const mime = ext === "svg"
+              ? "image/svg+xml"
+              : ext === "png" ? "image/png"
+              : ext === "webp" ? "image/webp"
+              : "image/jpeg";
+            const dataUrl = `data:${mime};base64,${buf.toString("base64")}`;
+            results.push({
+              name     : fname.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "),
+              file     : category + "/" + fname,
+              category,
+              ext,
+              dataUrl,
+            });
+          } catch(e) {}
+        });
+      } catch(e) {}
+    } else {
+      // Root-level files go to "general" category
+      const fname = entry.name;
+      if (!/\.(svg|png|jpg|jpeg|webp)$/i.test(fname)) return;
+      try {
+        const buf  = fs.readFileSync(path.join(graphicsDir, fname));
+        const ext  = fname.split(".").pop().toLowerCase();
+        const mime = ext === "svg" ? "image/svg+xml"
+          : ext === "png" ? "image/png"
+          : ext === "webp" ? "image/webp" : "image/jpeg";
+        results.push({
+          name    : fname.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "),
+          file    : fname,
+          category: "general",
+          ext,
+          dataUrl : `data:${mime};base64,${buf.toString("base64")}`,
+        });
+      } catch(e) {}
+    }
+  });
+  return results;
+});
+
 // ── Font scanning ─────────────────────────────────────────
 ipcMain.handle("scan-fonts", () => {
   const fontsDir = path.join(__dirname, "assets", "fonts");

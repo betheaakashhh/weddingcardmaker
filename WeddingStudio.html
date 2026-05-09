@@ -16,7 +16,7 @@
 body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
 
 /* ── TOPBAR ── */
-.topbar{background:#1a1a1a;border-bottom:2px solid #8B1A2E;padding:4px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;}
+.topbar{background:#1a1a1a;border-bottom:2px solid #a0a0a0;padding:4px 8px;display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;}
 .topbar-title {
   display: flex;
   align-items: center;
@@ -87,7 +87,7 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
   transition:all .15s;position:relative;
 }
 .block-item:hover{border-color:#3a3a3a;background:#232323;}
-.block-item.selected{border-color:#8B1A2E;background:#200a10;}
+.block-item.selected{border-color:#a0a0a0;background:#200a10;}
 .block-item.in-group{border-left:3px solid #2a5a9a;padding-left:8px;}
 .block-item-name{font-size:11px;color:#ddd;font-weight:600;}
 .block-item-type{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;}
@@ -117,30 +117,30 @@ body{font-family:'Poppins',sans-serif;background:#111;color:#eee;height:100vh;ov
 .prop-label{font-size:10px;color:#777;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:block;font-weight:500;}
 .prop-row{display:flex;gap:5px;align-items:center;margin-bottom:5px;}
 .prop-input{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#eee;padding:5px 8px;font-size:12px;flex:1;min-width:0;transition:border-color .15s;}
-.prop-input:focus{outline:none;border-color:#8B1A2E;background:#1a0a10;}
+.prop-input:focus{outline:none;border-color:#a0a0a0;background:#1a0a10;}
 .prop-textarea{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#eee;padding:7px 9px;font-size:13px;width:100%;resize:vertical;min-height:65px;font-family:'Noto Sans Devanagari',sans-serif;line-height:1.6;transition:border-color .15s;}
-.prop-textarea:focus{outline:none;border-color:#8B1A2E;}
+.prop-textarea:focus{outline:none;border-color:#a0a0a0;}
 .prop-select{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#eee;padding:5px 6px;font-size:11px;flex:1;transition:border-color .15s;}
-.prop-select:focus{outline:none;border-color:#8B1A2E;}
+.prop-select:focus{outline:none;border-color:#a0a0a0;}
 .color-swatch{width:28px;height:28px;border-radius:5px;border:2px solid #3a3a3a;cursor:pointer;flex-shrink:0;}
 .quick-colors{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
 .qc{width:22px;height:22px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:border-color .1s;}
 .qc:hover{border-color:#fff;}
 .align-btns{display:flex;gap:4px;}
 .align-btn{flex:1;background:#1e1e1e;border:1px solid #2a2a2a;border-radius:5px;color:#666;padding:5px 3px;cursor:pointer;font-size:12px;text-align:center;transition:all .15s;}
-.align-btn.active,.align-btn:hover{background:#200a10;border-color:#8B1A2E;color:#C9A84C;}
+.align-btn.active,.align-btn:hover{background:#200a10;border-color:#a0a0a0;color:#C9A84C;}
 .prop-checkbox{display:flex;align-items:center;gap:6px;font-size:11px;color:#bbb;cursor:pointer;}
-.prop-checkbox input{accent-color:#8B1A2E;width:14px;height:14px;}
-.prop-range{width:100%;accent-color:#8B1A2E;}
+.prop-checkbox input{accent-color:#a0a0a0;width:14px;height:14px;}
+.prop-range{width:100%;accent-color:#a0a0a0;}
 .prop-slider-row{display:flex;gap:8px;align-items:center;}
 .prop-slider-val{font-size:11px;color:#777;width:40px;text-align:right;flex-shrink:0;}
 
 /* ── SYMBOLS ── */
 .symbols-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;}
 .sym-btn{background:#222;border:1px solid #333;border-radius:4px;color:#C9A84C;font-size:17px;padding:5px 3px;cursor:pointer;text-align:center;transition:all .15s;font-family:'Noto Serif Devanagari',serif;}
-.sym-btn:hover{background:#2a1018;border-color:#8B1A2E;}
+.sym-btn:hover{background:#2a1018;border-color:#a0a0a0;}
 .sym-btn-new{background:#1a2a1a;border:1px solid #3a5a3a;border-radius:4px;color:#7ec87e;font-size:13px;padding:5px 3px;cursor:pointer;text-align:center;transition:all .15s;font-family:'Noto Serif Devanagari',serif;}
-.sym-btn-new:hover{background:#1e4a1e;border-color:#3a7a3a;}
+.sym-btn-new:hover{background:#1e4a1e;border-color:#a0a0a0;}
 
 /* Props CSS defined above in redesigned block */
 
@@ -448,7 +448,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   <div class="tb-group">
     <span class="tb-label">Zoom</span>
     <!-- Change min="20" max="250" to min="10" max="400" -->
-    <input type="range" min="10" max="400" value="100" id="zoomSlider" oninput="setZoom(this.value)" style="width:60px;accent-color:#8B1A2E;">
+    <input type="range" min="10" max="400" value="100" id="zoomSlider" oninput="setZoom(this.value)" style="width:60px;accent-color:#a0a0a0;">
     <span class="tb-label" id="zoomLabel">100%</span>
   </div>
   <div class="tb-sep"></div>
@@ -472,7 +472,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 
   <!-- graphics insertion -->
   <button class="tb-btn" onclick="triggerGraphicUpload()">
-  <img src="assets/icons/graphic-stitching-three.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.85">
+  <img src="assets/icons/design.png" width="14" height="14" style="vertical-align:middle;filter:invert(1);opacity:.5">
   </button>
   <!-- symbols -->
   <button class="tb-btn" onclick="addSymbolBlock()">
@@ -4722,25 +4722,47 @@ async function glibLoadPrebundled(){
   const prebundledGrid=document.getElementById('prebundledGrid');
   const countEl=document.getElementById('prebundledCount');
 
-  // Strategy 1: Try index.json (flat filelist — easiest to generate)
-  // Generate: ls assets/graphics/**/*.{svg,png} | sed "s|assets/graphics/||" > assets/graphics/index.json (as JSON array)
-  // Or manifest.json (structured, with names/categories)
+  // Strategy 0: Electron IPC — scan assets/graphics/ folders directly via Node.js fs
+  // No manifest.json or index.json needed. Category = subfolder name.
   let loaded=false;
+  if(!loaded && typeof window.electronAPI !== 'undefined' && window.electronAPI.scanGraphicsFolder){
+    try{
+      const items = await window.electronAPI.scanGraphicsFolder();
+      if(items && items.length){
+        glibPrebundled = items.map(item => {
+          const isSVG = item.ext === 'svg';
+          // Convert base64 dataUrl to inline src for SVG, or keep as dataUrl for images
+          return {
+            id       : 'pre_' + item.file,
+            name     : item.name,
+            category : item.category,
+            src      : item.dataUrl,
+            srcType  : isSVG ? 'svg-b64' : 'img',
+            prebundled: true,
+          };
+        });
+        loaded = true;
+        console.log('Graphics: loaded', glibPrebundled.length, 'items via Electron IPC');
+      }
+    }catch(e){ console.warn('scan-graphics IPC failed:', e); }
+  }
 
-  // Try manifest.json first (has richer info)
-  try{
-    const res=await fetch('./assets/graphics/manifest.json');
-    if(res.ok){
-      const manifest=await res.json();
-      glibPrebundled=manifest.map(item=>{
-        const file=item.file||item;
-        const name=item.name||file.replace(/.*[/\\]/,'').replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
-        const cat=item.category||glibCategoryFromName(file);
-        return{id:'pre_'+file,name,category:cat,src:'./assets/graphics/'+file,srcType:(file.endsWith('.svg')||file.endsWith('.SVG'))?'svg-url':'img-url',prebundled:true};
-      });
-      loaded=true;
-    }
-  }catch(e){}
+  // Strategy 1: manifest.json (web/non-Electron fallback — skipped when Electron IPC already loaded)
+  if(!loaded){
+    try{
+      const res=await fetch('./assets/graphics/manifest.json');
+      if(res.ok){
+        const manifest=await res.json();
+        glibPrebundled=manifest.map(item=>{
+          const file=item.file||item;
+          const name=item.name||file.replace(/.*[/\\]/,'').replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+          const cat=item.category||glibCategoryFromName(file);
+          return{id:'pre_'+file,name,category:cat,src:'./assets/graphics/'+file,srcType:(file.endsWith('.svg')||file.endsWith('.SVG'))?'svg-url':'img-url',prebundled:true};
+        });
+        loaded=true;
+      }
+    }catch(e){}
+  }
 
   // Fallback: Try index.json (simple array of filenames/paths)
   if(!loaded){
@@ -4816,8 +4838,10 @@ function buildGlibCard(g,allowDelete){
   const card=document.createElement('div');
   card.className='glib-card'+(g.prebundled?' prebundled':'');
   card.title=g.name+(g.category?' · '+g.category:'');
-  if(g.srcType==='svg-url'){const img=document.createElement('img');img.src=g.src;img.alt=g.name;card.appendChild(img);}
-  else if(g.srcType==='svg'){
+  if(g.srcType==='svg-url'||g.srcType==='svg-b64'){
+    // svg-b64: base64 dataUrl from Electron IPC — use <img> for preview (browser decodes it fine)
+    const img=document.createElement('img');img.src=g.src;img.alt=g.name;card.appendChild(img);
+  } else if(g.srcType==='svg'){
     const wrap=document.createElement('div');wrap.style.cssText='width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:5px;box-sizing:border-box;';
     wrap.innerHTML=g.src;const svgEl=wrap.querySelector('svg');if(svgEl){svgEl.style.width='100%';svgEl.style.height='100%';}card.appendChild(wrap);
   }else{const img=document.createElement('img');img.src=g.src;img.alt=g.name;card.appendChild(img);}
@@ -4829,7 +4853,21 @@ function buildGlibCard(g,allowDelete){
 
 function glibAddToCanvas(g){
   const c=ac();if(!c)return;
-  if(g.srcType==='svg-url'||g.srcType==='img-url'){
+  // svg-b64 / img (base64 dataUrl from Electron IPC): use directly, no fetch needed
+  if(g.srcType==='svg-b64'||g.srcType==='svg'||g.srcType==='img'){
+    // For svg-b64 we need to convert dataUrl back to raw SVG text for proper rendering
+    if(g.srcType==='svg-b64'){
+      try{
+        const base64=g.src.split(',')[1];
+        const svgText=decodeURIComponent(escape(atob(base64)));
+        const b=createBlock({type:'graphic',name:g.name,src:svgText,w:30,h:30,x:20,y:20});
+        c.blocks.push(b);snapshot();selectBlock(b.id);renderAll();toast('Added: '+g.name);
+        return;
+      }catch(e){}
+    }
+    const b=createBlock({type:'graphic',name:g.name,src:g.src,w:30,h:30,x:20,y:20});
+    c.blocks.push(b);snapshot();selectBlock(b.id);renderAll();toast('Added: '+g.name);
+  }else if(g.srcType==='svg-url'||g.srcType==='img-url'){
     fetch(g.src)
       .then(r=>g.srcType==='svg-url'?r.text():r.blob().then(blob=>new Promise(res=>{const reader=new FileReader();reader.onload=ev=>res(ev.target.result);reader.readAsDataURL(blob);})))
       .then(data=>{const b=createBlock({type:'graphic',name:g.name,src:data,w:30,h:30,x:20,y:20});c.blocks.push(b);snapshot();selectBlock(b.id);renderAll();toast('Added: '+g.name);})
