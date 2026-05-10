@@ -34,6 +34,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   scanFontsFolder:    () => ipcRenderer.invoke("scan-fonts"),
   scanGraphicsFolder: () => ipcRenderer.invoke("scan-graphics"),
 
+  removeBackground:   (dataUrl) => ipcRenderer.invoke("remove-background", dataUrl),
+
   platform: process.platform,
   versions: process.versions
 });

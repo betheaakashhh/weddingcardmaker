@@ -1,6 +1,6 @@
 {
   "name": "wedding-card-studio",
-  "version": "2.6.3",
+  "version": "2.7.0",
   "description": "Professional Hindu Wedding Card Designer",
   "main": "main.js",
   "author": "Aakash",
@@ -16,18 +16,23 @@
   "build": {
     "files": [
       "**/*",
-      "assets/fonts/**/*"
+      "assets/fonts/**/*",
+      "node_modules/@imgly/background-removal-node/**/*"
     ],
     "extraResources": [
       {
         "from": "assets/fonts",
         "to": "fonts"
       }
-    ]
+    ],
+     "asarUnpack": [
+    "node_modules/@imgly/background-removal-node/**",
+    "node_modules/onnxruntime-node/**"
+  ]
   },
   "appId": "com.aakash.weddingstudio",
   "productName": "Wedding Card Studio",
-   "artifactName": "Wedding-Card-Studio-Setup-${version}.${ext}",
+  "artifactName": "Wedding-Card-Studio-Setup-${version}.${ext}",
   "publish": [
     {
       "provider": "github",
@@ -38,7 +43,7 @@
   "win": {
     "target": "nsis",
     "icon": "icon.ico",
-     "artifactName": "Wedding-Card-Studio-Setup-${version}.${ext}"
+    "artifactName": "Wedding-Card-Studio-Setup-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,
@@ -47,6 +52,7 @@
     "createStartMenuShortcut": true
   },
   "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
     "electron-updater": "^6.8.3",
     "fs": "^0.0.1-security"
   }

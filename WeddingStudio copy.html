@@ -484,28 +484,6 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   font-weight: 900;
 }
 
-/* rmbg text */
-.rmbg-text{
-  font-size: 1rem;
-  color: #545654;
-  font-family: 'Noto Serif Devanagari', serif;
-  font-weight: 900;
-  margin-left: 10px;
-
-}
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* Crop modal image container */
-#cropModalImgContainer {
-  background: repeating-conic-gradient(#2a2a2a 0% 25%, transparent 0% 50%) 50% / 20px 20px;
-}
-/* Marker drawing cursor */
-#cropModalMarkerOverlay.crosshair {
-  cursor: crosshair;
-}
 
 </style>
 </head>
@@ -632,7 +610,7 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
 <img src="assets/icons/blueprint-fill.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1) sepia(1) saturate(3) hue-rotate(5deg);opacity:.9">
   </button>
   <!-- save layout -->
-  <button class="tb-btn" onclick="saveLayout()">
+  <button class="tb-btn primary" onclick="saveLayout()">
     <img src="assets/icons/save-arrow-right-24-regular.svg" width="14" height="14" style="vertical-align:middle;filter:invert(1)"></button>
     <!-- load layout -->
   <button class="tb-btn" onclick="loadLayout()">
@@ -688,13 +666,6 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
       </div>
     </div>
     <div class="panel-content-wrap">
-      <!-- Pin toggle -->
-<div style="display:flex;align-items:center;justify-content:flex-end;padding:4px 8px;background:#0f0f0f;border-bottom:1px solid #222;">
-  <label class="prop-checkbox" style="gap:5px;font-size:10px;color:#888;cursor:pointer;">
-    <input type="checkbox" id="panelPinCheckbox" onchange="togglePanelPin()" style="accent-color:#C9A84C;">
-    <img src="assets/icons/pin.svg" width="12" height="12" style="filter:invert(1);opacity:.6;"> Pin
-  </label>
-</div>
 
     <!-- LAYERS TAB -->
     <div class="tab-content active" id="tab-blocks">
@@ -1042,66 +1013,6 @@ body.blueprint-mode .shape-block{filter:grayscale(1) contrast(5);}
   </div>
 </div>
 
-<!-- CROP MODAL -->
-
-<div class="modal-overlay" id="cropModal">
-  <div class="modal" style="width:95vw; max-width:1200px; height:90vh; max-height:90vh; display:flex; flex-direction:row; overflow:hidden;">
-    
-    <!-- LEFT SIDEBAR -->
-    <div style="width:200px; background:#1a1a1a; border-right:1px solid #333; display:flex; flex-direction:column; padding:8px; overflow-y:auto; flex-shrink:0;">
-      <h3 style="color:#C9A84C; font-size:13px; margin-bottom:12px;">Crop Tools</h3>
-      
-      <!-- Crop presets -->
-      <div class="section-label">Aspect Ratio</div>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalSetRatio('free')"> ✂ Free Crop</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalSetRatio('1:1')"> ▣ Square 1:1</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalSetRatio('4:3')"> ▭ 4:3</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalSetRatio('16:9')"> ▭ 16:9</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalSetRatio('3:2')"> ▭ 3:2</button>
-      
-      <!-- Perspective button (opens sub-controls) -->
-      <div class="section-label" style="margin-top:12px;">Transform</div>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" id="perspectiveBtn" onclick="cropModalTogglePerspective()"> ◲ Perspective</button>
-      <div id="perspectiveSliders" style="display:none; padding:4px;">
-        <label class="prop-label">Corner X/Y</label>
-        <div class="prop-row"><span style="color:#888;width:16px;">TL</span><input class="prop-input" id="ptlX" value="0" oninput="cropModalUpdatePerspective()"><input class="prop-input" id="ptlY" value="0" oninput="cropModalUpdatePerspective()"></div>
-        <div class="prop-row"><span style="color:#888;width:16px;">TR</span><input class="prop-input" id="ptrX" value="100" oninput="cropModalUpdatePerspective()"><input class="prop-input" id="ptrY" value="0" oninput="cropModalUpdatePerspective()"></div>
-        <div class="prop-row"><span style="color:#888;width:16px;">BL</span><input class="prop-input" id="pblX" value="0" oninput="cropModalUpdatePerspective()"><input class="prop-input" id="pblY" value="100" oninput="cropModalUpdatePerspective()"></div>
-        <div class="prop-row"><span style="color:#888;width:16px;">BR</span><input class="prop-input" id="pbrX" value="100" oninput="cropModalUpdatePerspective()"><input class="prop-input" id="pbrY" value="100" oninput="cropModalUpdatePerspective()"></div>
-        <button class="tb-btn" style="width:100%;margin-top:4px;" onclick="cropModalResetPerspective()">↺ Reset</button>
-      </div>
-      
-      <!-- Mirror -->
-      <div class="section-label" style="margin-top:12px;">Mirror</div>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalMirror('h')"> ↔ Flip H</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" onclick="cropModalMirror('v')"> ↕ Flip V</button>
-      
-      <!-- Marker / Pen tool (freehand) -->
-      <div class="section-label" style="margin-top:12px;">Marker Crop</div>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%;" id="markerBtn" onclick="cropModalToggleMarker()"> ✎ Draw Area</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%; display:none;" id="clearMarkerBtn" onclick="cropModalClearMarker()"> ✕ Clear Marker</button>
-      <button class="tb-btn" style="margin-bottom:4px; width:100%; display:none;" id="applyMarkerBtn" onclick="cropModalApplyMarker()"> ✓ Apply Marker Crop</button>
-    </div>
-    
-    <!-- IMAGE AREA (scrollable for original size) -->
-    <div style="flex:1; display:flex; align-items:flex-start; justify-content:flex-start; overflow:auto; background:#111; position:relative;" id="cropModalImgContainer">
-      <div style="position:relative; flex-shrink:0;" id="cropImageWrapper">
-        <img id="cropModalImg" src="" style="display:none; max-width:none; max-height:none; width:auto; height:auto;">
-        <svg id="cropModalSVG" style="position:absolute; top:0; left:0; display:none;"></svg>
-        <canvas id="cropModalCanvas" style="position:absolute; top:0; left:0; display:none;"></canvas>
-        <div id="cropModalRect" style="position:absolute; border:2px dashed #C9A84C; background:rgba(255,255,255,0.1); pointer-events:none;"></div>
-        <div id="cropModalMarkerOverlay" style="position:absolute; top:0; left:0; pointer-events:none;"></div>
-      </div>
-    </div>
-    
-    <!-- Apply / Cancel buttons at bottom right -->
-    <div style="position:absolute; bottom:12px; right:12px; display:flex; gap:8px; z-index:20;">
-      <button class="modal-btn ok" id="cropModalApplyBtn">✓ Apply</button>
-      <button class="modal-btn cancel" id="cropModalCancelBtn">Cancel</button>
-    </div>
-  </div>
-</div>
-
 <!-- FONT MODAL -->
 <div class="modal-overlay" id="fontModal">
   <div class="modal">
@@ -1138,17 +1049,6 @@ let globalBlockCounter = 0;
 let selectedIds = []; // multi-select array
 let customPalette = [];
 
-
-//crop system 
-let cropStartRect = null;
-let cropStartX = 0;
-let cropStartY = 0;
-let cropMode       = false;
-let cropTargetId   = null;
-let cropRect       = null;  // {x, y, w, h} relative to block's container (0–1 fraction)
-let cropDragging   = false;
-let cropHandle     = null;
-
 // Rubber-band selection state
 let rbSelecting = false, rbStartX, rbStartY;
 const rbEl = (() => { const d = document.createElement('div'); d.id='selRubber'; d.style.display='none'; return d; })();
@@ -1168,13 +1068,6 @@ let selectedId = null;
 // ══════════════════════════════════════════════════════
 const imageStore = new Map(); // blockId → base64 src (shared across history states)
 
-// Panel pinning state (if true, panel stays open until manually closed; otherwise auto-hides on canvas click)
-let panelPinned = false;
-
-function togglePanelPin(){
-  panelPinned = document.getElementById('panelPinCheckbox').checked;
-  // Update icon appearance if desired
-}
 // Strip large src before serialising; restore after deserialising
 function blocksToHistory(blocks){
   return JSON.stringify(blocks.map(b=>{
@@ -1838,10 +1731,6 @@ function createBlock(opts={}) {
     groupId:opts.groupId||null,
     note:opts.note||'',
     _renderedH:null,
-    brightness: 100,
-    contrast:   100,
-    saturate:   100,
-    hueRotate:  0,
 
 
   };
@@ -2288,7 +2177,7 @@ async function removeBackground(blockId) {
   const c = ac(); if (!c) return;
   const b = c.blocks.find(b => b.id === blockId); if (!b) return;
 
-  // SVG files don't need background removal
+  // SVG files don't need background removal — already vector with transparency
   if (!b.src || b.src.trim().startsWith('<') || b.src.trim().startsWith('<?xml')) {
     toast('SVG files already support transparency — no removal needed'); return;
   }
@@ -2296,28 +2185,18 @@ async function removeBackground(blockId) {
     toast('❌ Background removal not available'); return;
   }
 
-  // Grab the button in the props panel
+  // Disable button & show spinner
   const btn = document.getElementById('rmbg-btn-' + blockId);
-  if (!btn) return;
-
-  // Save original button HTML so we can restore it
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-
-  // Show processing state: replace button content with an animated SVG icon
-  btn.innerHTML = `
-    <img src="assets/icons/loading.svg" 
-         width="64" height="64" 
-         style="flex-shrink:0;animation:spin 1s linear infinite;filter: invert(1) sepia(1) saturate(2) hue-rotate(70deg);" 
-         alt="Processing">
-    
-  `;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Processing…'; }
   toast('Removing background… this may take a moment');
 
   try {
     const newSrc = await window.electronAPI.removeBackground(b.src);
+
+    // Update the block's image source
     b.src = newSrc;
-    imageStore.set(b.id, newSrc);   // keep image store in sync
+    imageStore.set(b.id, newSrc);   // keep the image store in sync
+
     snapshot();
     renderBlocks();
     renderPropsPanel();
@@ -2325,12 +2204,7 @@ async function removeBackground(blockId) {
   } catch (err) {
     console.error('BG removal error:', err);
     toast('❌ Failed: ' + (err.message || 'Unknown error'));
-  } finally {
-    // Always restore the button to its original state
-    if (btn && btn.isConnected) {
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
-    }
+    if (btn) { btn.disabled = false; btn.textContent = '✂ Remove Background'; }
   }
 }
 
@@ -2597,7 +2471,6 @@ function renderBlocks(){
       el.style.overflow='hidden';
       el.style.cursor='move';
       el.style.padding='0';
-      el.style.filter = `brightness(${b.brightness}%) contrast(${b.contrast}%) saturate(${b.saturate}%) hue-rotate(${b.hueRotate}deg)`;
       if(b.imgCornerRadius) el.style.borderRadius=b.imgCornerRadius+'%';
       if(b.src){
         const img=document.createElement('img');
@@ -2605,16 +2478,12 @@ function renderBlocks(){
         img.style.cssText=`width:100%;height:100%;object-fit:${b.objectFit};display:block;`;
         img.draggable=false; el.appendChild(img);
       }
-       } else if(b.type==='graphic'){
+    } else if(b.type==='graphic'){
       el.style.overflow='hidden';
       el.style.cursor='move';
       el.style.padding='0';
       el.style.background='transparent';
-      // Adjustment filter on the container (affects all content)
-      el.style.filter = `brightness(${b.brightness||100}%) contrast(${b.contrast||100}%) saturate(${b.saturate||100}%) hue-rotate(${b.hueRotate||0}deg)`;
-
       if(b.imgCornerRadius) el.style.borderRadius=b.imgCornerRadius+'%';
-
       if(b.src){
         const isSVG=b.src.startsWith('<svg')||b.src.startsWith('<?xml');
         if(isSVG){
@@ -2625,13 +2494,10 @@ function renderBlocks(){
           const img=document.createElement('img');
           img.src=b.src;
           img.style.cssText=`width:100%;height:100%;object-fit:contain;display:block;`;
-          // Drop shadow and flipping go directly on the image
-          img.style.filter = b.graphicDropShadow ? 'drop-shadow(2px 3px 4px rgba(0,0,0,0.4))' : '';
-          const scaleX = b.graphicFlipH ? -1 : 1,
-                scaleY = b.graphicFlipV ? -1 : 1;
-          if(scaleX !== 1 || scaleY !== 1) img.style.transform = `scale(${scaleX},${scaleY})`;
-          img.draggable = false;
-          el.appendChild(img);
+          if(b.graphicDropShadow) img.style.filter='drop-shadow(2px 3px 4px rgba(0,0,0,0.4))';
+          const scaleX=b.graphicFlipH?-1:1, scaleY=b.graphicFlipV?-1:1;
+          if(scaleX!==1||scaleY!==1) img.style.transform=`scale(${scaleX},${scaleY})`;
+          img.draggable=false; el.appendChild(img);
         }
       }
     } else if(b.type==='qr'){
@@ -2695,7 +2561,7 @@ function renderBlocks(){
     }
 
     // ── Resize + Rotate handles (only on primary selected block) ──
-    if(b.id === selectedId && !b.locked && !(cropMode && b.id === cropTargetId)){
+    if(b.id===selectedId && !b.locked){
       // SE corner — scale proportionally
       const rhSE=document.createElement('div');
       rhSE.className='resize-handle resize-se';
@@ -2745,59 +2611,6 @@ function renderBlocks(){
       info.textContent = `${wVal}×${hVal}mm  x:${b.x.toFixed(1)} y:${b.y.toFixed(1)}`;
       el.appendChild(info);
     }
-    // Inside renderBlocks(), for image/graphic blocks:
-if (cropMode && b.id === cropTargetId) {
-  // Dark semi-transparent overlay
-  const overlay = document.createElement('div');
-  overlay.className = 'crop-overlay';
-  overlay.style.cssText = `
-    position:absolute;top:0;left:0;width:100%;height:100%;
-    background:rgba(0,0,0,0.4);pointer-events:none;z-index:5;
-  `;
-  el.appendChild(overlay);
-  
-  // Highlight the crop area (white border)
-  const cropArea = document.createElement('div');
-  cropArea.className = 'crop-area';
-  const cr = cropRect;
-  cropArea.style.cssText = `
-    position:absolute;
-    left:${cr.x*100}%; top:${cr.y*100}%;
-    width:${cr.w*100}%; height:${cr.h*100}%;
-    border:1.5px dashed #C9A84C;
-    background:rgba(255,255,255,0.1);
-    pointer-events:none;z-index:6;
-  `;
-  el.appendChild(cropArea);
-  
-  // Add 8 resize handles on the crop area
-  const handles = [
-    {pos:'top-left', left:'0', top:'0', cursor:'nw-resize'},
-    {pos:'top-right', left:'100%', top:'0', cursor:'ne-resize'},
-    {pos:'bottom-left', left:'0', top:'100%', cursor:'sw-resize'},
-    {pos:'bottom-right', left:'100%', top:'100%', cursor:'se-resize'},
-    {pos:'top-center', left:'50%', top:'0', cursor:'n-resize'},
-    {pos:'bottom-center', left:'50%', top:'100%', cursor:'s-resize'},
-    {pos:'left-center', left:'0', top:'50%', cursor:'w-resize'},
-    {pos:'right-center', left:'100%', top:'50%', cursor:'e-resize'},
-  ];
-  handles.forEach(h => {
-    const handle = document.createElement('div');
-    handle.className = 'crop-handle';
-    handle.dataset.handle = h.pos;
-    handle.style.cssText = `
-      position:absolute;
-      left:${h.left}; top:${h.top};
-      width:8px; height:8px;
-      background:#C9A84C; border:1px solid #fff;
-      transform:translate(-50%,-50%);
-      cursor:${h.cursor}; z-index:7;
-    `;
-    handle.addEventListener('mousedown', cropHandleMouseDown);
-    handle.addEventListener('click', e => e.stopPropagation());
-    el.appendChild(handle);
-  });
-}
 
     if(!b.locked) makeDraggable(el,b,c);
     el.addEventListener('click', e => {
@@ -2843,9 +2656,7 @@ if (cropMode && b.id === cropTargetId) {
 //  RUBBER-BAND MULTI-SELECT
 // ══════════════════════════════════════════════════════
 function onCanvasMouseDown(e){
-
   const area=document.getElementById('canvasArea');
-  if (cropMode) return;
   if(e.target!==area&&!e.target.classList.contains('card-canvas')&&e.target.tagName!=='CANVAS'&&!e.target.id.startsWith('canvas-'))return;
   if(e.button!==0)return;
   const rect=area.getBoundingClientRect();
@@ -2927,18 +2738,7 @@ function renderBlocksList(){
   document.getElementById('statusCount').textContent=c.blocks.length;
 }
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function renderAll(){
-  renderBlocks(); renderBlocksList();
-  if(selectedId) renderPropsPanel();
-  // Keep crop buttons correct after a re-render
-  if (cropMode && cropTargetId) {
-    const cropBtn = document.getElementById('crop-btn-' + cropTargetId);
-    const applyBtn = document.getElementById('apply-crop-btn-' + cropTargetId);
-    if (cropBtn) cropBtn.style.display = 'none';
-    if (applyBtn) applyBtn.style.display = 'inline-block';
-  }
-  updateStatusBar();
-}
+function renderAll(){renderBlocks();renderBlocksList();if(selectedId)renderPropsPanel();updateStatusBar();}
 function updateStatusBar(){
   const c=ac();if(!c)return;
   const idx=canvases.findIndex(cx=>cx.id===c.id);
@@ -3199,76 +2999,11 @@ function renderPropsPanel(){
   <button class="add-block-btn" id="rmbg-btn-${b.id}"
     style="border-color:#4a9a6a;color:#7ec87e;"
     onclick="removeBackground('${b.id}')">
-    <img class="rmbg-icon" 
-         src="assets/icons/background-remove.png" 
-         width="64" height="64" 
-         style="flex-shrink:0;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);"
-         alt=" Remove Background">
-         
-   
-  </button>
-</div>
-<div class="prop-group">
-  <span class="prop-label">Crop Image</span>
-  <button class="add-block-btn" id="crop-btn-${b.id}"
-    style="border-color:#7a7a5a;color:#C9A84C;"
-    onclick="toggleCropMode('${b.id}')">
-    <img class="rmbg-icon" 
-         src="assets/icons/crop.svg" 
-         width="24" height="24" 
-         style="flex-shrink:0;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);"
-         alt=" Remove Background">
-  </button>
-  <button class="add-block-btn" id="apply-crop-btn-${b.id}"
-    style="display:none;border-color:#4a9a6a;color:#7ec87e;margin-top:4px;"
-    onclick="applyCrop('${b.id}')">
-    ✓ Apply Crop
+    ✂ Remove Background
   </button>
 </div>
       ${posAndSize(true)}
-      <div class="prop-group">
-        <span class="prop-label">Object Fit</span>
-        <div class="img-fit-btns">${
-          ['contain','cover','fill','none'].map(f=>`
-          <div class="img-fit-btn ${b.objectFit===f?'active':''}" onclick="updatePropAndRefresh('objectFit','${f}')">${f}
-            </div>`).join('')
-            }
-            </div>
-        </div>
-
-    <!-- For images, we show separate sliders for brightness/contrast/saturation/hue instead of preset filter buttons, since those are more commonly adjusted for photos. -->
-        <div class="prop-group">
-  <span class="prop-label">Image Adjustments</span>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Brightness</span>
-    <input type="range" class="prop-range" min="0" max="200" value="${b.brightness||100}"
-      oninput="updateProp('brightness',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'">
-    <span class="prop-slider-val">${b.brightness||100}%</span>
-  </div>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Contrast</span>
-    <input type="range" class="prop-range" min="0" max="200" value="${b.contrast||100}"
-      oninput="updateProp('contrast',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'">
-    <span class="prop-slider-val">${b.contrast||100}%</span>
-  </div>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Saturation</span>
-    <input type="range" class="prop-range" min="0" max="200" value="${b.saturate||100}"
-      oninput="updateProp('saturate',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'">
-    <span class="prop-slider-val">${b.saturate||100}%</span>
-  </div>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Hue Rotate</span>
-    <input type="range" class="prop-range" min="0" max="360" value="${b.hueRotate||0}"
-      oninput="updateProp('hueRotate',parseInt(this.value));this.nextElementSibling.textContent=this.value+'°'">
-    <span class="prop-slider-val">${b.hueRotate||0}°</span>
-  </div>
-</div>
-
+      <div class="prop-group"><span class="prop-label">Object Fit</span><div class="img-fit-btns">${['contain','cover','fill','none'].map(f=>`<div class="img-fit-btn ${b.objectFit===f?'active':''}" onclick="updatePropAndRefresh('objectFit','${f}')">${f}</div>`).join('')}</div></div>
       <div class="prop-group"><span class="prop-label">Corner Radius</span><div class="prop-slider-row"><input type="range" class="prop-range" min="0" max="50" value="${b.imgCornerRadius||0}" oninput="updateProp('imgCornerRadius',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'"><span class="prop-slider-val">${b.imgCornerRadius||0}%</span></div></div>
       ${opacityRot()}${zOrder()}`;
   } else if(b.type==='graphic'){
@@ -3278,37 +3013,18 @@ function renderPropsPanel(){
   <span class="prop-label">Replace Graphic</span>
   <button class="add-block-btn" onclick="replaceGraphic('${b.id}')">📁 Choose PNG/SVG</button>
 </div>
-
 <div class="prop-group">
   <span class="prop-label">AI Background Removal</span>
-  <div style="font-size:9px;color:#555;margin-bottom:5px;">Removes background from PNG/JPG. Result is transparent PNG. First run downloads ~80MB model.</div>
-  <button class="add-block-btn rmbg-btn-enhanced" id="rmbg-btn-${b.id}"
-    style="position:relative;display:flex;align-items:center;gap:6px;justify-content:center;"
+  <div style="font-size:9px;color:#555;margin-bottom:5px;">
+    ${(b.src && (b.src.trim().startsWith('<') || b.src.trim().startsWith('<?xml')))
+      ? '⚠ SVG files already have transparency — no action needed.'
+      : 'Removes background from PNG/JPG graphic. First run downloads ~80MB model.'}
+  </div>
+  <button class="add-block-btn" id="rmbg-btn-${b.id}"
+    style="border-color:#4a9a6a;color:#7ec87e;${(b.src && (b.src.trim().startsWith('<') || b.src.trim().startsWith('<?xml'))) ? 'opacity:0.4;cursor:not-allowed;' : ''}"
+    ${(b.src && (b.src.trim().startsWith('<') || b.src.trim().startsWith('<?xml'))) ? 'disabled' : ''}
     onclick="removeBackground('${b.id}')">
-    <img class="rmbg-icon" 
-         src="assets/icons/background-remove.png" 
-         width="64" height="64" 
-         style="flex-shrink:0;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);"
-         alt="Remove Background">
-    
-  </button>
-</div>
-<!── For graphics, cropping is a manual freeform selection instead of preset aspect ratios, so we show a different UI with an "Apply Crop" button instead of fixed ratio buttons. ── -->
-<div class="prop-group">
-  <span class="prop-label">Crop Image</span>
-  <button class="add-block-btn" id="crop-btn-${b.id}"
-    style="border-color:#7a7a5a;color:#C9A84C;"
-    onclick="toggleCropMode('${b.id}')">
-    <img class="crop-icon" 
-         src="assets/icons/crop.svg" 
-         width="24" height="24" 
-         style="flex-shrink:0;filter:invert(1) sepia(1) saturate(2) hue-rotate(70deg);"
-         alt="Free Crop">
-  </button>
-  <button class="add-block-btn" id="apply-crop-btn-${b.id}"
-    style="display:none;border-color:#4a9a6a;color:#7ec87e;margin-top:4px;"
-    onclick="applyCrop('${b.id}')">
-    ✓ Apply Crop
+    ✂ Remove Background
   </button>
 </div>
       ${posAndSize(true)}
@@ -3322,42 +3038,9 @@ function renderPropsPanel(){
         <div class="quick-colors">${quickCols.map(c=>`<div class="qc" style="background:${c}" onclick="applyGraphicRecolorDirect('${b.id}','${c}')" title="${c}"></div>`).join('')}</div>
       </div>
       <div class="prop-group"><span class="prop-label">Flip</span><div class="prop-row" style="gap:8px;"><label class="prop-checkbox"><input type="checkbox" ${b.graphicFlipH?'checked':''} onchange="updateProp('graphicFlipH',this.checked)"> ↔ H</label><label class="prop-checkbox"><input type="checkbox" ${b.graphicFlipV?'checked':''} onchange="updateProp('graphicFlipV',this.checked)"> ↕ V</label></div></div>
-      <div class="prop-group">
-  <span class="prop-label">Image Adjustments</span>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Brightness</span>
-    <input type="range" class="prop-range" min="0" max="200" value="${b.brightness||100}"
-      oninput="updateProp('brightness',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'">
-    <span class="prop-slider-val">${b.brightness||100}%</span>
-  </div>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Contrast</span>
-    <input type="range" class="prop-range" min="0" max="200" value="${b.contrast||100}"
-      oninput="updateProp('contrast',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'">
-    <span class="prop-slider-val">${b.contrast||100}%</span>
-  </div>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Saturation</span>
-    <input type="range" class="prop-range" min="0" max="200" value="${b.saturate||100}"
-      oninput="updateProp('saturate',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'">
-    <span class="prop-slider-val">${b.saturate||100}%</span>
-  </div>
-  
-  <div class="prop-slider-row">
-    <span style="font-size:10px;color:#777;width:70px;">Hue Rotate</span>
-    <input type="range" class="prop-range" min="0" max="360" value="${b.hueRotate||0}"
-      oninput="updateProp('hueRotate',parseInt(this.value));this.nextElementSibling.textContent=this.value+'°'">
-    <span class="prop-slider-val">${b.hueRotate||0}°</span>
-  </div>
-</div>
       <div class="prop-group"><span class="prop-label">Corner Radius</span><div class="prop-slider-row"><input type="range" class="prop-range" min="0" max="50" value="${b.imgCornerRadius||0}" oninput="updateProp('imgCornerRadius',parseInt(this.value));this.nextElementSibling.textContent=this.value+'%'"><span class="prop-slider-val">${b.imgCornerRadius||0}%</span></div></div>
       <div class="prop-group"><label class="prop-checkbox"><input type="checkbox" ${b.graphicDropShadow?'checked':''} onchange="updateProp('graphicDropShadow',this.checked)"> Drop Shadow</label></div>
       ${opacityRot()}${zOrder()}`;
-
-      
   } else if(b.type==='shape'){
     panel.innerHTML=`
       <div class="prop-group"><span class="prop-label">Block Name</span><input class="prop-input" style="width:100%" value="${escHtml(b.name)}" oninput="updateProp('name',this.value)"></div>
@@ -3422,8 +3105,7 @@ const INPLACE_PROPS = new Set([
   'x','y','w','h',
   'shapeFill','shapeStroke','shapeStrokeW','shapeStrokeDash',
   'imgCornerRadius','graphicFlipH','graphicFlipV','graphicDropShadow',
-  'text','name',
-  'brightness','contrast','saturate','hueRotate'
+  'text','name'
 ]);
 
 // Apply a single property change directly to the live DOM element, avoiding full re-render
@@ -3468,27 +3150,19 @@ function applyPropToDOM(el, b, key){
     if(['text','fontSize','fontFamily','w','lineHeight','letterSpacing'].includes(key)){
       b._textMeasureKey = null;
     }
-    } else if(b.type==='image'){
-    el.style.borderRadius = b.imgCornerRadius ? (b.imgCornerRadius+'%') : '';
+  } else if(b.type==='image'){
+    el.style.borderRadius = b.imgCornerRadius?(b.imgCornerRadius+'%'):'';
     const img = el.querySelector('img');
     if(img) img.style.objectFit = b.objectFit||'cover';
-    // Apply adjustment filter to the container (mirrors renderBlocks)
-    const adjFilter = `brightness(${b.brightness||100}%) contrast(${b.contrast||100}%) saturate(${b.saturate||100}%) hue-rotate(${b.hueRotate||0}deg)`;
-    el.style.filter = adjFilter;
-
   } else if(b.type==='graphic'){
-    el.style.borderRadius = b.imgCornerRadius ? (b.imgCornerRadius+'%') : '';
+    el.style.borderRadius = b.imgCornerRadius?(b.imgCornerRadius+'%'):'';
     const img = el.querySelector('img');
     if(img){
-      img.style.filter = b.graphicDropShadow ? 'drop-shadow(2px 3px 4px rgba(0,0,0,0.4))' : '';
-      const sx = b.graphicFlipH ? -1 : 1, sy = b.graphicFlipV ? -1 : 1;
-      img.style.transform = (sx!==1||sy!==1) ? `scale(${sx},${sy})` : '';
+      img.style.filter = b.graphicDropShadow?'drop-shadow(2px 3px 4px rgba(0,0,0,0.4))':'';
+      const sx=b.graphicFlipH?-1:1, sy=b.graphicFlipV?-1:1;
+      img.style.transform = (sx!==1||sy!==1)?`scale(${sx},${sy})`:'';
     }
-    // Adjustment filter on the container
-    const adjFilter = `brightness(${b.brightness||100}%) contrast(${b.contrast||100}%) saturate(${b.saturate||100}%) hue-rotate(${b.hueRotate||0}deg)`;
-    el.style.filter = adjFilter;
-  }
-     else if(b.type==='shape'){
+  } else if(b.type==='shape'){
     // Shape fill/stroke changes need full SVG rebuild — fall back
     return false;
   }
@@ -3539,7 +3213,6 @@ function makeDraggable(el,b,canvasObj){
   const canvas=document.getElementById('canvas-'+canvasObj.id);
 
   el.addEventListener('mousedown',e=>{
-    if (cropMode && b.id === cropTargetId) return;
     if(e.target.classList.contains('resize-handle')||e.target.classList.contains('rotate-handle'))return;
     if(b.locked)return;
     // If this element is the active inline-edit target, let the browser
@@ -3647,632 +3320,6 @@ function makeDraggable(el,b,canvasObj){
   };
 }
 
-// ── CROP DRAG ──
-// For graphics, this is a freeform crop (no fixed aspect ratios) done 
-// by dragging a resizable rectangle over the image, then applying the crop when done. For images, 
-// we show preset aspect ratio buttons in the props panel, but the underlying mechanism is the 
-// same — a draggable crop rectangle that updates a cropRect property on the block.
-//================================================================================
-function cropHandleMouseDown(e) {
-  e.stopPropagation();
-  e.preventDefault();
-  const c = ac(); if (!c) return;
-  const b = c.blocks.find(x => x.id === cropTargetId); if (!b) return;
-  
-  cropDragging = true;
-  cropHandle = e.target.dataset.handle;
-  
-  const rect = e.target.parentElement.getBoundingClientRect();
-  cropStartRect = { ...cropRect };
-  cropStartX = e.clientX;
-  cropStartY = e.clientY;
-  
-  document.addEventListener('mousemove', onCropMouseMove);
-  document.addEventListener('mouseup', onCropMouseUp);
-}
-
-function onCropMouseMove(e) {
-  if (!cropDragging || !cropRect) return;
-  const c = ac(); if (!c) return;
-  const b = c.blocks.find(x => x.id === cropTargetId); if (!b) return;
-  
-  // Calculate delta relative to the block's pixel size
-  const blockEl = document.querySelector(`[data-id="${cropTargetId}"]`);
-  if (!blockEl) return;
-  const blockW = blockEl.offsetWidth;
-  const blockH = blockEl.offsetHeight;
-  
-  const dx = (e.clientX - cropStartX) / blockW; // fraction of width
-  const dy = (e.clientY - cropStartY) / blockH; // fraction of height
-  
-  let { x, y, w, h } = cropStartRect;
-  
-  switch(cropHandle) {
-    case 'top-left':      x += dx; y += dy; w -= dx; h -= dy; break;
-    case 'top-right':     y += dy; w += dx; h -= dy; break;
-    case 'bottom-left':   x += dx; w -= dx; h += dy; break;
-    case 'bottom-right':  w += dx; h += dy; break;
-    case 'top-center':    y += dy; h -= dy; break;
-    case 'bottom-center': h += dy; break;
-    case 'left-center':   x += dx; w -= dx; break;
-    case 'right-center':  w += dx; break;
-  }
-  
-  // Clamp and ensure minimum size
-  const minFrac = 0.05;
-  if (w < minFrac) w = minFrac;
-  if (h < minFrac) h = minFrac;
-  cropRect = { x: Math.max(0, Math.min(1-w, x)), y: Math.max(0, Math.min(1-h, y)), w, h };
-  
-  // Update the DOM elements live
-  const cropArea = blockEl.querySelector('.crop-area');
-  if (cropArea) {
-    cropArea.style.left = (cropRect.x*100)+'%';
-    cropArea.style.top = (cropRect.y*100)+'%';
-    cropArea.style.width = (cropRect.w*100)+'%';
-    cropArea.style.height = (cropRect.h*100)+'%';
-  }
-}
-
-function onCropMouseUp() {
-  cropDragging = false;
-  cropHandle = null;
-  document.removeEventListener('mousemove', onCropMouseMove);
-  document.removeEventListener('mouseup', onCropMouseUp);
-}
-
-//=====================================================
-// Toggle crop mode for a block. In crop mode, a resizable crop rectangle appears over the block's image, and the "Apply Crop" button is shown in the props panel. The actual cropping is applied when the user clicks "Apply Crop".
-
-//=====================================================
-function toggleCropMode(id) {
-  const c = ac(); if (!c) return;
-  const b = c.blocks.find(x => x.id === id); if (!b) return;
-  if (!b.src) { toast('No image source'); return; }
-  
-  // Open the crop modal instead of inline mode
-  openCropModal(b);
-}
-
-// ── ENHANCED CROP MODAL ──────────────────────────────────────────
-let cropModalBlock = null;
-let cropModalRect = { x: 0, y: 0, w: 1, h: 1 };
-let cropModalRatio = null;   // e.g. 'free', '1:1', '4:3', etc.
-let cropModalPerspective = { tl:[0,0], tr:[1,0], bl:[0,1], br:[1,1] }; // fractional 0-1
-let cropModalMirrorH = false, cropModalMirrorV = false;
-let cropModalMarkerPath = null; // array of points in image coordinates
-let cropModalMarkerDrawing = false;
-
-// ── Open / Close ───────────────────
-function openCropModal(block) {
-  cropModalBlock = block;
-  cropModalRect = { x: 0, y: 0, w: 1, h: 1 };
-  cropModalRatio = 'free';
-  cropModalPerspective = { tl:[0,0], tr:[1,0], bl:[0,1], br:[1,1] };
-  cropModalMirrorH = false;
-  cropModalMirrorV = false;
-  cropModalMarkerPath = null;
-  cropModalMarkerDrawing = false;
-
-  const imgEl = document.getElementById('cropModalImg');
-  const svgEl = document.getElementById('cropModalSVG');
-  const canvasEl = document.getElementById('cropModalCanvas');
-  imgEl.style.display = 'none';
-  svgEl.style.display = 'none';
-  canvasEl.style.display = 'none';
-  imgEl.src = '';
-  svgEl.innerHTML = '';
-
-  // Show image at original size
-  if (block.type === 'graphic' && (block.src.startsWith('<svg') || block.src.startsWith('<?xml'))) {
-    svgEl.innerHTML = block.src;
-    svgEl.style.display = 'block';
-    const w = mm2px(block.w);
-    const h = mm2px(block.h || block.w);
-    svgEl.setAttribute('width', w);
-    svgEl.setAttribute('height', h);
-    document.getElementById('cropImageWrapper').style.width = w + 'px';
-    document.getElementById('cropImageWrapper').style.height = h + 'px';
-    requestAnimationFrame(() => setupCropModalHandles());
-  } else {
-    imgEl.src = block.src;
-    imgEl.style.display = 'block';
-    imgEl.onload = () => {
-      document.getElementById('cropImageWrapper').style.width = imgEl.naturalWidth + 'px';
-      document.getElementById('cropImageWrapper').style.height = imgEl.naturalHeight + 'px';
-      setupCropModalHandles();
-    };
-  }
-
-  document.getElementById('cropModal').classList.add('show');
-  document.getElementById('cropModalApplyBtn').onclick = applyCropModalAll;
-  document.getElementById('cropModalCancelBtn').onclick = closeCropModal;
-  
-  // Reset UI elements
-  document.getElementById('perspectiveSliders').style.display = 'none';
-  document.getElementById('perspectiveBtn').classList.remove('active-btn');
-  document.getElementById('markerBtn').classList.remove('active-btn');
-  document.getElementById('clearMarkerBtn').style.display = 'none';
-  document.getElementById('applyMarkerBtn').style.display = 'none';
-}
-
-function closeCropModal() {
-  document.getElementById('cropModal').classList.remove('show');
-  cropModalBlock = null;
-}
-
-// ── Crop handles setup (same as before, but respects ratio) ──
-function setupCropModalHandles() {
-  const container = document.getElementById('cropImageWrapper');
-  const rectEl = document.getElementById('cropModalRect');
-  // Remove old handles
-  container.querySelectorAll('.crop-handle').forEach(el => el.remove());
-  
-  function updateRectPosition() {
-    const cr = cropModalRect;
-    rectEl.style.left = (cr.x * 100) + '%';
-    rectEl.style.top = (cr.y * 100) + '%';
-    rectEl.style.width = (cr.w * 100) + '%';
-    rectEl.style.height = (cr.h * 100) + '%';
-  }
-  updateRectPosition();
-  
-  const handles = [
-    {pos:'top-left', left:'0', top:'0', cursor:'nw-resize'},
-    {pos:'top-right', left:'100%', top:'0', cursor:'ne-resize'},
-    {pos:'bottom-left', left:'0', top:'100%', cursor:'sw-resize'},
-    {pos:'bottom-right', left:'100%', top:'100%', cursor:'se-resize'},
-    {pos:'top-center', left:'50%', top:'0', cursor:'n-resize'},
-    {pos:'bottom-center', left:'50%', top:'100%', cursor:'s-resize'},
-    {pos:'left-center', left:'0', top:'50%', cursor:'w-resize'},
-    {pos:'right-center', left:'100%', top:'50%', cursor:'e-resize'},
-  ];
-  
-  handles.forEach(h => {
-    const handle = document.createElement('div');
-    handle.className = 'crop-handle';
-    handle.dataset.handle = h.pos;
-    handle.style.cssText = `
-      position:absolute;
-      left:${h.left}; top:${h.top};
-      width:10px; height:10px;
-      background:#C9A84C; border:1.5px solid #fff;
-      transform:translate(-50%,-50%);
-      cursor:${h.cursor}; z-index:10;
-    `;
-    handle.addEventListener('mousedown', cropModalMouseDown);
-    handle.addEventListener('click', e => e.stopPropagation());
-    container.appendChild(handle);
-  });
-  window._cropModalUpdateRect = updateRectPosition;
-}
-
-// ── Mouse drag for crop rectangle (with ratio lock) ──
-function cropModalMouseDown(e) {
-  e.stopPropagation(); e.preventDefault();
-  cropModalDragging = true;
-  cropModalHandle = e.target.dataset.handle;
-  cropModalStartRect = { ...cropModalRect };
-  cropModalStartX = e.clientX;
-  cropModalStartY = e.clientY;
-  document.addEventListener('mousemove', cropModalMouseMove);
-  document.addEventListener('mouseup', cropModalMouseUp);
-}
-function cropModalMouseMove(e) {
-  if (!cropModalDragging) return;
-  const wrapper = document.getElementById('cropImageWrapper');
-  const wrapperRect = wrapper.getBoundingClientRect();
-  const dx = (e.clientX - cropModalStartX) / wrapperRect.width;
-  const dy = (e.clientY - cropModalStartY) / wrapperRect.height;
-  let { x, y, w, h } = cropModalStartRect;
-  
-  switch (cropModalHandle) {
-    case 'top-left':      x += dx; y += dy; w -= dx; h -= dy; break;
-    case 'top-right':     y += dy; w += dx; h -= dy; break;
-    case 'bottom-left':   x += dx; w -= dx; h += dy; break;
-    case 'bottom-right':  w += dx; h += dy; break;
-    case 'top-center':    y += dy; h -= dy; break;
-    case 'bottom-center': h += dy; break;
-    case 'left-center':   x += dx; w -= dx; break;
-    case 'right-center':  w += dx; break;
-  }
-  
-  // Enforce aspect ratio if not free
-  if (cropModalRatio !== 'free') {
-    const ratio = getRatioValue(cropModalRatio);
-    const newW = h * ratio;
-    const newH = w / ratio;
-    // Choose whichever keeps the corner/direction logic simpler
-    if (cropModalHandle === 'top-left' || cropModalHandle === 'top-right' ||
-        cropModalHandle === 'bottom-left' || cropModalHandle === 'bottom-right') {
-      // For corner handles, prefer width change
-      if (Math.abs(w - newW) < Math.abs(h - newH)) {
-        h = w / ratio;
-      } else {
-        w = h * ratio;
-      }
-    } else if (cropModalHandle === 'top-center' || cropModalHandle === 'bottom-center') {
-      w = h * ratio;
-    } else {
-      h = w / ratio;
-    }
-  }
-  
-  const minFrac = 0.01;
-  if (w < minFrac) w = minFrac;
-  if (h < minFrac) h = minFrac;
-  if (cropModalRatio !== 'free' && w > 0) h = w / getRatioValue(cropModalRatio);
-  x = Math.max(0, Math.min(1 - w, x));
-  y = Math.max(0, Math.min(1 - h, y));
-  
-  cropModalRect = { x, y, w, h };
-  if (window._cropModalUpdateRect) window._cropModalUpdateRect();
-}
-function cropModalMouseUp() {
-  cropModalDragging = false;
-  document.removeEventListener('mousemove', cropModalMouseMove);
-  document.removeEventListener('mouseup', cropModalMouseUp);
-}
-
-function getRatioValue(str) {
-  const parts = str.split(':').map(Number);
-  return parts[0] / parts[1];
-}
-
-// ── Ratio buttons ───────────────────
-function cropModalSetRatio(ratio) {
-  cropModalRatio = ratio;
-  if (ratio !== 'free') {
-    // Snap current rectangle to the ratio, keeping center
-    const r = getRatioValue(ratio);
-    let { x, y, w, h } = cropModalRect;
-    if (w / h > r) {
-      w = h * r;
-    } else {
-      h = w / r;
-    }
-    cropModalRect = { x: Math.max(0, Math.min(1 - w, x)), y: Math.max(0, Math.min(1 - h, y)), w, h };
-    if (window._cropModalUpdateRect) window._cropModalUpdateRect();
-  }
-  toast('Aspect ratio: ' + ratio);
-}
-
-// ── Perspective ───────────────────
-function cropModalTogglePerspective() {
-  const sliders = document.getElementById('perspectiveSliders');
-  const btn = document.getElementById('perspectiveBtn');
-  if (sliders.style.display === 'none') {
-    sliders.style.display = 'block';
-    btn.classList.add('active-btn');
-    // Initialize sliders based on current perspective
-    document.getElementById('ptlX').value = cropModalPerspective.tl[0] * 100;
-    document.getElementById('ptlY').value = cropModalPerspective.tl[1] * 100;
-    document.getElementById('ptrX').value = cropModalPerspective.tr[0] * 100;
-    document.getElementById('ptrY').value = cropModalPerspective.tr[1] * 100;
-    document.getElementById('pblX').value = cropModalPerspective.bl[0] * 100;
-    document.getElementById('pblY').value = cropModalPerspective.bl[1] * 100;
-    document.getElementById('pbrX').value = cropModalPerspective.br[0] * 100;
-    document.getElementById('pbrY').value = cropModalPerspective.br[1] * 100;
-  } else {
-    sliders.style.display = 'none';
-    btn.classList.remove('active-btn');
-  }
-}
-
-function cropModalUpdatePerspective() {
-  cropModalPerspective.tl = [parseFloat(document.getElementById('ptlX').value) / 100, parseFloat(document.getElementById('ptlY').value) / 100];
-  cropModalPerspective.tr = [parseFloat(document.getElementById('ptrX').value) / 100, parseFloat(document.getElementById('ptrY').value) / 100];
-  cropModalPerspective.bl = [parseFloat(document.getElementById('pblX').value) / 100, parseFloat(document.getElementById('pblY').value) / 100];
-  cropModalPerspective.br = [parseFloat(document.getElementById('pbrX').value) / 100, parseFloat(document.getElementById('pbrY').value) / 100];
-  // Apply visual transform to the image wrapper (we'll use CSS matrix3d via a canvas overlay later, but for preview we can just distort the image using a canvas)
-  cropModalUpdatePreview();
-}
-
-function cropModalResetPerspective() {
-  cropModalPerspective = { tl:[0,0], tr:[1,0], bl:[0,1], br:[1,1] };
-  document.getElementById('ptlX').value = 0; document.getElementById('ptlY').value = 0;
-  document.getElementById('ptrX').value = 100; document.getElementById('ptrY').value = 0;
-  document.getElementById('pblX').value = 0; document.getElementById('pblY').value = 100;
-  document.getElementById('pbrX').value = 100; document.getElementById('pbrY').value = 100;
-  cropModalUpdatePreview();
-}
-
-function cropModalUpdatePreview() {
-  // Redraw canvas with perspective applied
-  const imgEl = document.getElementById('cropModalImg');
-  const svgEl = document.getElementById('cropModalSVG');
-  const canvas = document.getElementById('cropModalCanvas');
-  const ctx = canvas.getContext('2d');
-  
-  // Determine source dimensions
-  let srcW, srcH;
-  if (imgEl.style.display !== 'none') {
-    srcW = imgEl.naturalWidth;
-    srcH = imgEl.naturalHeight;
-  } else {
-    srcW = parseFloat(svgEl.getAttribute('width'));
-    srcH = parseFloat(svgEl.getAttribute('height'));
-  }
-  canvas.width = srcW;
-  canvas.height = srcH;
-  ctx.clearRect(0, 0, srcW, srcH);
-  
-  // Draw source image
-  if (imgEl.style.display !== 'none') {
-    ctx.drawImage(imgEl, 0, 0);
-  } else {
-    // Draw SVG onto canvas
-    const svgData = new XMLSerializer().serializeToString(svgEl.firstChild);
-    const blob = new Blob([svgData], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const tmpImg = new Image();
-    tmpImg.onload = () => {
-      ctx.drawImage(tmpImg, 0, 0);
-      URL.revokeObjectURL(url);
-      applyPerspectiveDistort(ctx, canvas, srcW, srcH);
-    };
-    tmpImg.src = url;
-    return;
-  }
-  applyPerspectiveDistort(ctx, canvas, srcW, srcH);
-}
-
-function applyPerspectiveDistort(ctx, canvas, w, h) {
-  // Use a warp transform via ImageData manipulation (simple: we skip heavy implementation here; placeholder: just resize the image based on the corners)
-  // For full perspective, you'd need a texture mapping. For simplicity, we'll just stretch the four corners using a 2D canvas transform (which is not true perspective but okay for preview).
-  // Actual perspective is complex; we'll just show a bounding box.
-  // Better: use CSS transform on the image wrapper (but that doesn't work with canvas).
-  // Since we want functional cropping, we'll apply perspective at the final apply step using a more complex method (like OpenCV.js or manual rasterization).
-  // For now, we simply draw the rectangular bounding box of the perspective quad as the crop area.
-  // This is a minimal viable perspective preview.
-  const corners = [cropModalPerspective.tl, cropModalPerspective.tr, cropModalPerspective.br, cropModalPerspective.bl];
-  // Find bounding rectangle
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  corners.forEach(([px, py]) => {
-    minX = Math.min(minX, px * w);
-    minY = Math.min(minY, py * h);
-    maxX = Math.max(maxX, px * w);
-    maxY = Math.max(maxY, py * h);
-  });
-  // Draw a blue outline for the perspective zone
-  ctx.strokeStyle = '#00BFFF';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
-  
-  // Update crop rectangle to match the bounding box (so crop uses that)
-  cropModalRect = {
-    x: minX / w,
-    y: minY / h,
-    w: (maxX - minX) / w,
-    h: (maxY - minY) / h
-  };
-  if (window._cropModalUpdateRect) window._cropModalUpdateRect();
-  canvas.style.display = 'block';
-}
-
-// ── Mirror ─────────────────────────
-function cropModalMirror(dir) {
-  if (dir === 'h') cropModalMirrorH = !cropModalMirrorH;
-  else cropModalMirrorV = !cropModalMirrorV;
-  applyMirrorTransform();
-  toast(dir === 'h' ? (cropModalMirrorH ? 'Flipped H' : 'Unflip H') : (cropModalMirrorV ? 'Flipped V' : 'Unflip V'));
-}
-
-function applyMirrorTransform() {
-  const imgEl = document.getElementById('cropModalImg');
-  const svgEl = document.getElementById('cropModalSVG');
-  const scaleX = cropModalMirrorH ? -1 : 1;
-  const scaleY = cropModalMirrorV ? -1 : 1;
-  if (imgEl.style.display !== 'none') {
-    imgEl.style.transform = `scale(${scaleX}, ${scaleY})`;
-  } else {
-    svgEl.style.transform = `scale(${scaleX}, ${scaleY})`;
-  }
-}
-
-// ── Marker (freehand drawing) ──────────────────
-function cropModalToggleMarker() {
-  cropModalMarkerDrawing = !cropModalMarkerDrawing;
-  const btn = document.getElementById('markerBtn');
-  const clearBtn = document.getElementById('clearMarkerBtn');
-  const applyBtn = document.getElementById('applyMarkerBtn');
-  if (cropModalMarkerDrawing) {
-    btn.classList.add('active-btn');
-    clearBtn.style.display = 'inline-block';
-    applyBtn.style.display = 'inline-block';
-    // Initialize canvas for drawing
-    const canvas = document.getElementById('cropModalCanvas');
-    canvas.style.display = 'block';
-    canvas.width = parseFloat(document.getElementById('cropImageWrapper').style.width);
-    canvas.height = parseFloat(document.getElementById('cropImageWrapper').style.height);
-    canvas.style.cursor = 'crosshair';
-    canvas.addEventListener('mousedown', markerMouseDown);
-  } else {
-    btn.classList.remove('active-btn');
-    clearBtn.style.display = 'none';
-    applyBtn.style.display = 'none';
-  }
-}
-
-function markerMouseDown(e) {
-  e.preventDefault();
-  const canvas = e.target;
-  const ctx = canvas.getContext('2d');
-  const rect = canvas.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  if (!cropModalMarkerPath) cropModalMarkerPath = [];
-  cropModalMarkerPath.push({ x, y });
-  ctx.strokeStyle = '#ff0000';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  function onMouseMove(e2) {
-    const x2 = e2.clientX - rect.left;
-    const y2 = e2.clientY - rect.top;
-    cropModalMarkerPath.push({ x: x2, y: y2 });
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  }
-  function onMouseUp() {
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
-  }
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp, { once: true });
-}
-
-function cropModalClearMarker() {
-  cropModalMarkerPath = null;
-  const canvas = document.getElementById('cropModalCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function cropModalApplyMarker() {
-  if (!cropModalMarkerPath || cropModalMarkerPath.length < 3) return;
-  // Create a mask using the path and crop to the bounding box of the path
-  const canvas = document.getElementById('cropModalCanvas');
-  const w = canvas.width, h = canvas.height;
-  // Draw the path filled with white on a transparent canvas to create a mask
-  const maskCanvas = document.createElement('canvas');
-  maskCanvas.width = w; maskCanvas.height = h;
-  const ctx = maskCanvas.getContext('2d');
-  ctx.beginPath();
-  ctx.moveTo(cropModalMarkerPath[0].x, cropModalMarkerPath[0].y);
-  for (let i = 1; i < cropModalMarkerPath.length; i++) {
-    ctx.lineTo(cropModalMarkerPath[i].x, cropModalMarkerPath[i].y);
-  }
-  ctx.closePath();
-  ctx.fillStyle = 'white';
-  ctx.fill();
-  // Convert to image data and apply to the source
-  // We'll temporarily hide the marker and use it for cropping at final apply
-  cropModalMarkerCanvas = maskCanvas; // store for later use
-  toast('Marker area selected');
-}
-
-// ── Final Apply (crop + perspective + mirror) ──
-function applyCropModalAll() {
-  if (!cropModalBlock) return;
-  const b = cropModalBlock;
-  const imgEl = document.getElementById('cropModalImg');
-  const svgEl = document.getElementById('cropModalSVG');
-  const wrapper = document.getElementById('cropImageWrapper');
-  const srcW = parseFloat(wrapper.style.width);
-  const srcH = parseFloat(wrapper.style.height);
-  
-  // Determine the source image (may have been modified by mirror/perspective/marker)
-  // We'll use the canvas that has the perspective preview (if active) or the original image.
-  // Better: We'll create a final canvas that incorporates mirror, perspective, marker, and crop.
-  const finalCanvas = document.createElement('canvas');
-  finalCanvas.width = srcW;
-  finalCanvas.height = srcH;
-  const ctx = finalCanvas.getContext('2d');
-  
-  // 1. Draw original image (mirrored if needed)
-  ctx.save();
-  if (cropModalMirrorH) {
-    ctx.translate(srcW, 0);
-    ctx.scale(-1, 1);
-  }
-  if (cropModalMirrorV) {
-    ctx.translate(0, srcH);
-    ctx.scale(1, -1);
-  }
-  if (imgEl.style.display !== 'none') {
-    ctx.drawImage(imgEl, 0, 0, srcW, srcH);
-  } else {
-    // Draw SVG onto canvas
-    const svgData = new XMLSerializer().serializeToString(svgEl.firstChild);
-    const tempImg = new Image();
-    tempImg.onload = () => {
-      ctx.drawImage(tempImg, 0, 0, srcW, srcH);
-      ctx.restore();
-      applyFinalCropAndPerspective(finalCanvas, b);
-    };
-    tempImg.src = URL.createObjectURL(new Blob([svgData], { type: 'image/svg+xml' }));
-    return; // async continue
-  }
-  ctx.restore();
-  
-  applyFinalCropAndPerspective(finalCanvas, b);
-}
-
-function applyFinalCropAndPerspective(finalCanvas, b) {
-  // 2. Apply perspective warp (if not default) — simplified: we'll just use the bounding rectangle of the perspective quad.
-  const corners = [cropModalPerspective.tl, cropModalPerspective.tr, cropModalPerspective.br, cropModalPerspective.bl];
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  corners.forEach(([px, py]) => {
-    minX = Math.min(minX, px * finalCanvas.width);
-    minY = Math.min(minY, py * finalCanvas.height);
-    maxX = Math.max(maxX, px * finalCanvas.width);
-    maxY = Math.max(maxY, py * finalCanvas.height);
-  });
-  const perspW = maxX - minX;
-  const perspH = maxY - minY;
-  
-  // 3. Apply marker mask if present (cropModalMarkerCanvas from earlier)
-  let maskCanvas = null;
-  if (cropModalMarkerCanvas) {
-    maskCanvas = cropModalMarkerCanvas;
-    // Combine with crop rectangle
-  }
-  
-  // 4. Apply crop rectangle
-  const cropX = cropModalRect.x * finalCanvas.width;
-  const cropY = cropModalRect.y * finalCanvas.height;
-  const cropW = cropModalRect.w * finalCanvas.width;
-  const cropH = cropModalRect.h * finalCanvas.height;
-  
-  // Create output canvas
-  const outCanvas = document.createElement('canvas');
-  outCanvas.width = cropW;
-  outCanvas.height = cropH;
-  const outCtx = outCanvas.getContext('2d');
-  
-  // Draw the perspective‑bound area (or directly the crop rect from the full canvas)
-  // For simplicity, if no perspective offset, just crop directly.
-  if (minX === 0 && minY === 0 && perspW === finalCanvas.width && perspH === finalCanvas.height) {
-    // No perspective change
-    outCtx.drawImage(finalCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-  } else {
-    // Perspective requires a warp; we'll create a temporary canvas with the perspective region stretched to rectangle
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = perspW;
-    tempCanvas.height = perspH;
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCtx.drawImage(finalCanvas, minX, minY, perspW, perspH, 0, 0, perspW, perspH);
-    // Then crop from this warped area
-    outCtx.drawImage(tempCanvas, cropX - minX, cropY - minY, cropW, cropH, 0, 0, cropW, cropH);
-  }
-  
-  // Apply marker mask if present
-  if (maskCanvas) {
-    // Use the mask to make outside area transparent
-    const maskData = maskCanvas.getContext('2d').getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-    const outData = outCtx.getImageData(0, 0, outCanvas.width, outCanvas.height);
-    for (let i = 0; i < maskData.data.length; i += 4) {
-      const mx = (i / 4) % maskCanvas.width;
-      const my = Math.floor(i / 4 / maskCanvas.width);
-      // Map mask coordinates to output coordinates (if same size fine)
-      if (mx < outCanvas.width && my < outCanvas.height) {
-        const outIdx = (my * outCanvas.width + mx) * 4;
-        outData.data[outIdx + 3] = maskData.data[i] ? outData.data[outIdx + 3] : 0;
-      }
-    }
-    outCtx.putImageData(outData, 0, 0);
-  }
-  
-  b.src = outCanvas.toDataURL('image/png');
-  closeCropModal();
-  snapshot();
-  renderAll();
-  toast('Image cropped!');
-}
-
-// Helper variable to store marker canvas
-let cropModalMarkerCanvas = null;
 // ══════════════════════════════════════════════════════
 //  GROUP BOUNDING BOX OVERLAY
 //  Draws a single dashed rectangle around all members
@@ -4693,9 +3740,7 @@ function commitInlineEdit(){
 //  CANVAS CLICK DESELECT
 // ══════════════════════════════════════════════════════
 function onCanvasAreaClick(e){
-
   const target=e.target;
-  if (cropMode) return;
   if(target.classList.contains('card-canvas')||target.classList.contains('canvas-area')||target.tagName==='CANVAS'){
     if(_inlineEditEl) commitInlineEdit(); // commit active inline edit before deselecting
     selectedId=null;selectedIds=[];clearGuideLines();renderAll();
@@ -5951,12 +4996,7 @@ function insertSymbol(sym){
 function switchTab(name,el){
   const lp=document.querySelector(".left-panel");
   const notifyCanvas=()=>{try{if(typeof fixCanvasAreaScroll==="function")fixCanvasAreaScroll();if(typeof drawRulers==="function"&&typeof showRuler!=="undefined"&&showRuler)drawRulers();}catch(e){}window.dispatchEvent(new Event("resize"));};
-  if(el && el.classList.contains("active")){
-    if(!panelPinned) lp.classList.toggle("collapsed");
-    setTimeout(notifyCanvas,240);
-    return;
-}
-   
+  if(el&&el.classList.contains("active")){lp.classList.toggle("collapsed");setTimeout(notifyCanvas,240);return;}
   const wasCollapsed=lp&&lp.classList.contains("collapsed");
   if(lp)lp.classList.remove("collapsed");
   if(wasCollapsed)setTimeout(notifyCanvas,240);
@@ -5968,7 +5008,6 @@ function switchTab(name,el){
   if(name==='graphics'){glibBuildCatTabs();renderGraphicsLib();}
   if(name==='palette'){renderPaletteSwatches();buildColorLayerList();}
   if(name==='canvasbg'){const c=ac();if(c&&c.bgSrc){const p=document.getElementById('bgPreviewImg');p.src=c.bgSrc;p.style.display='block';}if(c)updateFoldBtnStates(c);}
- 
 }
 
 // ══════════════════════════════════════════════════════

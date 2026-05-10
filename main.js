@@ -5,6 +5,7 @@ const path = require("path");
 const fs   = require("fs");
 const { autoUpdater } = require("electron-updater");
 
+
 let win;
 
 // ══════════════════════════════════════════════════════════
@@ -175,6 +176,35 @@ ipcMain.on("start-download", () => {
 
 ipcMain.on("install-update", () => {
   autoUpdater.quitAndInstall();
+});
+
+// ── Background Removal ────────────────────────────────────
+ipcMain.handle("remove-background", async (event, dataUrl) => {
+  // Lazy-load to avoid startup cost
+  const { removeBackground } = require("@imgly/background-removal-node"); // ✅ fixed typo
+
+  // Extract raw bytes from the data URL
+  const mimeMatch  = dataUrl.match(/^data:(image\/[^;]+);base64,/);
+  const mimeType   = mimeMatch ? mimeMatch[1] : "image/png";
+  const base64Data = dataUrl.replace(/^data:(image\/[^;]+);base64,/, "");
+  const imgBuffer  = Buffer.from(base64Data, "base64"); // renamed to avoid any shadowing
+
+  // Wrap in a Blob so the library can detect the image type
+  const inputBlob = new Blob([imgBuffer], { type: mimeType }); // ✅ fixed double brackets [[]] → []
+
+// Build the correct path to the bundled model files inside node_modules
+  const modelDir = app.isPackaged
+    ? path.join(process.resourcesPath, "app.asar.unpacked", "node_modules", "@imgly", "background-removal-node", "dist")
+    : path.join(__dirname, "node_modules", "@imgly", "background-removal-node", "dist");
+
+  // Process — output is always PNG with alpha channel
+  const resultBlob = await removeBackground(inputBlob, {
+    output: { format: "image/png", quality: 0.9, type: "foreground" },
+    publicPath: `file://${modelDir}/`,
+  });
+
+  const resultBuffer = Buffer.from(await resultBlob.arrayBuffer());
+  return `data:image/png;base64,${resultBuffer.toString("base64")}`;
 });
 
 // ── Lifecycle ─────────────────────────────────────────────
